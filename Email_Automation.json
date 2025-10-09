@@ -1,0 +1,506 @@
+{
+  "name": "Email Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {
+          "labelIds": [
+            "INBOX"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -440,
+        -80
+      ],
+      "id": "8311acb0-4e19-4cae-a21d-c452cdd29514",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "P70o3W6SApRM8qjK",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputText": "={{ $json.snippet }}",
+        "categories": {
+          "categories": [
+            {
+              "category": "Assistance technique",
+              "description": "Emails qui demandent de l'assistance technique, service après-ventes, description du produit, matériel, matériau du produit, software, hardware, "
+            },
+            {
+              "category": "Assistant commercial ",
+              "description": "Demande par rapport au prix, promotion, stock, les nouveautés produit, modèle"
+            },
+            {
+              "category": "Divers",
+              "description": "email personnel, aucun rapport avec l'assistance ou la vente. "
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "typeVersion": 1,
+      "position": [
+        -180,
+        -80
+      ],
+      "id": "526fff62-92b3-4ee7-b52b-cc6036294b36",
+      "name": "Text Classifier"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -260,
+        140
+      ],
+      "id": "4e013ada-4be8-4327-b293-ca7a2879f339",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "x0tQpNXNP6v5Ovtd",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Tu es un assistant technique, tu donnes l'information nécessaire par rapport à la technicité du produit cité. Si tu ne connais pas la réponse, invite le client à contacter support@gmail.com.  \n\nDonne une solution directe sans demander plus d'information. \n\nTu écris la réponse sous forme d'un email.\n\nVoilà la demande du client  :  {{ $json.snippet }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        200,
+        -320
+      ],
+      "id": "f03b910b-3a91-4725-bcdf-ef7c0f44060c",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "x0tQpNXNP6v5Ovtd",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "reply",
+        "messageId": "={{ $('Text Classifier').item.json.id }}",
+        "emailType": "text",
+        "message": "={{ $json.message.content }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        580,
+        -80
+      ],
+      "id": "f5b0bfe2-b251-48ad-922f-ccc8ae84d3dc",
+      "name": "Gmail",
+      "webhookId": "8031ca10-2b5e-4115-8a43-2c5d9799280b",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "P70o3W6SApRM8qjK",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Tu es un assistant commercial, tu pousses la vente des ordinateurs, on se basant sur le document dont tu as accès. \n\n\nNom du client : {{ $json.From }}\n\nMail auquel tu dois répondre : \n\nTexte sous forme d'email.  ",
+              "role": "assistant"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        200,
+        -80
+      ],
+      "id": "34e0c0a9-c487-44c0-a900-90438988df38",
+      "name": "OpenAI1",
+      "credentials": {
+        "openAiApi": {
+          "id": "x0tQpNXNP6v5Ovtd",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "892959162",
+        "text": "=Tu as envoyé un message : \n\nSujet : {{ $json.output['L\\'objet de l\\'email'] }}\n\nà : {{ $json.output.Destinataire }}\n\nMessage : {{ $json.output['Message envoyé'] }}",
+        "additionalFields": {
+          "appendAttribution": true
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1260,
+        -80
+      ],
+      "id": "f0b65003-0c33-489b-a0e8-abeb5220252c",
+      "name": "Telegram",
+      "webhookId": "9368b865-9ed4-4914-bc01-076e2e29648c",
+      "credentials": {
+        "telegramApi": {
+          "id": "lNY2NyTYBc6YUziG",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.text }}",
+        "attributes": {
+          "attributes": [
+            {
+              "name": "L'objet de l'email",
+              "description": "L'objet de l'email"
+            },
+            {
+              "name": "Message envoyé",
+              "description": "Message envoyé"
+            },
+            {
+              "name": "Destinataire ",
+              "description": "=celui qui nous envoyé le mail : {{ $('Gmail Trigger').item.json.From }}"
+            }
+          ]
+        },
+        "options": {
+          "systemPromptTemplate": "You are an expert extraction algorithm.\nOnly extract relevant information from the text.\nIf you do not know the value of an attribute asked to extract, you may omit the attribute's value."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1,
+      "position": [
+        920,
+        -80
+      ],
+      "id": "df43f46d-e646-4383-9bcc-6543b7fbe73d",
+      "name": "Information Extractor"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        940,
+        160
+      ],
+      "id": "60a6bc5f-21c1-4fa9-b45a-591453780715",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "x0tQpNXNP6v5Ovtd",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Donne un résumé du message envoyé avec l'adresse email.  \n\nEmail du Destinateur : {{ $('Gmail Trigger').item.json.From }}\n\nMessage envoyé :  {{ $json.snippet }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        200,
+        280
+      ],
+      "id": "17009dd3-7e5f-4d24-b0c0-b40bcb8036db",
+      "name": "OpenAI2",
+      "credentials": {
+        "openAiApi": {
+          "id": "x0tQpNXNP6v5Ovtd",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "892959162",
+        "text": "={{ $json.message.content }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        580,
+        280
+      ],
+      "id": "20590ccc-3b4e-4280-9c7b-c52a3dcdd4f1",
+      "name": "Telegram1",
+      "webhookId": "89cad701-18b6-47ae-b080-10845b749ee6",
+      "credentials": {
+        "telegramApi": {
+          "id": "lNY2NyTYBc6YUziG",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "messageId": "={{ $json.id }}",
+        "simple": false,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        760,
+        -80
+      ],
+      "id": "4359006e-dcc9-43d9-ad8f-24bb07025196",
+      "name": "Gmail1",
+      "webhookId": "a9885549-eef7-4902-b585-f56abcf04a0c",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "P70o3W6SApRM8qjK",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "https://docs.google.com/document/d/1fuMsd9gIAXSzPoZ_TVs9v7FNCI53-5FXInZUCH5CsHc/edit?usp=sharing"
+      },
+      "type": "n8n-nodes-base.googleDocsTool",
+      "typeVersion": 2,
+      "position": [
+        400,
+        140
+      ],
+      "id": "8e2d1e12-e8b8-435a-80f3-f290873e143c",
+      "name": "Google Docs1",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "DWhaDQxaKJ2CEot3",
+          "name": "Google Docs account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Classifier": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "OpenAI1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "OpenAI2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI1": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail": {
+      "main": [
+        [
+          {
+            "node": "Gmail1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Information Extractor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Information Extractor": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI2": {
+      "main": [
+        [
+          {
+            "node": "Telegram1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail1": {
+      "main": [
+        [
+          {
+            "node": "Information Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Docs1": {
+      "ai_tool": [
+        [
+          {
+            "node": "OpenAI1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "11aafe7e-43ef-4332-bb35-001f7caf1d83",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2ee8293be0fa6380527ab247a1eb95264d17c994507730562aa1c31ddb264f82"
+  },
+  "id": "kA6PVJ1HDFFKKpoV",
+  "tags": []
+}
