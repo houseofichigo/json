@@ -1,0 +1,353 @@
+{
+  "name": "Dice Job Scrapping",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -20,
+        2540
+      ],
+      "id": "e4f1da33-f582-4c25-97ee-d79e845b76d3",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1ptu1iZefi4UGHla82Yytp6KGWaiZ1Ib00fYFAiHNVOg",
+          "mode": "list",
+          "cachedResultName": "Dice Job Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ptu1iZefi4UGHla82Yytp6KGWaiZ1Ib00fYFAiHNVOg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "August",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ptu1iZefi4UGHla82Yytp6KGWaiZ1Ib00fYFAiHNVOg/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Serial_No.",
+              "displayName": "Serial_No.",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Link",
+              "displayName": "Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Company",
+              "displayName": "Company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Location",
+              "displayName": "Location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Posted",
+              "displayName": "Posted",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Employment_Type",
+              "displayName": "Employment_Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Salary",
+              "displayName": "Salary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "error",
+              "displayName": "error",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1040,
+        2640
+      ],
+      "id": "bad70788-1602-413f-8612-b4d2415fb293",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "DL3FPXna5x5uGkop",
+          "name": "R&D Google Sheet"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "sendTo": "ashraf@socialengagementgroup.com , tawhid@socialengagementgroup.com , dhruba@socialengagementgroup.com, shayekh@socialengagementgroup.com ",
+        "subject": "New job matches on Dice!",
+        "message": "=Dear Concern,\n\nGreat news! Your latest job matches on Dice have been updated. You can check out all the new opportunities by clicking the link below:\n\nhttps://docs.google.com/spreadsheets/d/1ptu1iZefi4UGHla82Yytp6KGWaiZ1Ib00fYFAiHNVOg/edit?usp=sharing\n\n\nBest,\nSEG IT",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        620,
+        2460
+      ],
+      "id": "4eb1e196-86f2-4465-a906-8078216650a3",
+      "name": "Gmail",
+      "webhookId": "fdc11fac-1c0a-497c-b5ee-85f9ffe8fdf7",
+      "executeOnce": true,
+      "credentials": {
+        "googleApi": {
+          "id": "DVkUGo0BWEUPUW6i",
+          "name": "R&D Service Account - AI Chat"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Code node – parse Dice SERP HTML into table with formatted Posted_time\n\nconst html = $json?.data;\nif (typeof html !== \"string\") {\n  return [{ json: { error: \"Expected HTML string in $.data from HTTP node.\" } }];\n}\n\nconst decode = (s = \"\") =>\n  s\n    .replace(/&amp;/g, \"&\")\n    .replace(/&#x27;/g, \"'\")\n    .replace(/&quot;/g, '\"')\n    .replace(/&lt;/g, \"<\")\n    .replace(/&gt;/g, \">\");\n\nconst cards = html.split('data-testid=\"job-search-serp-card\"').slice(1);\nconst pick = (re, s) => {\n  const m = s.match(re);\n  return m ? decode(m[1].trim()) : \"\";\n};\n\n// Helper: convert a relative label or time to dd.mm.yyyy HH:MM\nfunction formatPostedTime(raw) {\n  const now = new Date();\n  const lower = raw.toLowerCase();\n\n  if (lower.includes(\"today\")) {\n    return `${String(now.getDate()).padStart(2, \"0\")}.${String(now.getMonth() + 1).padStart(2, \"0\")}.${now.getFullYear()} ${String(now.getHours()).padStart(2, \"0\")}:${String(now.getMinutes()).padStart(2, \"0\")}`;\n  }\n  if (lower.includes(\"yesterday\")) {\n    const yest = new Date(now);\n    yest.setDate(yest.getDate() - 1);\n    return `${String(yest.getDate()).padStart(2, \"0\")}.${String(yest.getMonth() + 1).padStart(2, \"0\")}.${yest.getFullYear()} ${String(now.getHours()).padStart(2, \"0\")}:${String(now.getMinutes()).padStart(2, \"0\")}`;\n  }\n  if (/(\\d{1,2}):(\\d{2})/.test(raw)) {\n    // Use today's date with given time\n    const [_, hh, mm] = raw.match(/(\\d{1,2}):(\\d{2})/);\n    return `${String(now.getDate()).padStart(2, \"0\")}.${String(now.getMonth() + 1).padStart(2, \"0\")}.${now.getFullYear()} ${hh.padStart(2, \"0\")}:${mm}`;\n  }\n  // Fallback: just return today's date at 00:00\n  return `${String(now.getDate()).padStart(2, \"0\")}.${String(now.getMonth() + 1).padStart(2, \"0\")}.${now.getFullYear()} 00:00`;\n}\n\nconst rows = cards.map((c, idx) => {\n  const Link = pick(/href=\"(https:\\/\\/www\\.dice\\.com\\/job-detail\\/[^\"]+)\"/, c);\n  const Title = pick(/data-testid=\"job-search-job-detail-link\"[^>]*>([^<]+)</, c);\n  const Company = pick(/companyname=[^>]+>\\s*<p[^>]*>([^<]+)<\\/p>/, c);\n  const smallPs = [...c.matchAll(/<p class=\"text-sm[^\"]*\">([^<]+)<\\/p>/g)].map(m => decode(m[1].trim()));\n  const Location = smallPs[0] || \"\";\n  const rawTime = smallPs.find(t => /(today|yesterday|hour|minute|day|\\d{1,2}:\\d{2})/i.test(t)) || smallPs[1] || \"\";\n  const Posted_time = formatPostedTime(rawTime);\n  const Employment_Type = pick(/aria-labelledby=\"employmentType-label\"[\\s\\S]*?<p[^>]*>([^<]+)<\\/p>/, c);\n  const Salary = pick(/aria-labelledby=\"salary-label\"[\\s\\S]*?<p[^>]*>([^<]+)<\\/p>/, c) || \"Not specified\";\n\n  return {\n    Serial_No: idx + 1,\n    Title,\n    Link,\n    Company,\n    Location,\n    Posted_time,\n    Employment_Type,\n    Salary,\n  };\n});\n\nreturn rows.map(r => ({ json: r }));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        840,
+        2640
+      ],
+      "id": "148fcb12-7591-4d5a-b2d8-2614cfa6f162",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "content": "## Dice Job Scrapping for Business Analyst in the USA",
+        "height": 480,
+        "width": 1340,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -100,
+        2420
+      ],
+      "typeVersion": 1,
+      "id": "91101624-5ae2-4c22-bd57-9c3dc72c9064",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Code node: build Dice search URLs (filters-style) + pagination (last 24 hours only)\n\nconst role = \"Business Analyst\";\nconst states = [\"TX\", \"NY\", \"MI\", \"MA\"];\nconst pagesPerState = 2; // raise if you want to go deeper\n\nconst STATE_META = {\n  TX: { name: \"Texas\", lat: 31.9685988, lon: -99.9018131, countryCode: \"US\" },\n  NY: { name: \"New York\", lat: 43.00035, lon: -75.4999, countryCode: \"US\" },\n  MI: { name: \"Michigan\", lat: 44.182205, lon: -84.506836, countryCode: \"US\" },\n  MA: { name: \"Massachusetts\", lat: 42.407211, lon: -71.382439, countryCode: \"US\" },\n};\n\nfunction enc(v) { return encodeURIComponent(v); }\n\nfunction diceFilteredUrl({ role, st, page = 1 }) {\n  const meta = STATE_META[st];\n  return \"https://www.dice.com/jobs?\"\n    + \"filters.postedDate=ONE\"                         // last 24 hours only\n    + \"&filters.employmentType=\" + enc(\"CONTRACTS|THIRD_PARTY\")\n    + \"&location=\" + enc(`${meta.name}, USA`)\n    + \"&q=\" + enc(role)\n    + \"&latitude=\" + enc(meta.lat)\n    + \"&longitude=\" + enc(meta.lon)\n    + \"&countryCode=\" + enc(meta.countryCode)\n    + \"&locationPrecision=State\"\n    + \"&adminDistrictCode=\" + enc(st)\n    + \"&page=\" + enc(page);\n}\n\nconst out = [];\nfor (const st of states) {\n  for (let p = 1; p <= pagesPerState; p++) {\n    out.push({\n      json: { source: \"dice\", role, state: st, page: p, url: diceFilteredUrl({ role, st, page: p }) }\n    });\n  }\n}\nreturn out;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        200,
+        2540
+      ],
+      "id": "5992667b-35b9-49ba-a553-a1697f421345",
+      "name": "Customize Your Search"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        400,
+        2540
+      ],
+      "id": "c1b68082-8f28-4144-b1e2-78df45ac922a",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0"
+            },
+            {
+              "name": "Accept",
+              "value": "text/html,application/xhtml+xml"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": false,
+              "neverError": false,
+              "responseFormat": "text",
+              "outputPropertyName": "data"
+            }
+          },
+          "pagination": {}
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        620,
+        2640
+      ],
+      "id": "4057b630-7c28-475d-b67b-837cfaba428b",
+      "name": "Dice Search"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Customize Your Search",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Customize Your Search": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Dice Search",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dice Search": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "9cbc27d7-bc92-4514-991e-36e1c7a9e62a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6bb5339e67011e36cf93cf54a8bca6b7e3857fbcd93e9f5eeac8f6e87022da02"
+  },
+  "id": "VHbRrP5qeofcltuH",
+  "tags": []
+}
