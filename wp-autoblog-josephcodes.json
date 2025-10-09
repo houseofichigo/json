@@ -1,0 +1,830 @@
+{
+  "name": "wp-autoblog-josephcodes",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Write SEO Optimized Blog Post\n\n\n",
+        "height": 440,
+        "width": 420,
+        "color": 3
+      },
+      "id": "1bfeb532-43b4-48a3-887b-4a2e8ce379e8",
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -464,
+        240
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "title": "={{ $('Combine Blog Details').item.json.data[2].output.title }}",
+        "additionalFields": {
+          "authorId": 2,
+          "content": "={{ $json.content }}",
+          "slug": "={{ $('Combine Blog Details').item.json.data[2].output.slug }}",
+          "status": "draft",
+          "commentStatus": "closed",
+          "sticky": false,
+          "postTemplate": {
+            "values": {}
+          }
+        }
+      },
+      "id": "0e35b732-2880-4d00-b53b-8d945bdbdc6c",
+      "name": "Wordpress",
+      "type": "n8n-nodes-base.wordpress",
+      "position": [
+        -240,
+        912
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "wordpressApi": {
+          "id": "lKjb513dWUAIdqnO",
+          "name": "delegg v1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Create HTML\n\n\n",
+        "height": 280,
+        "width": 440,
+        "color": 7
+      },
+      "id": "6277daeb-153e-4ba0-876c-8028d0bef29d",
+      "name": "Sticky Note6",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        0
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Post on Wordpress\n\n\n",
+        "height": 280,
+        "width": 300,
+        "color": 4
+      },
+      "id": "0db591ec-c8b0-492a-8041-a6b7a9713d3c",
+      "name": "Sticky Note8",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -336,
+        800
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "id": "af78c0fe-7827-4400-a578-7e78413f94a6",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        80,
+        608
+      ],
+      "typeVersion": 1.2,
+      "credentials": {
+        "openAiApi": {
+          "id": "4L8jb2TbLhoKUr3D",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\"slug\": \"rpo-benefits-recruitment\",\n\"title\": \"7 Key Advantages of RPO for Modern Recruitment\",\n\"meta\": \"Explore how Recruitment Process Outsourcing (RPO) enhances hiring efficiency, reduces costs, and expands talent pools for businesses seeking top candidates.\"\n}"
+      },
+      "id": "f6d93910-a9f6-42bd-9a5b-d68dee10b4fb",
+      "name": "Structured Output Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "position": [
+        304,
+        608
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=**Create a slug, blog post title, and meta description for the following blog post:**\n\n{{ $json.output }}\n\n**Slug Guidelines:**\n- Keep it concise (4-5 words maximum).\n- Include the primary keyword related to recruitment or HR.\n- Use hyphens to separate words.\n- Avoid unnecessary words, articles, or prepositions.\n- Ensure it reflects the main topic of the blog post.\n- Make it readable and relevant for both users and search engines.\n\n**Title Guidelines:**\n- Avoid AI words like \"Transform\" or \"Revolutionize\" and similar overused terms.\n- Avoid using a colon (:) in the title.\n- Never structure it as a primary/secondary title separated by a colon.\n- Include the primary keyword related to recruitment or HR (e.g., 'AI in recruitment' or 'talent acquisition trends').\n- Clearly inform users what they can expect from reading the blog post.\n- Be concise and engaging, ideally 50-60 characters long.\n- Incorporate power words that appeal to HR professionals and recruiters.\n\n**Meta Description Guidelines:**\n- Avoid AI words like \"Transform\" or \"Revolutionize\" and similar overused terms.\n- Be concise: Limit to 150-160 characters to ensure full visibility in search results.\n- Include keywords: Naturally incorporate primary recruitment-related keywords to enhance relevance and visibility.\n- Provide value: Clearly convey the benefits or insights readers will gain from the article.\n- Be engaging: Use action-oriented language or a thought-provoking question to encourage clicks.\n- Align with content: Accurately reflect the blog post's content to meet user expectations and reduce bounce rates.\n- Highlight expertise: Subtly emphasize SocialFind's authority in the recruitment field.\n\nYour output must be a single valid JSON object with these 3 fields:\n-slug: The slug\n-title: The blog post title\n-meta: The meta description  \n\nEach should be presented without any additional text, explanation, quotation marks, or formatting.\n",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "id": "855e79b6-8c75-4f53-86bd-b70b69b69d14",
+      "name": "Create Title, Slug, Meta",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        112,
+        432
+      ],
+      "typeVersion": 1.8
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Only output the HTML content without preamble or further explanation. Generate WordPress-compatible HTML for a blog post based on the provided content.\n\n### CONTENT PROCESSING:\n- Process all content from {{ $json.output }}\n- Preserve all original facts, information, and URLs\n- Format according to the specifications below\n\n### REQUIRED STRUCTURE (IN THIS ORDER):\n1. Title (H2)\n2. Estimated reading time\n3. Key takeaways (3-5 bullet points)\n4. Table of contents (linked to all headings)\n5. Main content (with proper heading hierarchy)\n6. FAQ section\n\n### STYLING REQUIREMENTS:\n- Style Override: Include a style section with !important declarations\n- Links: All hyperlinks, TOC items, and FAQ questions must be #00c2ff (blue)\n- Headings: All headings need a bottom border in #00c2ff with padding\n- Spacing: Add <br><br> between each major section\n\n### ENGAGEMENT FORMATTING:\n- Use bold, italics, bullet points, quotes, and highlighting for emphasis\n- Create proper paragraph structure with appropriate line breaks\n- NO emojis allowed\n- Use whitespace strategically for readability\n\n### HYPERLINK HANDLING (CRITICAL):\n- When URLs appear next to keyphrases (e.g., \"AI tools (https://example.com)\")\n- Convert to: <a href=\"https://example.com\" style=\"color: #00c2ff !important;\">AI tools</a>\n- The KEYPHRASE must be linked, never the URL itself\n\n### WORDPRESS COMPATIBILITY:\n- Use WordPress block classes (wp-block-heading, wp-block-paragraph, etc.)\n- Add heading IDs starting with \"h-\" for better TOC linking\n- Ensure all styles use !important to override theme styles\n\nDO NOT include any explanations, code tags, or comments. Output ONLY the raw HTML.\n"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c933026a-8cca-490f-baa5-d54c4ff03a39",
+      "name": "Create HTML",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "position": [
+        112,
+        80
+      ],
+      "typeVersion": 1.8,
+      "credentials": {
+        "openAiApi": {
+          "id": "4L8jb2TbLhoKUr3D",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "id": "8c782a0a-d8bf-498a-858f-0d274c617c16",
+      "name": "Merge",
+      "type": "n8n-nodes-base.merge",
+      "position": [
+        560,
+        352
+      ],
+      "typeVersion": 3
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://delegg.com/wp-json/wp/v2/media",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "wordpressApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Disposition",
+              "value": "=attachment; filename=\"cover-image-{{ $('Wordpress').item.json.id }}.jpeg\""
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "binaryData",
+        "inputDataFieldName": "data",
+        "options": {}
+      },
+      "id": "841da786-7ce7-498f-8c0d-4d6ac5407f36",
+      "name": "Upload Image to Wordpress",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        720,
+        928
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "wordpressApi": {
+          "id": "lKjb513dWUAIdqnO",
+          "name": "delegg v1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://delegg.com/wp-json/wp/v2/posts/{{ $('Wordpress').item.json.id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "wordpressApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "featured_media",
+              "value": "={{ $json.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e9ed3d84-bc8a-412a-a2cc-f5ae906d2bf1",
+      "name": "Set Image on Wordpress Post",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        912,
+        928
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "wordpressApi": {
+          "id": "lKjb513dWUAIdqnO",
+          "name": "delegg v1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are part of a marketing team that creates high-quality blog posts for the virtual assistant, business growth, and delegation services industry. Your goal is to produce engaging, SEO-optimized content that positions DELEGG as an authority in helping businesses save time, reduce costs, and grow efficiently by using qualified virtual assistants. The content should attract inbound leads by showcasing expertise in task delegation, lead generation, and workflow optimization.\n\nEvery 2 days, your team publishes a blog on the most trending topics in virtual assistance, business growth strategies, lead generation, and operational efficiency. As the copywriter, you are provided with the following information:\n\nQuery: The main topic for this week’s blog post, representing the most trending news or insights in virtual assistant services, business growth, or task delegation strategies.\n\nOther Keywords: A curated list of high-search-volume keywords related to virtual assistants, business growth, delegation, lead generation, operational efficiency, and workflow optimization. These keywords should be incorporated naturally into the blog post where relevant, without keyword stuffing or altering the meaning.\n\nYour Goal: Produce engaging, SEO-optimized content that positions DELEGG as an authority in virtual assistant services, builds trust with potential clients, and generates inbound leads.\n\nResearch findings: Detailed information from reputable sources related to the blog topic. Your post must be based on this research.\n\nGiven this information, write a comprehensive blog post that:\n\n- Includes the query in the blog title, H2 header, and early in the introduction.\n- Incorporates all details from the research findings, including source URLs for potential hyperlinks.\n- Is detailed and informative, showcasing the companies expertise in AI consulting and n8n workflows to automate business processes and website development .\n- Uses a professional yet engaging tone, highlighting the exciting developments and challenges in the recruitment industry.\n- Flows naturally and logically, making it easy for readers to follow.\n- Is between 1500 to 2000 words long.\n- Is written at a level accessible to HR professionals and business leaders.\n- ue the focus keyword verry well , metion it in the first paraghpaphe of the articles \n\nAdditional requirements:\n- Include practical takeaways or actionable advice for recruiters and HR professionals.\n- Highlight how the topic relates to the companies services or expertise.\n- Include a call-to-action (CTA) that encourages readers to explore the comapnies services or contact for more information.\n\nCreate the entire blog post draft in your first output. Don't stop or cut it short.\n\nYour output must be the blog post and nothing else.\n\nHere are the details of this blog post project:\n\nQuery:\n{{ $json.Keyword }}\n\ninformation about the business : {{ $json.Description }}\n\n\n",
+        "options": {}
+      },
+      "id": "6b248823-fed6-4034-be23-5909dc03311c",
+      "name": "Copywriter AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        -384,
+        352
+      ],
+      "typeVersion": 1.8
+    },
+    {
+      "parameters": {
+        "content": "## Create Title, Slug & Meta\n\n\n",
+        "height": 440,
+        "width": 440,
+        "color": 7
+      },
+      "id": "196c8a11-96a4-4950-9755-85566abb25cd",
+      "name": "Sticky Note7",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        320
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0afb2988-1481-4b04-b16d-fb33c50a16d0",
+              "name": "content",
+              "type": "string",
+              "value": "={{ $json.data[0].message.content.replaceAll('```html', '').replaceAll('```','') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "96731e2f-cc02-4c30-8e8f-2701f198000c",
+      "name": "Cleanup HTML ",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        768,
+        608
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "content": "## Set Image for Wordpress Post",
+        "height": 280,
+        "width": 820
+      },
+      "id": "46593902-54fd-476f-8ea0-9b13c3b7cdb6",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        800
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "id": "e40a39c2-547b-494c-86cf-58548da8a98a",
+      "name": "gpt-4o-mini",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        -384,
+        544
+      ],
+      "typeVersion": 1.2,
+      "credentials": {
+        "openAiApi": {
+          "id": "4L8jb2TbLhoKUr3D",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "id": "270a1ce9-dc85-4b91-b90e-feac4a73c96d",
+      "name": "Combine Blog Details",
+      "type": "n8n-nodes-base.aggregate",
+      "position": [
+        768,
+        352
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1DqZkNsmVqtV_iWIthp8ZV0NhgZLdwEZxZeJ0RGxiD6g",
+          "mode": "list",
+          "cachedResultName": "DELEGG BLOG",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1DqZkNsmVqtV_iWIthp8ZV0NhgZLdwEZxZeJ0RGxiD6g/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1DqZkNsmVqtV_iWIthp8ZV0NhgZLdwEZxZeJ0RGxiD6g/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "status",
+              "lookupValue": "None"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -960,
+        400
+      ],
+      "id": "8b1c52af-379c-4ea7-9ca8-ae5d9d74d40b",
+      "name": "Get row(s) in sheet",
+      "alwaysOutputData": false,
+      "executeOnce": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "KP1KRGzDejLSEqJm",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1328,
+        368
+      ],
+      "id": "5ac60425-73cb-4738-97d7-91e49d7599dc",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1DqZkNsmVqtV_iWIthp8ZV0NhgZLdwEZxZeJ0RGxiD6g",
+          "mode": "list",
+          "cachedResultName": "DELEGG BLOG",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1DqZkNsmVqtV_iWIthp8ZV0NhgZLdwEZxZeJ0RGxiD6g/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1DqZkNsmVqtV_iWIthp8ZV0NhgZLdwEZxZeJ0RGxiD6g/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "row_number": "={{ $('Get row(s) in sheet').item.json.row_number }}",
+            "status": "Done"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "Keyword",
+              "displayName": "Keyword",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Description",
+              "displayName": "Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1088,
+        912
+      ],
+      "id": "f591c33b-57bf-4e94-9464-0d276fc52d41",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "KP1KRGzDejLSEqJm",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Search Pexels Image').item.json.photos[0].src.large2x }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "65451967-2801-43db-896a-9c5642c4ecb9",
+      "name": "Download Pexels Image",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        528,
+        944
+      ],
+      "typeVersion": 4.2,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.pexels.com/v1/search?query={{ $json.message.content }}&per_page=1",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "API TOKEN"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1395116a-a496-43c8-84e4-687eb7d5f257",
+      "name": "Search Pexels Image",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        304,
+        960
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "={{ $json.title.raw }}\ntake this and return me only one word descripe it so i can ue it as a search term in pixels to get the perfect picture for that but should be the focus keyword for the specific service make sure its one word exacly not two or more and the word must be something commun like we can find it in pixels photos if not use close word to it "
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -32,
+        912
+      ],
+      "id": "5311ad51-c1b0-40cf-994a-75371cadb21d",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "4L8jb2TbLhoKUr3D",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "atlasdigits@gmail.com",
+        "subject": "=New Articles created: {{ $('Wordpress').item.json.slug }}",
+        "emailType": "text",
+        "message": "=hello youssef ,\nhere is your new post check it out :\n{{ $('Wordpress').item.json.guid.rendered }}\n\nEnjoy !",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1296,
+        912
+      ],
+      "id": "bf078ce5-d809-4e10-beb5-16c3a47b0223",
+      "name": "Send a message",
+      "webhookId": "cef4fb1f-3b5d-4c0c-b7b1-edd11dcef65f",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "xIYd6uPCzG3kqzcc",
+          "name": "ouabi-codes"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Combine Blog Details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wordpress": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create HTML": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "gpt-4o-mini": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Copywriter AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cleanup HTML ": {
+      "main": [
+        [
+          {
+            "node": "Wordpress",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Create Title, Slug, Meta",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Copywriter AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Create HTML",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Create Title, Slug, Meta",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Combine Blog Details": {
+      "main": [
+        [
+          {
+            "node": "Cleanup HTML ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Title, Slug, Meta": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Create Title, Slug, Meta",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Image to Wordpress": {
+      "main": [
+        [
+          {
+            "node": "Set Image on Wordpress Post",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Image on Wordpress Post": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Copywriter AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Pexels Image": {
+      "main": [
+        [
+          {
+            "node": "Upload Image to Wordpress",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Search Pexels Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Pexels Image": {
+      "main": [
+        [
+          {
+            "node": "Download Pexels Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "5ae33899-7080-4af8-8d6f-0c30e0d26c4c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "826ce4e6340ba155d2ca019b3fc2c5daaf0039a158b6c12764782207e427828b"
+  },
+  "id": "C6ykRQpti4cC7GYs",
+  "tags": []
+}
