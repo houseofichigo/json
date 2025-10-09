@@ -1,0 +1,1585 @@
+{
+  "name": "BOT / Template / Demo [WP]",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "*"
+        ],
+        "additionalFields": {}
+      },
+      "id": "b53d06b7-1c9f-453e-8a3b-a2fceaee1c1f",
+      "name": "Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -440,
+        340
+      ],
+      "webhookId": "4269cd04-fd94-4771-abda-cfbc4c1a37e3",
+      "credentials": {
+        "telegramApi": {
+          "id": "BsrAeDsPMOnQOFa7",
+          "name": "n8n template"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "1618b6c1-9dcb-43be-88d0-488f46036ea8",
+      "name": "Global data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -200,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Trigger').item.json.message.from.id }}",
+        "text": "Photo",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "76bf3429-4283-45ec-bdcd-8099053967e7",
+      "name": "Telegram1",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1700,
+        -360
+      ],
+      "webhookId": "f7c3935a-3cf0-4c54-be32-679293b5e79f",
+      "credentials": {
+        "telegramApi": {
+          "id": "BsrAeDsPMOnQOFa7",
+          "name": "n8n template"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Trigger').item.json.message.from.id }}",
+        "text": "File",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "457b6122-97f2-4560-bdfe-a8743f1c82cb",
+      "name": "Telegram2",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1700,
+        -120
+      ],
+      "webhookId": "0bb08276-db2e-4e3a-9079-6d9dacb9ba15",
+      "credentials": {
+        "telegramApi": {
+          "id": "BsrAeDsPMOnQOFa7",
+          "name": "n8n template"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Trigger').item.json.callback_query.data }}",
+        "text": "Callback",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "88c44211-33bc-43e2-8bd5-7623b70167ba",
+      "name": "Telegram3",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1260,
+        460
+      ],
+      "webhookId": "38c46069-910e-4235-82fa-72226073bd6c",
+      "credentials": {
+        "telegramApi": {
+          "id": "BsrAeDsPMOnQOFa7",
+          "name": "n8n template"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Trigger').item.json.message.from.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "1955b6c2-171d-4511-bd8a-c11cdd83ccc4",
+      "name": "Telegram4",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1940,
+        -740
+      ],
+      "webhookId": "7f3ddd54-d5c7-4275-9b25-671166629991",
+      "credentials": {
+        "telegramApi": {
+          "id": "BsrAeDsPMOnQOFa7",
+          "name": "n8n template"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Callback",
+        "height": 326.00218267794156,
+        "width": 1200.5980355767667,
+        "color": 7
+      },
+      "id": "f819e58c-5c93-44e2-bc7c-9108c253d35c",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        980,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Text\n",
+        "height": 481,
+        "width": 1201,
+        "color": 7
+      },
+      "id": "a255ce9e-9dab-418e-887d-f18ad2f13050",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        980,
+        -920
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Photo",
+        "height": 198.69915410333263,
+        "width": 1200.5980355767667,
+        "color": 7
+      },
+      "id": "ec9fe1d2-621a-4ce1-8456-bef8f3a7b8c0",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        980,
+        -400
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## File",
+        "height": 198.69915410333263,
+        "width": 1200.5980355767667,
+        "color": 7
+      },
+      "id": "5b20f4c4-9c0e-4a0e-9eae-84ea202242d7",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        980,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Voice",
+        "height": 198.69915410333263,
+        "width": 1200.5980355767667,
+        "color": 7
+      },
+      "id": "cb1011e2-daf0-4984-b584-dabf1c5d8a72",
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        980,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Trigger').item.json.message.from.id }}",
+        "text": "Voice",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "71fbe2f4-030b-4197-9f5d-e2693f0b38d6",
+      "name": "Telegram5",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1700,
+        140
+      ],
+      "webhookId": "e089e811-fd91-4ad9-aa24-86fe0c611157",
+      "credentials": {
+        "telegramApi": {
+          "id": "BsrAeDsPMOnQOFa7",
+          "name": "n8n template"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "id": "360a2e5b-8736-488c-87dc-b5fcbd2b5102",
+                    "leftValue": "={{ $('Trigger').item.json.message.hasOwnProperty('text') }}",
+                    "rightValue": "/",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Text"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Trigger').item.json.message.hasOwnProperty('photo') }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Photo"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "id": "eb5a5507-4374-46c9-b8eb-25b36cbe17ee",
+                    "leftValue": "={{ $('Trigger').item.json.message.hasOwnProperty('document') }}",
+                    "rightValue": "2",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "File"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "id": "b5a43050-e657-4b56-aa9b-290a94aa8902",
+                    "leftValue": "={{ $('Trigger').item.json.message.hasOwnProperty('voice') }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Voice"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c16ab14a-d0c5-44f9-a363-aaa70b4fb51d",
+      "name": "Switch_MessageType",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        720,
+        -120
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Commands",
+        "height": 501,
+        "width": 1776,
+        "color": 7
+      },
+      "id": "aa123710-dfea-4d22-857f-93fbefa4d27b",
+      "name": "Sticky Note5",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        980,
+        -1460
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Trigger').item.json.message.from.id }}",
+        "text": "Don't know the command",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "32703eec-bac8-42e6-b56a-40c10e5f1d34",
+      "name": "Telegram6",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1840,
+        -1180
+      ],
+      "webhookId": "5c440f7a-c1c6-4361-9c66-a41fd980ad07",
+      "credentials": {
+        "telegramApi": {
+          "id": "BsrAeDsPMOnQOFa7",
+          "name": "n8n template"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "id": "798e1a40-e85b-4294-afcb-b129f92eb833",
+                    "leftValue": "={{ $('Trigger').item.json.callback_query.data }}",
+                    "rightValue": "menu_conditions",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Conditions"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "id": "f91b8a94-8961-4d20-ae9c-0ee34ff04000",
+                    "leftValue": "={{ $('Trigger').item.json.callback_query.data }}",
+                    "rightValue": "menu_reviews",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Reviews"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "4cdc4f08-1a78-4e5a-be02-a8cbac61709c",
+      "name": "Menu",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        1420,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "a2025331-2c2b-4df8-9e23-37035a5c808a",
+              "leftValue": "={{ $('Trigger').item.json.message.text }}\n",
+              "rightValue": "/",
+              "operator": {
+                "type": "string",
+                "operation": "startsWith"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "1ef5730c-8ab6-4027-8f37-13fed8a4b2ee",
+      "name": "Command?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1340,
+        -760
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1nTDcSinsEdKUA_BzISUwCa8WogQZXc7sjIdBvs3D7o0/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "USERS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1nTDcSinsEdKUA_BzISUwCa8WogQZXc7sjIdBvs3D7o0/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "0"
+          },
+          "matchingColumns": [
+            "ID"
+          ],
+          "schema": [
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Lastname",
+              "displayName": "Lastname",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Username",
+              "displayName": "Username",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Language",
+              "displayName": "Language",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Balance",
+              "displayName": "Balance",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e155b6a1-9453-4eee-a139-7a62133fe4af",
+      "name": "Change status",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.4,
+      "position": [
+        1460,
+        1220
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "3",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "253b4dfb-2b86-499a-a1a6-b6d916c9c25f",
+              "leftValue": "={{ $('Trigger').item.json.my_chat_member.new_chat_member.status }}",
+              "rightValue": "member",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "0c759c75-8bea-48bf-8150-cae13da38a1d",
+      "name": "Start bot?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.1,
+      "position": [
+        1260,
+        1040
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": "XZKoHGcXJE1fUizb",
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "id": "1386fb0e-1fa1-4fac-8706-f5f4444cecaa",
+      "name": "Register",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [
+        1660,
+        920
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "lPX901W8CIMbKbww",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "6099aa2e-3b81-4cb9-aaf9-a66c6a508e31",
+      "name": "Payment Handler",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.1,
+      "position": [
+        1460,
+        1660
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ Object.assign({}, $('Trigger').item.json, { \"action\": \"HandlePayment\" }) }}",
+        "options": {}
+      },
+      "id": "cf94b0e6-fe3f-4226-8917-1992e443f2d2",
+      "name": "Trigger Data for Payment",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1280,
+        1660
+      ],
+      "notesInFlow": true,
+      "notes": "Chat ID required. \n\nSend action name to handle it inside Payment workflow"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ $('Trigger').item.json }}",
+        "options": {}
+      },
+      "id": "f82c17e9-3e8a-4d1b-ad9d-3af64e004a49",
+      "name": "Trigger Data for Register",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1460,
+        920
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "360a2e5b-8736-488c-87dc-b5fcbd2b5102",
+                    "leftValue": "={{ $('Trigger').item.json.message && (!$('Trigger').item.json.message.successful_payment) }}",
+                    "rightValue": "/",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Message"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Trigger').item.json.hasOwnProperty('callback_query') }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    },
+                    "id": "727fdd8d-ed98-4d64-b720-a10d78d73025"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Callback"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "e014a230-519a-4028-98b3-33c10d408c85",
+                    "leftValue": "={{ $('Trigger').item.json.hasOwnProperty('my_chat_member') }}",
+                    "rightValue": "System",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "System"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "b03aaa37-d57f-437c-acb2-de2068d3241a",
+                    "leftValue": "={{ $('Trigger').item.json.hasOwnProperty('pre_checkout_query') || $('Trigger').item.json.message.hasOwnProperty('successful_payment') }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Payment"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "74727c7f-fb2c-4722-9134-324be2ec8743",
+      "name": "Switch",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        -20,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ Object.assign({}, $('Trigger').item.json, { \"action\": \"SendInvoice\" }) }}",
+        "options": {}
+      },
+      "id": "64edfbfc-87cc-4f25-8e49-5775a6d3486f",
+      "name": "Data for Invoice",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1840,
+        -1380
+      ],
+      "notesInFlow": true,
+      "notes": "Chat ID required. \n\nSend action name to handle it inside Payment workflow"
+    },
+    {
+      "parameters": {
+        "workflowId": "lPX901W8CIMbKbww",
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "id": "8d79fd3b-e126-442e-8c5f-140c3fdb5185",
+      "name": "Send Invoice",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [
+        2040,
+        -1380
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## New member or Member left",
+        "height": 613,
+        "width": 1417,
+        "color": 7
+      },
+      "id": "978224bb-b1a2-4795-a586-ca37bb25ca8d",
+      "name": "Sticky Note6",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        980,
+        820
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Payment handler",
+        "height": 577,
+        "width": 1217,
+        "color": 7
+      },
+      "id": "46f2dac0-ed37-4526-a558-f4c55bc540e4",
+      "name": "Sticky Note7",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        980,
+        1500
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "id": "360a2e5b-8736-488c-87dc-b5fcbd2b5102",
+                    "leftValue": "={{ $('Trigger').item.json.message.text }}",
+                    "rightValue": "/pay",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Command 1"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "id": "546c81bf-2ee0-46b2-847b-1f92b84efaf3",
+                    "leftValue": "={{ $('Trigger').item.json.message.text }}",
+                    "rightValue": "/command2",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Command 2"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "id": "3efc3469-318e-4929-8394-e7836e396ec1",
+      "name": "Switch_Commands",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        1540,
+        -1280
+      ]
+    },
+    {
+      "parameters": {
+        "content": "### 🚀 Set up Telegram Trigger\n\n1. Create a bot via [@BotFather](https://t.me/BotFather) and copy the **Bot Token**.\n2. Connect it to this node\n\n📝 Tip: Send `/start` to your bot in Telegram to trigger the flow.\n\n[🔗 Full guide](https://docs.n8n.io/integrations/builtin/credentials/telegram/?utm_source=n8n_app&utm_medium=credential_settings&utm_campaign=create_new_credentials_modal)",
+        "height": 400,
+        "width": 260
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -520,
+        100
+      ],
+      "typeVersion": 1,
+      "id": "7b80e1f9-11c4-41bd-b734-3495cdba4990",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "content": "### 👋 New member joined? Register them automatically!\n\nUse this node when someone joins or leaves your Telegram group.\n\nPair it with the [n8n Telegram Payment & Registration Workflow ⭐️](https://viktorgubanov.gumroad.com/l/n8n-telegram-payment-workflow-stars) to:\n\n- ✅ Automatically **register new users** in your database\n- 💬 Send a **welcome message** or onboarding flow\n- 💾 Keep track of active members for payments, access control, or CRM\n- 🔁 Remove access or mark users as inactive when they leave\n\n⚡️ Automate your group membership like a pro — start now with this ready-to-use workflow!",
+        "height": 460,
+        "width": 360,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1860,
+        860
+      ],
+      "typeVersion": 1,
+      "id": "e6db44b8-ced6-4a12-ae8e-896444f3148f",
+      "name": "Sticky Note9"
+    },
+    {
+      "parameters": {
+        "content": "### 💸 Telegram Payments Made Easy with n8n\n\nThis ready-to-use workflow helps you:\n\n- ✅ Accept payments **directly in Telegram**\n- 👤 Automatically **register paying users**\n- ⏳ Control access based on subscription status or payment\n- 📊 Save user data for analytics, CRM, or follow-up\n\nPerfect for:\n- Online schools  \n- Closed communities  \n- Paid bots or premium content  \n\n👉 [Download the full template on Gumroad](https://viktorgubanov.gumroad.com/l/n8n-telegram-payment-workflow-stars) and start accepting payments today — no coding required.\n",
+        "height": 420,
+        "width": 400,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1680,
+        1540
+      ],
+      "typeVersion": 1,
+      "id": "fcf5d438-7fa1-4e50-97b8-1928203de3ac",
+      "name": "Sticky Note10"
+    },
+    {
+      "parameters": {
+        "content": "### 💸 Telegram Payments Made Easy with n8n\n\nThis ready-to-use workflow helps you:\n\n- ✅ Accept payments **directly in Telegram**\n- 👤 Automatically **register paying users**\n- ⏳ Control access based on subscription status or payment\n- 📊 Save user data for analytics, CRM, or follow-up\n\nPerfect for:\n- Online schools  \n- Closed communities  \n- Paid bots or premium content  \n\n👉 [Download the full template on Gumroad](https://viktorgubanov.gumroad.com/l/n8n-telegram-payment-workflow-stars) and start accepting payments today — no coding required.\n",
+        "height": 420,
+        "width": 400,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2280,
+        -1420
+      ],
+      "typeVersion": 1,
+      "id": "694b934c-bb8a-482f-8bc5-545f73d9fe9a",
+      "name": "Sticky Note11"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "\n  {\n    \"update_id\": 327139593,\n    \"message\": {\n      \"message_id\": 264,\n      \"from\": {\n        \"id\": 194972177,\n        \"is_bot\": false,\n        \"first_name\": \"Victor\",\n        \"last_name\": \"Gold\",\n        \"username\": \"gubanov_vn\",\n        \"language_code\": \"en\",\n        \"is_premium\": true\n      },\n      \"chat\": {\n        \"id\": 194972177,\n        \"first_name\": \"Victor\",\n        \"last_name\": \"Gold\",\n        \"username\": \"gubanov_vn\",\n        \"type\": \"private\"\n      },\n      \"date\": 1749162501,\n      \"text\": \"test text\"\n    }\n  }\n",
+        "options": {}
+      },
+      "id": "1903cd7a-904a-4b75-aadf-9cc0d27a278f",
+      "name": "TextDataExample",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -200,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "name": "knolageBase"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.1,
+      "position": [
+        3120,
+        -420
+      ],
+      "id": "9f4de1f4-636d-4909-be3f-3a24ce9fd262",
+      "name": "Agent: Find in the Internet",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Answer the questions:\n{{ $('Trigger').item.json.message.text }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        1600,
+        -740
+      ],
+      "id": "c1c88335-b4ce-4193-be86-7c40487d3715",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Trigger').item.json.message.from.id }}",
+        "contextWindowLength": 3
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        1560,
+        -580
+      ],
+      "id": "1ead571f-0d82-4fe0-8942-9463501c32c2",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1440,
+        -580
+      ],
+      "id": "b6fbc32c-d5c3-4eac-a740-2531ec12e893",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "1KMvV0IrAxpjusIi",
+          "name": "INSAIM "
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "### 🧪 Basic AI agent for testing and play\n\nThis setup is a **lightweight prototype** that lets you:\n\n- 💬 Chat with an AI via Telegram  \n- 🧠 Retain short context (3 messages) per user  \n- 🔁 Explore how memory + Langchain + OpenAI work in n8n  \n---\n\n### ⚠️ Limitations for production use\n\nNot suitable for serious bots without upgrades:\n\n- 🔄 **Memory resets** on restart — no long-term context  \n- 🧠 **Shallow context** — only 3 messages, no thread awareness  \n- 👤 **No user profiles** — no saved data or personalization  \n- 🧩 **No workflow actions** — can't trigger external APIs or steps  \n- 📈 **Not scalable** — lacks logging, fallback logic, and analytics  \n",
+        "height": 480,
+        "width": 500,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2220,
+        -920
+      ],
+      "typeVersion": 1,
+      "id": "a6d1ee56-9626-4cf7-9d51-483664d45041",
+      "name": "Sticky Note12"
+    },
+    {
+      "parameters": {
+        "content": "## 🤖 Supercharge Your Bot with Task-Specific AI Agents\n\n### Transform your Telegram bot from a simple responder into a **versatile business assistant** powered by modular AI agents. Each agent is designed to handle a focused task — acting like a smart, specialized teammate inside your workflow.\n\nSeamlessly integrated with the `Langchain Agent`, these tools let your bot **search, calculate, retrieve, and automate actions**, not just respond.\n\n⚡️ Want more than small talk?\nEnable these agents and let your bot work like part of your operations team.\n\n### You can find some of them in my [Gumroad page →](https://viktorgubanov.gumroad.com/)\n",
+        "height": 300,
+        "width": 1260,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2780,
+        -920
+      ],
+      "typeVersion": 1,
+      "id": "1a74324c-7a0c-424e-b234-5f3dc4c9d8b8",
+      "name": "Sticky Note13"
+    },
+    {
+      "parameters": {
+        "name": "knolageBase"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.1,
+      "position": [
+        3380,
+        -420
+      ],
+      "id": "f99c5099-7fad-47b1-abfc-4725009a12bd",
+      "name": "Agent: Check Order Status",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "name": "knolageBase"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.1,
+      "position": [
+        2860,
+        -420
+      ],
+      "id": "169372e4-dd24-4416-bf9b-f4602c4ac465",
+      "name": "Agent: Search Internal Docs",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "content": "### 🌐 **Agent: Find in the Internet**  \n  → Searches live data online to answer fresh, time-sensitive queries.",
+        "height": 340,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        3040,
+        -580
+      ],
+      "typeVersion": 1,
+      "id": "c32e08d0-5017-40b3-b96a-4a92c25be779",
+      "name": "Sticky Note14"
+    },
+    {
+      "parameters": {
+        "content": "### 📁 **Agent: Search Internal Docs**  \n  → Fetches relevant answers from your internal knowledge base (Notion, Google Drive, etc.).\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n### [Buy this Agent →](https://viktorgubanov.gumroad.com/l/n8n-telegram-ai-agent-chatbot-contextual-retrieval-rag?_gl=1*8nbhf*_ga*OTI1MjUwNTguMTc0ODcxNzU4NQ..*_ga_6LJN6D94N6*czE3NDk3NDI5ODYkbzE5JGcxJHQxNzQ5NzQzMTA0JGo2MCRsMCRoMA..)",
+        "height": 400,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2780,
+        -580
+      ],
+      "typeVersion": 1,
+      "id": "56716e99-cd04-4014-a6d9-8591f7ed9a67",
+      "name": "Sticky Note15"
+    },
+    {
+      "parameters": {
+        "content": "### 📦 **Agent: Check Order Status** \n  → Instantly checks order progress from Google Sheets, Airtable, or CRM.",
+        "height": 340,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        3300,
+        -580
+      ],
+      "typeVersion": 1,
+      "id": "07c41502-fabb-4b92-bc5d-bc197815173d",
+      "name": "Sticky Note16"
+    },
+    {
+      "parameters": {
+        "content": "### 💰 **Agent: Calculate Cost or Quote**  \n  → Generates quotes using predefined pricing logic based on user input. ",
+        "height": 340,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        3560,
+        -580
+      ],
+      "typeVersion": 1,
+      "id": "5ab89aa2-5a61-475e-bec3-fa374eeb916e",
+      "name": "Sticky Note17"
+    },
+    {
+      "parameters": {
+        "content": "##### ❓ Need help with your own?\n\n\n\n## Share your idea and get the estimation for your agent. \n\n### [Fill the form →](https://tally.so/r/wQaeJA)",
+        "height": 340
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        3820,
+        -580
+      ],
+      "typeVersion": 1,
+      "id": "17af010b-6792-4a72-b537-105e3babf94f",
+      "name": "Sticky Note18"
+    },
+    {
+      "parameters": {
+        "name": "knolageBase"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.1,
+      "position": [
+        3640,
+        -420
+      ],
+      "id": "2a0b7b8f-8398-435e-b059-d7114813f64d",
+      "name": "Agent: Calculate Cost or Quote",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "name": "AgentSerachInternalDocs",
+        "description": "Call this tool for searching in internal docs. Find the answer in internal docs.",
+        "workflowId": {
+          "__rl": true,
+          "value": "A8EpMTYhvSS1of89",
+          "mode": "list",
+          "cachedResultName": "Agent: Serach Internal Docs"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "message": "={{ $('Trigger').item.json.message.text }}",
+            "chatId": "={{ $('Trigger').item.json.message.chat.id }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "chatId",
+              "displayName": "chatId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.1,
+      "position": [
+        1760,
+        -580
+      ],
+      "id": "5b7aa77c-742b-4bbe-b66e-516514f646b7",
+      "name": "Agent: Connect yours or Buy mine",
+      "disabled": true
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Trigger": {
+      "main": [
+        [
+          {
+            "node": "Global data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Global data": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram3": {
+      "main": [
+        [
+          {
+            "node": "Menu",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch_MessageType": {
+      "main": [
+        [
+          {
+            "node": "Command?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Command?": {
+      "main": [
+        [
+          {
+            "node": "Switch_Commands",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start bot?": {
+      "main": [
+        [
+          {
+            "node": "Trigger Data for Register",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Change status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger Data for Payment": {
+      "main": [
+        [
+          {
+            "node": "Payment Handler",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger Data for Register": {
+      "main": [
+        [
+          {
+            "node": "Register",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Switch_MessageType",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Start bot?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Trigger Data for Payment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Data for Invoice": {
+      "main": [
+        [
+          {
+            "node": "Send Invoice",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch_Commands": {
+      "main": [
+        [
+          {
+            "node": "Data for Invoice",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram4": {
+      "main": [
+        []
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Telegram4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agent: Search Internal Docs": {
+      "ai_tool": [
+        []
+      ]
+    },
+    "Agent: Connect yours or Buy mine": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": false,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "V25WROkESjoczztM",
+    "saveDataSuccessExecution": "all"
+  },
+  "versionId": "46585a8b-604a-434c-a0c3-9212e0ffc9df",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1dbc26c48fe55fbd6f6084822260e5ffcc6df7c619b3d6ceeb699da53e67c82c"
+  },
+  "id": "Hi12LcAigLsCd6x1",
+  "tags": [
+    {
+      "createdAt": "2024-09-04T12:18:05.489Z",
+      "updatedAt": "2024-11-16T13:46:55.920Z",
+      "id": "1Q6Oth1p8LnNiZMQ",
+      "name": "🏗️ Template"
+    },
+    {
+      "createdAt": "2024-08-24T15:01:32.048Z",
+      "updatedAt": "2024-08-24T15:01:32.048Z",
+      "id": "yKXUHs1An8e8Y40v",
+      "name": "BOT"
+    }
+  ]
+}
