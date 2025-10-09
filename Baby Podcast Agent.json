@@ -1,0 +1,3591 @@
+{
+  "name": "My workflow 14",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Author: Calvin Hia\nhttps://www.youtube.com/@dainami_ai/",
+        "height": 80,
+        "width": 540,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2560,
+        -1220
+      ],
+      "id": "5171e6a6-0a51-488b-982f-8ca0fbaa96f3",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Scrape Original VIdeo\n",
+        "height": 300,
+        "width": 1140
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2560,
+        -1100
+      ],
+      "id": "6da49f14-059f-4f46-ba0f-284e92e978a7",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "formTitle": "TikTok Scraper",
+        "formDescription": "Scrape the latest videos of your favourite creator on TikTok.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "What is the username of the creator? ",
+              "placeholder": "Make sure to copy the exact creator username here. "
+            },
+            {
+              "fieldLabel": "Character Image",
+              "fieldType": "file"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -2520,
+        -1000
+      ],
+      "id": "13ef561b-7a81-4775-9567-9727e585bbcd",
+      "name": "On form submission",
+      "webhookId": "8f1be93b-a45d-4d01-8adb-f0d236d09102"
+    },
+    {
+      "parameters": {
+        "inputDataFieldName": "Character_Image",
+        "name": "={{ $json['What is the username of the creator? '] }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1t7DkquxNIOBd2rcyDnM1NNPirE7WziQI",
+          "mode": "list",
+          "cachedResultName": "76.character images",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1t7DkquxNIOBd2rcyDnM1NNPirE7WziQI"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -2360,
+        -1000
+      ],
+      "id": "7f411120-d374-4a50-840a-156a4f82f0ea",
+      "name": "Google Drive",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "9WRrz2c8ZemVzlPL",
+          "name": "Google Drive account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -2540,
+        -680
+      ],
+      "id": "c10c85e4-afe4-4f81-960b-b6685146399b",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Video Caption: {{ $json.Captions }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=# Role  \nYou are an expert image prompt generator specialized in creating photorealistic prompts for generating a baby version of a given creator or person.\n\nYour task is to generate:\n\n- A **short, catchy title** of 2 to 4 words max that captures the essence or vibe of the baby image to be generated.\n- A **highly detailed, vivid image prompt** suitable for AI image generation models.\n\nRequirements for the image prompt:\n\n- The subject should be a baby or toddler version of the provided person, with facial features and profile recognizably similar but stylized to look cute and age-appropriate.  \n- The baby is seated at a professional podcast studio desk with a high-quality microphone in front of them.  \n- The setting clearly evokes a podcast studio atmosphere, with professional studio lighting highlighting the subject and equipment.  \n- The image composition should always be a vertical portrait shot with a 9:16 aspect ratio.  \n- Clothing and style should match the vibe indicated by the accompanying video caption or context, ensuring the baby’s outfit complements the tone and personality.\n\n---\n\n### Example input:\n\nVideo Caption: Reminder that it's okay to feel shitty and not change your plan. Most times that's what it takes for plans to work to begin with—sticking with the plan.\n\n---\n\n### Example output (JSON only):\n{\n  \"title\": \"Determined Toddler\",\n  \"prompt\": \"Create a photorealistic vertical 9:16 portrait of a baby version of the given person, preserving their recognizable facial structure and profile but styled as a cute toddler. The baby is seated at a modern podcast studio desk with a professional microphone positioned in front. The scene is lit with soft but clear studio lighting that emphasizes the podcast environment. Dress the baby in comfortable, casual clothing that reflects a resilient and determined vibe matching the caption’s tone about persistence and sticking to plans. The background is subtly blurred to keep focus on the baby host and microphone, capturing a warm, engaging, and lively podcast setting.\"\n}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        -2220,
+        -680
+      ],
+      "id": "12fb266a-571b-4006-a188-9691d8fb6300",
+      "name": "Image Prompt Agent"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appZ98jYdzzp1ooE4",
+          "mode": "list",
+          "cachedResultName": "Baby Podcast",
+          "cachedResultUrl": "https://airtable.com/appZ98jYdzzp1ooE4"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblit0bJNcsjuvgtD",
+          "mode": "list",
+          "cachedResultName": "Creators",
+          "cachedResultUrl": "https://airtable.com/appZ98jYdzzp1ooE4/tblit0bJNcsjuvgtD"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Username": "={{ $('On form submission').item.json['What is the username of the creator? '] }}",
+            "Character Image": "={{ $json.webViewLink }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Username",
+              "displayName": "Username",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Character Image",
+              "displayName": "Character Image",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Original Videos",
+              "displayName": "Original Videos",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Baby Videos",
+              "displayName": "Baby Videos",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Created Time",
+              "displayName": "Created Time",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Last Modified Time",
+              "displayName": "Last Modified Time",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Creator Record ID",
+              "displayName": "Creator Record ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -2200,
+        -1000
+      ],
+      "id": "312758dd-647c-4913-b772-0564f4df0ae3",
+      "name": "Upload Creator",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.musicMeta.playUrl }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1920,
+        -1000
+      ],
+      "id": "aa136626-20a7-440f-8b6a-c68c4f249510",
+      "name": "Get Audio"
+    },
+    {
+      "parameters": {
+        "name": "={{ $json.authorMeta.name }}_{{ $json.id }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1lTv0ZaedZixlY4b6maWnqsQ1X75qXr_B",
+          "mode": "list",
+          "cachedResultName": "76. original audio",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1lTv0ZaedZixlY4b6maWnqsQ1X75qXr_B"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -1780,
+        -1000
+      ],
+      "id": "e9b70322-ba5c-4521-853d-47611be95b68",
+      "name": "Upload Audio",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "9WRrz2c8ZemVzlPL",
+          "name": "Google Drive account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appZ98jYdzzp1ooE4",
+          "mode": "list",
+          "cachedResultName": "Baby Podcast",
+          "cachedResultUrl": "https://airtable.com/appZ98jYdzzp1ooE4"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblR97hR7v1KoMTvD",
+          "mode": "list",
+          "cachedResultName": "Original Videos",
+          "cachedResultUrl": "https://airtable.com/appZ98jYdzzp1ooE4/tblR97hR7v1KoMTvD"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Video URL": "={{ $('Get Audio').item.json.webVideoUrl }}",
+            "Captions": "={{ $('Get Audio').item.json.text }}",
+            "Audio URL": "={{ $json.webViewLink }}",
+            "Creator": "={{[ $('Upload Creator').item.json.fields['Creator Record ID'] ]}}",
+            "Status": "Pending"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Captions",
+              "displayName": "Captions",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Video URL",
+              "displayName": "Video URL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Audio URL",
+              "displayName": "Audio URL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Baby Prompt",
+              "displayName": "Baby Prompt",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Baby Image",
+              "displayName": "Baby Image",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "New Caption",
+              "displayName": "New Caption",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Baby Video",
+              "displayName": "Baby Video",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Pending",
+                  "value": "Pending"
+                },
+                {
+                  "name": "Image Generated",
+                  "value": "Image Generated"
+                },
+                {
+                  "name": "Babyfied",
+                  "value": "Babyfied"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Video Record ID",
+              "displayName": "Video Record ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Creator",
+              "displayName": "Creator",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Baby Videos",
+              "displayName": "Baby Videos",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -1640,
+        -1000
+      ],
+      "id": "875aecc5-ea32-471c-9824-6f7eb26a19d1",
+      "name": "Upload Originals",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -2540,
+        -180
+      ],
+      "id": "f9ef8b86-1dc7-4521-aec7-4fdf6b321918",
+      "name": "Schedule Trigger1"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appZ98jYdzzp1ooE4",
+          "mode": "list",
+          "cachedResultName": "Baby Podcast",
+          "cachedResultUrl": "https://airtable.com/appZ98jYdzzp1ooE4"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblR97hR7v1KoMTvD",
+          "mode": "list",
+          "cachedResultName": "Original Videos",
+          "cachedResultUrl": "https://airtable.com/appZ98jYdzzp1ooE4/tblR97hR7v1KoMTvD"
+        },
+        "filterByFormula": "Status = \"Pending\"",
+        "returnAll": false,
+        "limit": 1,
+        "options": {},
+        "sort": {
+          "property": [
+            {
+              "field": "Status"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -2380,
+        -680
+      ],
+      "id": "a8442667-1e15-43f8-8555-fb8c6a28d54d",
+      "name": "Search Video",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -2240,
+        -500
+      ],
+      "id": "9e180bdc-0eff-48da-9765-6c760f7f6af3",
+      "name": "gpt 4o mini",
+      "credentials": {
+        "openRouterApi": {
+          "id": "y1vjMptfuqUZLu87",
+          "name": "Openrouter Key 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"title\": \"Determined Toddler\",\n  \"prompt\": \"Create a photorealistic vertical 9:16 portrait of a baby version of the given person, preserving their recognizable facial structure and profile but styled as a cute toddler. The baby is seated at a modern podcast studio desk with a professional microphone positioned in front. The scene is lit with soft but clear studio lighting that emphasizes the podcast environment. Dress the baby in comfortable, casual clothing that reflects a resilient and determined vibe matching the caption’s tone about persistence and sticking to plans. The background is subtly blurred to keep focus on the baby host and microphone, capturing a warm, engaging, and lively podcast setting.\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        -2040,
+        -500
+      ],
+      "id": "2a70529b-88e0-44dd-9ee7-c32075a998b7",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "content": "## Generate Baby Images\n",
+        "height": 400,
+        "width": 1540,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2560,
+        -760
+      ],
+      "id": "2020ff77-f72b-41b5-ab3e-c818ebba5bf5",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json['Character Image'] }}",
+          "mode": "url"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -1780,
+        -680
+      ],
+      "id": "86994b97-7208-4bc2-b48c-6bf11dc4ddd7",
+      "name": "Download File",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "9WRrz2c8ZemVzlPL",
+          "name": "Google Drive account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "data[0].b64_json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        -1480,
+        -680
+      ],
+      "id": "b2889392-1683-4914-a342-24ea7de318de",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "value": "appZ98jYdzzp1ooE4",
+          "mode": "list",
+          "cachedResultName": "Baby Podcast",
+          "cachedResultUrl": "https://airtable.com/appZ98jYdzzp1ooE4"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblit0bJNcsjuvgtD",
+          "mode": "list",
+          "cachedResultName": "Creators",
+          "cachedResultUrl": "https://airtable.com/appZ98jYdzzp1ooE4/tblit0bJNcsjuvgtD"
+        },
+        "id": "={{ $('Search Video').item.json.Creator[0] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -1920,
+        -680
+      ],
+      "id": "00f1ff0b-ce4c-44bd-9eed-b008796cd422",
+      "name": "Get Original Image",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/images/edits",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "image",
+              "inputDataFieldName": "data"
+            },
+            {
+              "name": "prompt",
+              "value": "={{ $('Image Prompt Agent').item.json.output.prompt }}"
+            },
+            {
+              "name": "model",
+              "value": "gpt-image-1"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1620,
+        -680
+      ],
+      "id": "4927b95b-78e2-492b-bc9f-bfeaddc88f2f",
+      "name": "Create Baby",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "iMF3QDOGv5O2t2g2",
+          "name": "OpenAI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "={{ $('Get Original Image').item.json.Username }}_{{ $('Image Prompt Agent').item.json.output.title }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1vxNaP6qVJ0NqkJlkbiHKr-AIAHwJwufR",
+          "mode": "list",
+          "cachedResultName": "76.baby images",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1vxNaP6qVJ0NqkJlkbiHKr-AIAHwJwufR"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -1340,
+        -680
+      ],
+      "id": "64329b1a-5a60-479b-8892-356cd59a2e95",
+      "name": "Upload Baby Image",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "9WRrz2c8ZemVzlPL",
+          "name": "Google Drive account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appZ98jYdzzp1ooE4",
+          "mode": "list",
+          "cachedResultName": "Baby Podcast",
+          "cachedResultUrl": "https://airtable.com/appZ98jYdzzp1ooE4"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblR97hR7v1KoMTvD",
+          "mode": "list",
+          "cachedResultName": "Original Videos",
+          "cachedResultUrl": "https://airtable.com/appZ98jYdzzp1ooE4/tblR97hR7v1KoMTvD"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Search Video').item.json.id }}",
+            "Baby Prompt": "={{ $('Image Prompt Agent').item.json.output.prompt }}",
+            "Baby Image": "={{ $json.webViewLink }}",
+            "Status": "Image Generated"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Captions",
+              "displayName": "Captions",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Video URL",
+              "displayName": "Video URL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Audio URL",
+              "displayName": "Audio URL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Baby Prompt",
+              "displayName": "Baby Prompt",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Baby Image",
+              "displayName": "Baby Image",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Baby Video",
+              "displayName": "Baby Video",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Pending",
+                  "value": "Pending"
+                },
+                {
+                  "name": "Image Generated",
+                  "value": "Image Generated"
+                },
+                {
+                  "name": "Babyfied",
+                  "value": "Babyfied"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Video Record ID",
+              "displayName": "Video Record ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "New Caption",
+              "displayName": "New Caption",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Creator",
+              "displayName": "Creator",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Baby Videos",
+              "displayName": "Baby Videos",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -1180,
+        -680
+      ],
+      "id": "4bc74c1c-7448-4ada-add5-2b0927c1ad82",
+      "name": "Update Airtable",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appZ98jYdzzp1ooE4",
+          "mode": "list",
+          "cachedResultName": "Baby Podcast",
+          "cachedResultUrl": "https://airtable.com/appZ98jYdzzp1ooE4"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblR97hR7v1KoMTvD",
+          "mode": "list",
+          "cachedResultName": "Original Videos",
+          "cachedResultUrl": "https://airtable.com/appZ98jYdzzp1ooE4/tblR97hR7v1KoMTvD"
+        },
+        "filterByFormula": "Status = \"Image Generated\"",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -2380,
+        -180
+      ],
+      "id": "28597a44-5936-4d7d-a482-94d7c3af3781",
+      "name": "Search Baby",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Search Baby').item.json['Audio URL'] }}",
+          "mode": "url"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -2060,
+        -180
+      ],
+      "id": "fc9c847c-56f8-4aa9-8e2c-cc055868bf62",
+      "name": "Download Voiceover",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "9WRrz2c8ZemVzlPL",
+          "name": "Google Drive account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.hedra.com/web-app/public/assets/{{ $json.id }}/upload",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1900,
+        -180
+      ],
+      "id": "d41f34c0-945a-40e0-84e7-69a962172afb",
+      "name": "Upload Voiceover",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "n04H8zJUykJ4IxfA",
+          "name": "Hedra"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.hedra.com/web-app/public/assets",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n\"name\": \"voiceover\",\n\"type\": \"audio\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2220,
+        -180
+      ],
+      "id": "53d6c620-6d10-4f1d-be1d-945d92131505",
+      "name": "Voiceover Container",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "n04H8zJUykJ4IxfA",
+          "name": "Hedra"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.hedra.com/web-app/public/assets",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n\"name\": \"babyimage\",\n\"type\": \"image\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1740,
+        -180
+      ],
+      "id": "85711947-eeae-4e19-8170-fb12ed24b09e",
+      "name": "Image Container",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "n04H8zJUykJ4IxfA",
+          "name": "Hedra"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Search Baby').item.json['Baby Image'] }}",
+          "mode": "url"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -1580,
+        -180
+      ],
+      "id": "47436bd4-3837-4219-aeb5-f3653cc33bbc",
+      "name": "Download Image",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "9WRrz2c8ZemVzlPL",
+          "name": "Google Drive account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.hedra.com/web-app/public/assets/{{ $json.id }}/upload",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1420,
+        -180
+      ],
+      "id": "aad0a721-9643-4288-aa01-ddb08be7e971",
+      "name": "Upload Image",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "n04H8zJUykJ4IxfA",
+          "name": "Hedra"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.hedra.com/web-app/public/generations",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"type\": \"video\",\n  \"ai_model_id\": \"d1dd37a3-e39a-4854-a298-6510289f9cf2\",\n  \"start_keyframe_id\": \"{{ $('Image Container').item.json.id }}\",\n  \"audio_id\": \"{{ $('Voiceover Container').item.json.id }}\",\n  \"generated_video_inputs\":{\n    \"text_prompt\": \"{{ $('Search Baby').item.json['Baby Prompt'] }}\",\n    \"resolution\": \"720p\",\n    \"aspect_ratio\": \"9:16\",\n    \"duration_ms\": 5000\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1260,
+        -180
+      ],
+      "id": "67f2afdd-3002-43f6-980f-6548672ac63d",
+      "name": "Generate Baby Video",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "n04H8zJUykJ4IxfA",
+          "name": "Hedra"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -1120,
+        -180
+      ],
+      "id": "ed11b061-4511-43ce-8b31-5c02c74e16ec",
+      "name": "Wait",
+      "webhookId": "317d31d1-b682-48f9-88f5-edad0807d6cb"
+    },
+    {
+      "parameters": {
+        "httpRequestMethod": "POST",
+        "graphApiVersion": "v22.0",
+        "node": "{insertinstagramid}",
+        "edge": "media",
+        "options": {
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "caption",
+                "value": "={{ $('Publishing Agent').item.json.output.instagram.description }}"
+              },
+              {
+                "name": "media_type",
+                "value": "REELS"
+              },
+              {
+                "name": "video_url",
+                "value": "={{ $json.url }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        -1560,
+        720
+      ],
+      "id": "247f20f8-a841-4dc0-9dbe-7d180ed9637f",
+      "name": "Create Container",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "SDZ83wepVRZLIeAk",
+          "name": "New Meta 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpRequestMethod": "POST",
+        "graphApiVersion": "v22.0",
+        "node": "={insertinstagramid}",
+        "edge": "media_publish",
+        "options": {
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "creation_id",
+                "value": "={{ $json.id }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        -1260,
+        720
+      ],
+      "id": "2a9a69c3-c493-4694-b551-7dd6c3ab51cf",
+      "name": "Instagram POST",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "SDZ83wepVRZLIeAk",
+          "name": "New Meta 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=- **Input Text Field**: {{ $json.Captions }}\n- **style_tone**: bossbaby",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "type": "=SystemMessagePromptTemplate",
+              "message": "=You are an AI specialized in crafting high-impact, viral titles and descriptions optimized for TikTok Shorts, Instagram Reels, YouTube Shorts, and Facebook Reels. \n\nYou will receive a input containing informational fields which may be variably named (e.g., \"caption\", \"description\", etc.).\n\nYour task is to dynamically detect and use the first available text field from the input to generate platform-specific content tailored to each platform’s unique style and audience engagement.\n\nThe **tone and style** of the output should be customizable based on a user-defined variable called `style_tone`. This variable specifies the persona or voice you should adopt when generating content (e.g., \"bossbaby\", \"motivational coach\", \"comedy sketch\", etc.).\n\n---\n\n### Input variables:\n\n- **Input Text Field**: The text to base your content on (captions, description, name etc).  \n- **style_tone**: A string indicating the desired voice/persona for the content.\n\n---\n\n### Platform-specific output requirements:\n\n1. **Instagram Reels**:  \n   - Description: Brief, visually descriptive, up to 5 hashtags, strong call-to-action.\n\n2. **YouTube Shorts**:  \n   - Title (max 50 chars): Direct, suspenseful, clickbait style.  \n   - Description: Concise, keyword-rich, with engagement prompts.\n\n3. **Facebook Reels**:   \n   - Description: Short, emotional hook encouraging reactions.\n\n4. **TikTok**:  \n   - Description: Creative, catchy, platform-appropriate.\n\n---\n\n### Output format:\n\nReturn strictly this JSON structure, adapting content tone according to `style_tone`:\n{\n  \"instagram\": {\n    \"description\": \"...\"\n  },\n  \"youtube\": {\n    \"title\": \"...\",\n    \"description\": \"...\"\n  },\n  \"facebook\": {\n    \"description\": \"...\"\n  },\n  \"tiktok\": {\n    \"description\": \"...\"\n  }\n}\n\n#Note \n- Return only the EXACT JSON Output and nothing else."
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        -2200,
+        540
+      ],
+      "id": "acdca47b-3dbc-45c9-9d0f-b8a68d0b97bb",
+      "name": "Publishing Agent"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c087ebbf-22a5-45f4-82d5-ddabfd921889",
+              "leftValue": "={{ $json.fields.YouTube }}",
+              "rightValue": "Uploaded",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "301baec8-c772-4042-bdc1-7d2d99f07043",
+              "leftValue": "={{ $json.fields.Instagram }}",
+              "rightValue": "Uploaded",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "a216f3c7-76f0-4bdb-89c6-e9e0dd389ce5",
+              "leftValue": "={{ $json.fields.TikTok }}",
+              "rightValue": "Uploaded",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -680,
+        740
+      ],
+      "id": "9144ddeb-1801-4921-90a2-d388b142bde5",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appZ98jYdzzp1ooE4",
+          "mode": "list",
+          "cachedResultName": "Baby Podcast",
+          "cachedResultUrl": "https://airtable.com/appZ98jYdzzp1ooE4"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblR97hR7v1KoMTvD",
+          "mode": "list",
+          "cachedResultName": "Original Videos",
+          "cachedResultUrl": "https://airtable.com/appZ98jYdzzp1ooE4/tblR97hR7v1KoMTvD"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Search Record').item.json.id }}",
+            "YouTube": "Uploaded"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Captions",
+              "displayName": "Captions",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Video URL",
+              "displayName": "Video URL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Audio URL",
+              "displayName": "Audio URL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Baby Prompt",
+              "displayName": "Baby Prompt",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Baby Image",
+              "displayName": "Baby Image",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Baby Video",
+              "displayName": "Baby Video",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Pending",
+                  "value": "Pending"
+                },
+                {
+                  "name": "Image Generated",
+                  "value": "Image Generated"
+                },
+                {
+                  "name": "Babyfied",
+                  "value": "Babyfied"
+                },
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Facebook",
+              "displayName": "Facebook",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "YouTube",
+              "displayName": "YouTube",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "TikTok",
+              "displayName": "TikTok",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Instagram",
+              "displayName": "Instagram",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Video Record ID",
+              "displayName": "Video Record ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Creator",
+              "displayName": "Creator",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Baby Videos",
+              "displayName": "Baby Videos",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -1380,
+        220
+      ],
+      "id": "72d6ab18-3863-44b4-92bd-b5c11c0eb67c",
+      "name": "Youtube Posted",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appZ98jYdzzp1ooE4",
+          "mode": "list",
+          "cachedResultName": "Baby Podcast",
+          "cachedResultUrl": "https://airtable.com/appZ98jYdzzp1ooE4"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblR97hR7v1KoMTvD",
+          "mode": "list",
+          "cachedResultName": "Original Videos",
+          "cachedResultUrl": "https://airtable.com/appZ98jYdzzp1ooE4/tblR97hR7v1KoMTvD"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Search Record').item.json.id }}",
+            "Instagram": "Uploaded"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true
+            },
+            {
+              "id": "Captions",
+              "displayName": "Captions",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Video URL",
+              "displayName": "Video URL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Audio URL",
+              "displayName": "Audio URL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Baby Prompt",
+              "displayName": "Baby Prompt",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Baby Image",
+              "displayName": "Baby Image",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Baby Video",
+              "displayName": "Baby Video",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Pending",
+                  "value": "Pending"
+                },
+                {
+                  "name": "Image Generated",
+                  "value": "Image Generated"
+                },
+                {
+                  "name": "Babyfied",
+                  "value": "Babyfied"
+                },
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Facebook",
+              "displayName": "Facebook",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "YouTube",
+              "displayName": "YouTube",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "TikTok",
+              "displayName": "TikTok",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Instagram",
+              "displayName": "Instagram",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Video Record ID",
+              "displayName": "Video Record ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Creator",
+              "displayName": "Creator",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Baby Videos",
+              "displayName": "Baby Videos",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -1100,
+        720
+      ],
+      "id": "0b244dd4-a474-4434-8d79-8a2e4ea8b21f",
+      "name": "Instagram Posted",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appZ98jYdzzp1ooE4",
+          "mode": "list",
+          "cachedResultName": "Baby Podcast",
+          "cachedResultUrl": "https://airtable.com/appZ98jYdzzp1ooE4"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblR97hR7v1KoMTvD",
+          "mode": "list",
+          "cachedResultName": "Original Videos",
+          "cachedResultUrl": "https://airtable.com/appZ98jYdzzp1ooE4/tblR97hR7v1KoMTvD"
+        },
+        "filterByFormula": "{Status} = \"Babyfied\"",
+        "returnAll": false,
+        "limit": 1,
+        "options": {},
+        "sort": {
+          "property": [
+            {
+              "field": "Status"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -2360,
+        540
+      ],
+      "id": "1f6bc82c-6abe-4b25-9d75-c0d6db4098f5",
+      "name": "Search Record",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "video",
+        "operation": "upload",
+        "title": "={{ $('Publishing Agent').item.json.output.youtube.title }}",
+        "regionCode": "SG",
+        "categoryId": "1",
+        "options": {
+          "description": "={{ $('Publishing Agent').item.json.output.youtube.description }}"
+        }
+      },
+      "type": "n8n-nodes-base.youTube",
+      "typeVersion": 1,
+      "position": [
+        -1560,
+        220
+      ],
+      "id": "f8a5d115-cebc-447b-9e19-beb9d4b8dc2a",
+      "name": "Youtube Post",
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "INhltBeDLkn5aZ0Z",
+          "name": "YouTube account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appZ98jYdzzp1ooE4",
+          "mode": "list",
+          "cachedResultName": "Baby Podcast",
+          "cachedResultUrl": "https://airtable.com/appZ98jYdzzp1ooE4"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblR97hR7v1KoMTvD",
+          "mode": "list",
+          "cachedResultName": "Original Videos",
+          "cachedResultUrl": "https://airtable.com/appZ98jYdzzp1ooE4/tblR97hR7v1KoMTvD"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $json.id }}",
+            "Status": "Uploaded"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Captions",
+              "displayName": "Captions",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Video URL",
+              "displayName": "Video URL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Audio URL",
+              "displayName": "Audio URL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Baby Prompt",
+              "displayName": "Baby Prompt",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Baby Image",
+              "displayName": "Baby Image",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Baby Video",
+              "displayName": "Baby Video",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Pending",
+                  "value": "Pending"
+                },
+                {
+                  "name": "Image Generated",
+                  "value": "Image Generated"
+                },
+                {
+                  "name": "Babyfied",
+                  "value": "Babyfied"
+                },
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Facebook",
+              "displayName": "Facebook",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "YouTube",
+              "displayName": "YouTube",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "TikTok",
+              "displayName": "TikTok",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Instagram",
+              "displayName": "Instagram",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Video Record ID",
+              "displayName": "Video Record ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Creator",
+              "displayName": "Creator",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Baby Videos",
+              "displayName": "Baby Videos",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -480,
+        640
+      ],
+      "id": "01f24db9-b57f-4cd8-b6f2-5e2a09a8376b",
+      "name": "Video Published",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.upload-post.com/api/upload",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "title",
+              "value": "={{ $json.output.tiktok.description }}"
+            },
+            {
+              "name": "user",
+              "value": "tester123"
+            },
+            {
+              "name": "platform[]",
+              "value": "tiktok"
+            },
+            {
+              "parameterType": "formBinaryData",
+              "name": "video",
+              "inputDataFieldName": "data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1560,
+        460
+      ],
+      "id": "1d26f112-40a9-415b-9c0c-a29878268cb0",
+      "name": "TikTok Post (NEW)",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "RScYZfzdT1tlOftE",
+          "name": "Upload-Post"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -2540,
+        540
+      ],
+      "id": "e8eee494-97af-414c-b02f-23a63ea981b7",
+      "name": "Schedule Trigger2"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"instagram\": {\n    \"description\": \"...\"\n  },\n  \"youtube\": {\n    \"title\": \"...\",\n    \"description\": \"...\"\n  },\n  \"facebook\": {\n    \"description\": \"...\"\n  },\n  \"tiktok\": {\n    \"description\": \"...\"\n  }\n}\n\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        -2020,
+        720
+      ],
+      "id": "0023eb49-c248-4c95-a046-99309751be48",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "content": "## Youtube Agent\n",
+        "height": 220,
+        "width": 420,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1600,
+        160
+      ],
+      "id": "53e1d77f-7a95-4b20-bec5-3297d2b4031f",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "## Instagram Agent\n- Make sure to update Instagram Page ID",
+        "height": 220,
+        "width": 680,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1600,
+        640
+      ],
+      "id": "b5b679d9-15c5-4caf-b144-c4e8997569e6",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "amount": 60
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -1420,
+        720
+      ],
+      "id": "0e12ae32-33f2-427d-bc11-d42d3257ccc2",
+      "name": "Wait1",
+      "webhookId": "d3016a86-f0c3-4edc-bd14-ebb7d987d62f"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.asset.url }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -840,
+        -180
+      ],
+      "id": "9203259b-6886-4de4-b4da-13971dd2ce15",
+      "name": "Download From Hedra",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "n04H8zJUykJ4IxfA",
+          "name": "Hedra"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "={{ $('Search Baby').item.json.id }}_video",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1t_iv4jmYKJUlkw-Dc8TtbkE7PBiWacIc",
+          "mode": "list",
+          "cachedResultName": "76. baby videos",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1t_iv4jmYKJUlkw-Dc8TtbkE7PBiWacIc"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -680,
+        -180
+      ],
+      "id": "decef1c1-6756-430e-b573-48a47a81ac9f",
+      "name": "Upload Final Video",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "9WRrz2c8ZemVzlPL",
+          "name": "Google Drive account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://api.hedra.com/web-app/public/assets?type=video&ids={{ $json.asset_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -980,
+        -180
+      ],
+      "id": "64071091-7e50-46eb-8414-7bf8574b9cb8",
+      "name": "Get Final1",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "n04H8zJUykJ4IxfA",
+          "name": "Hedra"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appZ98jYdzzp1ooE4",
+          "mode": "list",
+          "cachedResultName": "Baby Podcast",
+          "cachedResultUrl": "https://airtable.com/appZ98jYdzzp1ooE4"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblR97hR7v1KoMTvD",
+          "mode": "list",
+          "cachedResultName": "Original Videos",
+          "cachedResultUrl": "https://airtable.com/appZ98jYdzzp1ooE4/tblR97hR7v1KoMTvD"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Search Baby').item.json.id }}",
+            "Baby Video": "={{ $json.webViewLink }}",
+            "Status": "Babyfied"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Captions",
+              "displayName": "Captions",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Video URL",
+              "displayName": "Video URL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Audio URL",
+              "displayName": "Audio URL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Baby Prompt",
+              "displayName": "Baby Prompt",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Baby Image",
+              "displayName": "Baby Image",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Baby Video",
+              "displayName": "Baby Video",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Pending",
+                  "value": "Pending"
+                },
+                {
+                  "name": "Image Generated",
+                  "value": "Image Generated"
+                },
+                {
+                  "name": "Babyfied",
+                  "value": "Babyfied"
+                },
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Facebook",
+              "displayName": "Facebook",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "YouTube",
+              "displayName": "YouTube",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "TikTok",
+              "displayName": "TikTok",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Instagram",
+              "displayName": "Instagram",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Video Record ID",
+              "displayName": "Video Record ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Creator",
+              "displayName": "Creator",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Baby Videos",
+              "displayName": "Baby Videos",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -520,
+        -180
+      ],
+      "id": "47a68d5e-6aa1-4a8e-b7c8-531974050de7",
+      "name": "Babyfied",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## TikTok Post",
+        "height": 220,
+        "width": 420
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1600,
+        400
+      ],
+      "id": "0d11a45f-eafa-4cab-83ba-a8e35eeadc96",
+      "name": "Sticky Note9"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appZ98jYdzzp1ooE4",
+          "mode": "list",
+          "cachedResultName": "Baby Podcast",
+          "cachedResultUrl": "https://airtable.com/appZ98jYdzzp1ooE4"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblR97hR7v1KoMTvD",
+          "mode": "list",
+          "cachedResultName": "Original Videos",
+          "cachedResultUrl": "https://airtable.com/appZ98jYdzzp1ooE4/tblR97hR7v1KoMTvD"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Search Record').item.json.id }}",
+            "TikTok": "Uploaded"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true
+            },
+            {
+              "id": "Captions",
+              "displayName": "Captions",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Video URL",
+              "displayName": "Video URL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Audio URL",
+              "displayName": "Audio URL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Baby Prompt",
+              "displayName": "Baby Prompt",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Baby Image",
+              "displayName": "Baby Image",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Baby Video",
+              "displayName": "Baby Video",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Pending",
+                  "value": "Pending"
+                },
+                {
+                  "name": "Image Generated",
+                  "value": "Image Generated"
+                },
+                {
+                  "name": "Babyfied",
+                  "value": "Babyfied"
+                },
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Facebook",
+              "displayName": "Facebook",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "YouTube",
+              "displayName": "YouTube",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "TikTok",
+              "displayName": "TikTok",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Instagram",
+              "displayName": "Instagram",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Video Record ID",
+              "displayName": "Video Record ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Creator",
+              "displayName": "Creator",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Baby Videos",
+              "displayName": "Baby Videos",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -1400,
+        460
+      ],
+      "id": "6bb715b1-0fee-4042-88a7-3019da307082",
+      "name": "TikTok Posted",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Search Record').item.json['Baby Video'] }}",
+          "mode": "url"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -1880,
+        440
+      ],
+      "id": "06187faf-93ec-458f-ac8a-3d9b314246b6",
+      "name": "Download Final Vid",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "9WRrz2c8ZemVzlPL",
+          "name": "Google Drive account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -2200,
+        740
+      ],
+      "id": "db171423-ca29-4c47-905b-a01fc27988f6",
+      "name": "gpt4o mini",
+      "credentials": {
+        "openRouterApi": {
+          "id": "y1vjMptfuqUZLu87",
+          "name": "Openrouter Key 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "numberInputs": 3,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        -860,
+        740
+      ],
+      "id": "5a37639b-cd13-48a9-9e8f-abc5afe7c3d2",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "content": "## Publishing Agent Team\n- Watch this video to set up API: https://www.youtube.com/watch?v=BWEKvAPPUYk ",
+        "height": 800,
+        "width": 2260,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2580,
+        120
+      ],
+      "id": "52264687-93d3-4c03-94d3-1b5de88a2dbc",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "Make sure up update API key in url",
+        "height": 260,
+        "width": 150,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2080,
+        -1080
+      ],
+      "id": "45098a7d-ce21-48e9-98a9-7eb0b8637abd",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/clockworks~tiktok-scraper/run-sync-get-dataset-items?token={insert-api-key}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"excludePinnedPosts\": true, \n  \"oldestPostDateUnified\": \"7 days\",\n  \"profileScrapeSections\": [\n    \"videos\"\n  ],\n  \"profileSorting\": \"latest\",\n  \"profiles\": [\n    \"{{ $json.fields.Username }}\"\n  ],\n  \"proxyCountryCode\": \"None\",\n  \"resultsPerPage\": 100,\n  \"shouldDownloadAvatars\": false,\n  \"shouldDownloadCovers\":false,\n  \"shouldDownloadMusicCovers\": false,\n  \"shouldDownloadSlideshowImages\": false,\n  \"shouldDownloadSubtitles\": false,\n  \"shouldDownloadVideos\": false\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2060,
+        -1000
+      ],
+      "id": "e21899cb-0020-482d-a32f-28af25a5ffda",
+      "name": "Apify"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.cloudinary.com/v1_1/{update cloud key}/upload",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "=data"
+            },
+            {
+              "name": "upload_preset",
+              "value": "n8n_upload"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1800,
+        700
+      ],
+      "id": "283775ad-56de-4388-b86e-699c92226d22",
+      "name": "Upload To Cloudinary (Update URL with key)",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "jRDusgPWYlKZodhd",
+          "name": "Runway"
+        },
+        "httpBasicAuth": {
+          "id": "ZGYLJUR6PAnlFnLj",
+          "name": "Cloudinary"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Generate Baby Video\n\n",
+        "height": 380,
+        "width": 2200,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2580,
+        -300
+      ],
+      "id": "9837be58-4aca-41cf-a58a-001466dfbaee",
+      "name": "Sticky Note7"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Upload Creator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Search Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Creator": {
+      "main": [
+        [
+          {
+            "node": "Apify",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Audio": {
+      "main": [
+        [
+          {
+            "node": "Upload Audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Audio": {
+      "main": [
+        [
+          {
+            "node": "Upload Originals",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Search Baby",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Video": {
+      "main": [
+        [
+          {
+            "node": "Image Prompt Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "gpt 4o mini": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Image Prompt Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Image Prompt Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download File": {
+      "main": [
+        [
+          {
+            "node": "Create Baby",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Upload Baby Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Image Prompt Agent": {
+      "main": [
+        [
+          {
+            "node": "Get Original Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Original Image": {
+      "main": [
+        [
+          {
+            "node": "Download File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Baby": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Baby Image": {
+      "main": [
+        [
+          {
+            "node": "Update Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Baby": {
+      "main": [
+        [
+          {
+            "node": "Voiceover Container",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Voiceover": {
+      "main": [
+        [
+          {
+            "node": "Upload Voiceover",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Voiceover": {
+      "main": [
+        [
+          {
+            "node": "Image Container",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Voiceover Container": {
+      "main": [
+        [
+          {
+            "node": "Download Voiceover",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Image Container": {
+      "main": [
+        [
+          {
+            "node": "Download Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Image": {
+      "main": [
+        [
+          {
+            "node": "Upload Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Image": {
+      "main": [
+        [
+          {
+            "node": "Generate Baby Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Baby Video": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Container": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Instagram POST": {
+      "main": [
+        [
+          {
+            "node": "Instagram Posted",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Publishing Agent": {
+      "main": [
+        [
+          {
+            "node": "Download Final Vid",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Video Published",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Youtube Posted": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Instagram Posted": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Search Record": {
+      "main": [
+        [
+          {
+            "node": "Publishing Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Youtube Post": {
+      "main": [
+        [
+          {
+            "node": "Youtube Posted",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TikTok Post (NEW)": {
+      "main": [
+        [
+          {
+            "node": "TikTok Posted",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger2": {
+      "main": [
+        [
+          {
+            "node": "Search Record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Publishing Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Instagram POST",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Get Final1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download From Hedra": {
+      "main": [
+        [
+          {
+            "node": "Upload Final Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Final1": {
+      "main": [
+        [
+          {
+            "node": "Download From Hedra",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Final Video": {
+      "main": [
+        [
+          {
+            "node": "Babyfied",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TikTok Posted": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Download Final Vid": {
+      "main": [
+        [
+          {
+            "node": "TikTok Post (NEW)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Upload To Cloudinary (Update URL with key)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Youtube Post",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "gpt4o mini": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Publishing Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apify": {
+      "main": [
+        [
+          {
+            "node": "Get Audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload To Cloudinary (Update URL with key)": {
+      "main": [
+        [
+          {
+            "node": "Create Container",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6eb952b9-79f7-487b-a856-2e76c8c14437",
+  "meta": {
+    "instanceId": "d8c459f4ebcadd20c3258ade09582fe0f02de933363f6184259e0c9a36784090"
+  },
+  "id": "hgw4hZ2t0D3DJ0O9",
+  "tags": [
+    {
+      "createdAt": "2025-05-20T03:24:56.310Z",
+      "updatedAt": "2025-05-20T03:24:56.310Z",
+      "id": "0rWAvxnRzPQiczkQ",
+      "name": "W15: Marketing Agents"
+    },
+    {
+      "createdAt": "2025-05-21T15:25:23.130Z",
+      "updatedAt": "2025-05-21T15:25:23.130Z",
+      "id": "AQBoWZYx3dU3F79p",
+      "name": "W16: Baby Podcast Videos"
+    }
+  ]
+}
