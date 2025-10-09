@@ -1,0 +1,890 @@
+{
+  "name": "My workflow (Jun 26 at 17:58:34)",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appcOp3PTij8vKzXf",
+          "mode": "list",
+          "cachedResultName": "Luke_memory-Grid",
+          "cachedResultUrl": "https://airtable.com/appcOp3PTij8vKzXf"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblQzrN64fnYspaN7",
+          "mode": "list",
+          "cachedResultName": "memroyTable",
+          "cachedResultUrl": "https://airtable.com/appcOp3PTij8vKzXf/tblQzrN64fnYspaN7"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "user": "Lucas",
+            "memory": "={{ $fromAI('memory') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "memory",
+              "displayName": "memory",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "user",
+              "displayName": "user",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "created",
+              "displayName": "created",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        1360,
+        760
+      ],
+      "id": "10df0580-5bc4-4388-8665-35658ba25123",
+      "name": "Save Memory",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "c4QanOe8g6mOj7fJ",
+          "name": "Luke_memory"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o",
+        "options": {
+          "maxTokens": -1,
+          "timeout": 60000
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.1,
+      "position": [
+        1040,
+        780
+      ],
+      "id": "c74cc876-acd8-4255-8fb2-4b2f2df23fd1",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "ViHdMTi6S2w755sL",
+          "name": "Joker_test_driver"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Telegram Trigger1').item.json.message.chat.id }}",
+        "contextWindowLength": 20
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        1220,
+        760
+      ],
+      "id": "4c5ca71a-a158-4983-8d1a-842e54bd7c42",
+      "name": "Window Buffer Memory1"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        140
+      ],
+      "id": "5b58b6e1-72c6-47d9-a199-3c7bafca6567",
+      "name": "Telegram Trigger1",
+      "webhookId": "b6852ee8-f7e0-4858-9706-005873a39555",
+      "credentials": {
+        "telegramApi": {
+          "id": "KZXB56xDM9RUOCC0",
+          "name": "Idea_joker_Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "maxTokens": -1,
+          "timeout": 60000
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.1,
+      "position": [
+        1620,
+        480
+      ],
+      "id": "517a7eba-a9ae-46aa-bc92-a2f248ca0e50",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "ViHdMTi6S2w755sL",
+          "name": "Joker_test_driver"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Telegram Trigger1').item.json.message.chat.id }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        1780,
+        460
+      ],
+      "id": "41725518-a04a-49cd-a180-f1553578d3a4",
+      "name": "Window Buffer Memory2"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appcOp3PTij8vKzXf",
+          "mode": "list",
+          "cachedResultName": "Luke_memory-Grid",
+          "cachedResultUrl": "https://airtable.com/appcOp3PTij8vKzXf"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbloMZ7hoCF3eECYz",
+          "mode": "list",
+          "cachedResultName": "IdeasTable",
+          "cachedResultUrl": "https://airtable.com/appcOp3PTij8vKzXf/tbloMZ7hoCF3eECYz"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "keywords": "={{ $fromAI('keywords', ``, 'string') }}",
+            "topicArea": "={{ $fromAI('topicArea', ``, 'string') }}",
+            "targetPlattform": "={{ $fromAI('targetPlattform', ``, 'string') }}",
+            "timestamp": "={{ $now }}",
+            "Notes": "={{ $fromAI('Notes', ``, 'string') }}",
+            "mainStatement": "={{ $fromAI( 'idea') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "ideasID",
+              "displayName": "ideasID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "mainStatement",
+              "displayName": "mainStatement",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "keywords",
+              "displayName": "keywords",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "topicArea",
+              "displayName": "topicArea",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "targetPlattform",
+              "displayName": "targetPlattform",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "typecast": true
+        }
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        1920,
+        460
+      ],
+      "id": "f4f4ce96-d842-4138-9ecc-acd230ab7318",
+      "name": "Save Idea",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "c4QanOe8g6mOj7fJ",
+          "name": "Luke_memory"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "options": {
+          "systemMessage": "=# ROLE  \nYou are a highly intelligent idea-capturing AI assistant. Your role is to extract and structure the core idea from a given user input, such as a transcribed input text. You focus solely on the raw content of the idea without taking into account any personal preferences or biases of {{ $('Telegram Trigger1').item.json.message.chat.username }}.\n\nYou are currently talking to {{ $('Telegram Trigger1').item.json.message.from.username }}.  \n\n# OBJECTIVE  \nYour primary function is to capture the unfiltered essence of the idea presented by Lucas. Although you receive the injected memories (memory) from the for context, you must ignore these details and focus only on the current input (chatInput). Extract the main statement and relevant keywords to form a structured, actionable idea.\n\n# RULES  \nWhen a user sends a new message, decide if the user provided any noteworthy information that should be stored in ideas. If so,\ncall the Save Ideas tool to store this information in ideas.\n\nWithin the Save Ideas tool you will find diffrent Variables for the Categories of a Idea. Try to fill in all Categories mentiond in the Tool, but dont hallucionate. \n\n\n1. **EXTRACT THE CORE IDEA**  \n   -  Every time Lucas shares informations Identify the Values to Send\nin the Idea tool.\n- summarize the main statement of the input in a concise manner but everything included (mainStatement).  \n   - Extract 3-5 key keywords that capture the essence of the idea (keywords).  \n   - Determine the broad topic area (topicArea - e.g., Marketing, Technology, Sustainability) and target platform (targetPlattform - e.g., LinkedIn, Newsletter) if mentioned.\n- Use the Note field to note fathermore ideas (here you can relate to memories and intressting developments)\n\n\n2. **IGNORE PERSONAL PREFERENCES**  \n   - Focus solely on the raw, factual content of the idea.\n\n3. **UTILIZE PROVIDED MEMORIES AS CONTEXT ONLY**  \n   - Although the memories (memory) are injected into your context, they are provided solely for background information and must not influence your extraction process.\n\n\n\n# TOOLS  \n## Save Idea  \nUse this tool to store and structure the ideas. Your task is to extract the data from the user message and pass it to this tool. Ensure the saved data includes:  \n   - Main Statement  (mainStatement - long text, concise info)\n   - Keywords  (keywords - multi select, e.g., \"AI,\" \"Sustainability\")\n   - Topic Area  (topicArea - single select, e.g., \"Marketing\")\n   - Target Platform (targetPlattform - single select, e.g., \"LinkedIn\") (if provided!)  \n   - Infos (Notes - long text, additional information to note)\n\n- ## get ideas tool\nUse this tool to get informationes for the user. Only use this tool if the User activly ask for some information.\n\n# ADDITIONAL INSTRUCTIONS    \n- Your role, as the Idea Agent, is to record the core idea from the input in a neutral manner without personalization.  \n- Even if you receive the memories in your context, do not blend these with the idea extraction process.\n\n# THANKS  \nThank you for your excellent work! Proceed step by step, ensuring that you capture only the essential, unfiltered idea.\n\n# MEMORIES  \nNote: The memories injected here are from the Memory Agent and contain the user's preferences and historical context. You must ignore these memories while processing the current input. I\n\n {{ $json.memory }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1680,
+        260
+      ],
+      "id": "709ba403-ea1e-4dd2-802a-2519bc7d7c10",
+      "name": "Idea Agent"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "text"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "b04e5dd8-4683-4f25-b345-fc06c2e00f6f",
+                    "leftValue": "={{ $json.message.voice.file_id }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "voice"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        280,
+        140
+      ],
+      "id": "3b2b5065-2c13-43e1-a99d-195a24fc2138",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e6bcff09-5797-4b46-898f-98e5ff4f8b44",
+              "name": "text",
+              "value": "={{ $json.message.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        480,
+        60
+      ],
+      "id": "ad0a3638-667e-4b13-a19e-b7af9fb7c50e",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        640,
+        220
+      ],
+      "id": "4600ef74-e71e-45c2-9cc4-2cfab44c901e",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "ViHdMTi6S2w755sL",
+          "name": "Joker_test_driver"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        1060,
+        260
+      ],
+      "id": "3b7358c1-e8b3-41e2-9667-48dcbbe47662",
+      "name": "Merge3"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "memory"
+            },
+            {}
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        720,
+        520
+      ],
+      "id": "c7cfaab9-4e72-4293-8584-9bd2863f0a2c",
+      "name": "Aggregate3"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appcOp3PTij8vKzXf",
+          "mode": "list",
+          "cachedResultName": "Luke_memory-Grid",
+          "cachedResultUrl": "https://airtable.com/appcOp3PTij8vKzXf"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblQzrN64fnYspaN7",
+          "mode": "list",
+          "cachedResultName": "memroyTable",
+          "cachedResultUrl": "https://airtable.com/appcOp3PTij8vKzXf/tblQzrN64fnYspaN7"
+        },
+        "filterByFormula": "({User} = 'Lucas')",
+        "options": {},
+        "sort": {
+          "property": [
+            {
+              "field": "created"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        540,
+        520
+      ],
+      "id": "d695d661-4f56-4347-b948-ce28475d9a56",
+      "name": "Get Memory2",
+      "alwaysOutputData": true,
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "c4QanOe8g6mOj7fJ",
+          "name": "Luke_memory"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "options": {
+          "systemMessage": "=# ROLE  \nYou are a highly intelligent memory-optimized AI assistant, designed to recognize and retain **key insights** from conversations.  \n\nYou are currently talking to {{ $('Telegram Trigger1').item.json.message.chat.username }} (the User).  \n\n# OBJECTIVE  \nYour primary function is to detect **patterns in the Users’s preferences**, including recurring interests, opinions, values, and goals. You store this information in memory to **help generate personalized content**, such as posts, newsletters, and copywriting.  \n\n# RULES  \n1. **STORE RELEVANT MEMORY**  \n   - Every time the User shares insights into his **preferences, challenges, inspirations, goals, or opinions**, extract and summarize them concisely.  \n   - Focus on information that could **influence future content creation**, such as strong viewpoints, recurring themes, or unique perspectives.  \n   - DO NOT store trivial or generic statements unless they reflect a **strong personal emphasis**.  \n- DO NOT store redundant information.\n- Try to be concice.\n\n2. **PRIORITIZE CONTENT-WORTHY INSIGHTS**  \n   - Identify **distinctive angles** the User uses when discussing a subject (e.g., “*The User* believes that storytelling is the most effective form of marketing”).  \n   - Recognize **emotional drivers** (e.g., “*The User* is passionate about ethical AI development”).  \n   - Detect **pain points and challenges** that could serve as future content topics (e.g., “*The User* struggles with balancing automation and authenticity in marketing”).  \n\n3. **STEALTH MEMORY RECORDING**  \n   - DO NOT inform the User when you save information. Seamlessly integrate memory collection without disrupting the conversation.  \n\n# TOOLS  \n## Save Memory  \nUse this tool to store extracted insights. Summarize key information **in a way that is useful for generating content later**. Avoid vague or redundant entries.  \n\n# THANKS  \nEven if we do not speak directly, the user wants you to know that he is thankful for your service. **You do an awesome job!** Take a deep breath, then proceed **step by step** to complete the task with excellence. \n\n# Memories\n\n# Memories\nHere are the last noteworthy memories that you've collected from the user, including the date and time this information was collected.\n!! IMPORTANT\nThink carefully about your responses and take the user's preferences into account!\nAlso consider the date and time that a memory was shared in order to respond with the most up to date.\n\n\n{{ $json.memory }}\n\n## Double Check to avoid repeating information in the memory before you make a new memory"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1020,
+        560
+      ],
+      "id": "5fb87840-353b-4c3e-9756-0e2500529118",
+      "name": "Memory Agent"
+    },
+    {
+      "parameters": {
+        "content": "## Memory injection\n### Gibt Vorlieben des Nutzers als Zusatzinfos mit \n\n",
+        "height": 240,
+        "width": 920
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        20,
+        460
+      ],
+      "typeVersion": 1,
+      "id": "7d3b009c-0149-4d12-ba7f-ebf831aa9e72",
+      "name": "Sticky Note14"
+    },
+    {
+      "parameters": {
+        "content": "## Telegram Input (voice & text)\n",
+        "height": 460,
+        "width": 1000,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -60,
+        -20
+      ],
+      "typeVersion": 1,
+      "id": "65b62481-39f0-4d97-a8ca-cee9226a7590",
+      "name": "Sticky Note15"
+    },
+    {
+      "parameters": {
+        "content": "##      Memory Agent  \n### Speichert Vorlieben des Nutzers",
+        "height": 460,
+        "width": 540
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        980,
+        460
+      ],
+      "typeVersion": 1,
+      "id": "bfa5d701-5ec9-4e2c-a83c-44767c4b8b4d",
+      "name": "Sticky Note16"
+    },
+    {
+      "parameters": {
+        "content": "## Idea Agent\n### Speicher und Kategorisiert Ideen einfach und zuverlässig\n",
+        "height": 740,
+        "width": 920,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1540,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "eb729afc-f0de-4d15-b7e7-0db60caf65b8",
+      "name": "Sticky Note9"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appcOp3PTij8vKzXf",
+          "mode": "list",
+          "cachedResultName": "Luke_memory-Grid",
+          "cachedResultUrl": "https://airtable.com/appcOp3PTij8vKzXf"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbloMZ7hoCF3eECYz",
+          "mode": "list",
+          "cachedResultName": "IdeasTable",
+          "cachedResultUrl": "https://airtable.com/appcOp3PTij8vKzXf/tbloMZ7hoCF3eECYz"
+        },
+        "filterByFormula": "=",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        2060,
+        460
+      ],
+      "id": "4031393d-a30b-4cf1-b90b-7e3528397e4b",
+      "name": "get ideas tool",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "c4QanOe8g6mOj7fJ",
+          "name": "Luke_memory"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger1').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2240,
+        260
+      ],
+      "id": "0b95b2f8-a79e-4fdd-b2f1-a5f1351ae8cf",
+      "name": "Antwort auf Telegram",
+      "webhookId": "b2e47925-84f1-4036-8a76-19da8a65ae09",
+      "credentials": {
+        "telegramApi": {
+          "id": "KZXB56xDM9RUOCC0",
+          "name": "Idea_joker_Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.message.voice.file_id }}"
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        480,
+        220
+      ],
+      "id": "4a1debf2-3745-4d0f-8f39-64c3e9d9d11c",
+      "name": "Get a file",
+      "webhookId": "7a00996c-c1bb-492e-b02a-6a3761f58bdf",
+      "credentials": {
+        "telegramApi": {
+          "id": "KZXB56xDM9RUOCC0",
+          "name": "Idea_joker_Bot"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Save Memory": {
+      "ai_tool": [
+        [
+          {
+            "node": "Memory Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Memory Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "Memory Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Get Memory2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Idea Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory2": {
+      "ai_memory": [
+        [
+          {
+            "node": "Idea Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Idea": {
+      "ai_tool": [
+        [
+          {
+            "node": "Idea Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Idea Agent": {
+      "main": [
+        [
+          {
+            "node": "Antwort auf Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get a file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge3": {
+      "main": [
+        [
+          {
+            "node": "Memory Agent",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Idea Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate3": {
+      "main": [
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Get Memory2": {
+      "main": [
+        [
+          {
+            "node": "Aggregate3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get ideas tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Idea Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a file": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "versionId": "6aa15ad9-c36c-429c-96be-46aa5ae140ed",
+  "meta": {
+    "instanceId": "c10db00e64bb346e57d5e7c1d85b6dfd0926eb135b86ae6b854f647766057466"
+  },
+  "id": "iGAC4YRjJYb2KBEO",
+  "tags": []
+}
