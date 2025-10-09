@@ -1,0 +1,562 @@
+{
+  "name": "LinkedIn Job Search",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "links",
+              "cssSelector": "ul.jobs-search__results-list li div a[class*=\"base-card\"]",
+              "returnValue": "attribute",
+              "attribute": "href",
+              "returnArray": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "068b6fb6-fb3f-4e72-90b1-dc88ecc792d9",
+      "name": "Extract Job Links",
+      "type": "n8n-nodes-base.html",
+      "position": [
+        -360,
+        -460
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "options": {}
+      },
+      "id": "ad532500-675f-44aa-abaa-c0cbe5a746ca",
+      "name": "Fetch Jobs from Linkedin",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -540,
+        -460
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "jsCode": "// === Input from your workflow nodes ===\n// Replace these assignments with your actual n8n inputs\n\nconst keywordsInput = $input.first().json.keywords; \nconst jobTypeInput = $('On form submission').first().json['Job Type'];  // expected array\nconst experienceInput = $('On form submission').first().json['Experience Level'];  // expected array\n\n// === Mappings for LinkedIn parameters ===\n\nconst experienceMap = {\n  \"Internship\": 1,\n  \"Entry level\": 2,\n  \"Associate\": 3,\n  \"Mid-Senior level\": 4,\n  \"Director\": 5,\n  \"Executive\": 6\n};\n\nconst jobTypeMap = {\n  \"On-site\": 1,\n  \"Remote\": 2,\n  \"Hybrid\": 3\n};\n\n// === Process inputs ===\n\n// Map experience labels to codes\nconst expLevels = experienceInput.map(lvl => experienceMap[lvl]).filter(Boolean);\n\n// Map job type labels to codes\nconst jobTypes = jobTypeInput.map(type => jobTypeMap[type]).filter(Boolean);\n\n// Encode keywords (replace commas with spaces)\nconst keywords = encodeURIComponent(keywordsInput.replace(/,\\s*/g, \" \").trim());\n\n// Fixed geoId for USA\nconst geoId = \"103644278\";\n\n// === Construct LinkedIn job search URL ===\n\nconst url =\n  `https://www.linkedin.com/jobs/search/?` +\n  `f_E=${expLevels.join(\",\")}` +\n  `&f_TPR=r86400` +\n  `&f_WT=${jobTypes.join(\",\")}` +\n  `&geoId=${geoId}` +\n  `&keywords=${keywords}` +\n  `&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true`;\n\n// === Return result ===\nreturn { url };\n"
+      },
+      "id": "fe6923ff-7fae-4cce-8edf-c1de6af12b32",
+      "name": "Create search URL",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        -540,
+        -280
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "links",
+        "options": {}
+      },
+      "id": "7132225d-8a4d-44f1-879f-8ea359168572",
+      "name": "Split Out",
+      "type": "n8n-nodes-base.splitOut",
+      "position": [
+        -180,
+        -460
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "784ead57-9d83-4e08-b83c-23fa165bf045",
+              "name": "description",
+              "type": "string",
+              "value": "={{ $json.description.replaceAll(/\\s+/g, \" \") }}"
+            },
+            {
+              "id": "fd3c9d2c-5ff9-46a7-b70a-f990fbc7da9d",
+              "name": "jobid",
+              "type": "string",
+              "value": "={{ $json.jobid.split(\":\").last() }}"
+            },
+            {
+              "id": "27a20cd2-ab0d-42b7-9cee-ea64e0e26ea3",
+              "name": "applyLink",
+              "type": "string",
+              "value": "={{ \"https://www.linkedin.com/jobs/view/\"+ $json.jobid.split(\":\").last() }} "
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "4a7511d8-0847-4031-ba54-e26091ef7305",
+      "name": "Modify Job Attributes",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        560,
+        -360
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "title",
+              "cssSelector": "div h1"
+            },
+            {
+              "key": "company",
+              "cssSelector": "div span a"
+            },
+            {
+              "key": "location",
+              "cssSelector": "div span[class*='topcard__flavor topcard__flavor--bullet']"
+            },
+            {
+              "key": "description",
+              "cssSelector": "div.description__text.description__text--rich"
+            },
+            {
+              "key": "jobid",
+              "cssSelector": "a[data-item-type='semaphore']",
+              "returnValue": "attribute",
+              "attribute": "data-semaphore-content-urn"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f7c10771-ded3-42df-94c2-66e3973bce85",
+      "name": "Parse Job Attributes",
+      "type": "n8n-nodes-base.html",
+      "position": [
+        380,
+        -360
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.links }}",
+        "options": {}
+      },
+      "id": "c91b94d9-1624-4d37-8f92-50b764809018",
+      "name": "Fetch Job Page",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        200,
+        -360
+      ],
+      "executeOnce": false,
+      "retryOnFail": true,
+      "typeVersion": 4.2,
+      "waitBetweenTries": 5000,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "77e1260a-19fb-430c-b8bb-a01603cfe1fa",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "position": [
+        20,
+        -460
+      ],
+      "typeVersion": 3
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1MJSQVnANVvEYvBsTDYCb1LXOpW5iuz-asKyvheV64cU",
+          "mode": "list",
+          "cachedResultName": "Job List",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MJSQVnANVvEYvBsTDYCb1LXOpW5iuz-asKyvheV64cU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1632853648,
+          "mode": "list",
+          "cachedResultName": "USA",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MJSQVnANVvEYvBsTDYCb1LXOpW5iuz-asKyvheV64cU/edit#gid=1632853648"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "company",
+              "displayName": "company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "location",
+              "displayName": "location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "description",
+              "displayName": "description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "jobid",
+              "displayName": "jobid",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "applyLink",
+              "displayName": "applyLink",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        740,
+        -360
+      ],
+      "id": "15636da3-641a-4c05-8a39-f16113dfaa94",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "eAsaLEpRaVbiUbcN",
+          "name": "Dhruba"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map(item => {\n  // Defensive handling: check if the keywords field exists and is a string\n  let rawKeywords = $input.first().json.Keywords;\n\n  let keywords = (typeof rawKeywords === \"string\" && rawKeywords.trim().length > 0)\n    ? rawKeywords.split(',').map(str => str.trim())\n    : [];\n\n  return {\n    json: {\n      ...item.json,\n      keywords: keywords,\n      // Keep location as is, no splitting\n      // location: item.json['Location(s)'] or do nothing if you don't want to add\n    }\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1100,
+        -360
+      ],
+      "id": "9ee28008-f53f-4df2-ac9a-fb971714299c",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "formTitle": "LinkedIn Job Search",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Job Role",
+              "placeholder": "Automation Engineer",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Keywords",
+              "placeholder": "Keyword 1, Keyword 2",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Experience Level",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Internship"
+                  },
+                  {
+                    "option": "Entry level"
+                  },
+                  {
+                    "option": "Associate"
+                  },
+                  {
+                    "option": "Mid-Senior level"
+                  },
+                  {
+                    "option": "Director"
+                  },
+                  {
+                    "option": "Executive"
+                  }
+                ]
+              },
+              "multiselect": true,
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Job Type",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "On-site"
+                  },
+                  {
+                    "option": "Remote"
+                  },
+                  {
+                    "option": "Hybrid"
+                  }
+                ]
+              },
+              "multiselect": true,
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -1260,
+        -360
+      ],
+      "id": "7ae7402f-93da-4076-8eec-8936673a8cd4",
+      "name": "On form submission",
+      "webhookId": "64d8a2c5-25f4-4214-b375-cb9f08d3c290"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -720,
+        -360
+      ],
+      "id": "edb631b0-6008-4e5d-98e2-99aa6295a4a1",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "keywords",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -920,
+        -360
+      ],
+      "id": "2f2b749c-5937-4a95-bfb3-8ac851a0366c",
+      "name": "Split Out Keywords"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Fetch Jobs from Linkedin": {
+      "main": [
+        [
+          {
+            "node": "Extract Job Links",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create search URL": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Job Links": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Job Attributes": {
+      "main": [
+        [
+          {
+            "node": "Modify Job Attributes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Job Page": {
+      "main": [
+        [
+          {
+            "node": "Parse Job Attributes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Fetch Job Page",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Modify Job Attributes": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Split Out Keywords",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [
+          {
+            "node": "Fetch Jobs from Linkedin",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create search URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out Keywords": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "c18d9a97-f98e-47e4-826d-ef3b502fa090",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6bb5339e67011e36cf93cf54a8bca6b7e3857fbcd93e9f5eeac8f6e87022da02"
+  },
+  "id": "EDTdkamcKDdSd0Qj",
+  "tags": []
+}
