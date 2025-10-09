@@ -1,0 +1,359 @@
+{
+  "name": "BCKP 2",
+  "active": true,
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT *\nFROM workflow_entity\nWHERE name NOT ILIKE '%backup%'\nORDER BY id;",
+        "additionalFields": {}
+      },
+      "name": "Get Workflows from DB",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1,
+      "position": [
+        -1392,
+        -160
+      ],
+      "id": "a49209ba-3e8a-44a3-9474-c9b7cf12f12e",
+      "credentials": {
+        "postgres": {
+          "id": "2xkaCrgCVOfCETb3",
+          "name": "PostgreSQL credential n8n_database"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "operation": "list",
+        "owner": {
+          "__rl": true,
+          "value": "paul-z4z",
+          "mode": "name"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "n8n_Workflows",
+          "mode": "name"
+        }
+      },
+      "name": "Get Repository Files",
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1,
+      "position": [
+        -1392,
+        32
+      ],
+      "id": "e0447505-ce77-478d-80d4-32f4b8802ac5",
+      "webhookId": "48710b91-af72-425c-bd75-489de3675c89",
+      "credentials": {
+        "githubApi": {
+          "id": "9RWBslDcc6pPEYjG",
+          "name": "GitHub backup"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Cleanup logic with better debugging\nlet workflows = [];\nlet repoFiles = [];\n\n// Process all input items\nfor (const item of items) {\n  if (item.json) {\n    // Check if it's a workflow (from DB)\n    if (item.json.nodes || item.json.connections || (item.json.name && !item.json.sha && !item.json.path)) {\n      workflows.push(item.json);\n    }\n    // Check if it's a GitHub file object\n    else if (item.json.sha && item.json.name) {\n      repoFiles.push(item.json);\n    }\n  }\n}\n\nconst RETENTION_COUNT = 5;\nconst backupFiles = {};\nconst filesToDelete = [];\nlet matchedBackups = 0;\n\n// Process repository files to find backups\nrepoFiles.forEach(file => {\n  const fileName = file.name;\n  \n  // Proper backup pattern: workflowname_YYYY-MM-DDTHH-MM-SS.json\n  const properPattern = /^[a-z0-9-]+_\\d{4}-\\d{2}-\\d{2}T\\d{2}-\\d{2}-\\d{2}\\.json$/;\n  \n  // Check if it's a properly formatted backup file\n  if (properPattern.test(fileName) && !fileName.startsWith('_cleanup_')) {\n    const backupPattern = /^(.+)_(\\d{4}-\\d{2}-\\d{2}T\\d{2}-\\d{2}-\\d{2})\\.json$/;\n    const match = fileName.match(backupPattern);\n    \n    if (match) {\n      matchedBackups++;\n      const workflowName = match[1];\n      const fileTimestamp = match[2];\n      \n      if (!backupFiles[workflowName]) {\n        backupFiles[workflowName] = [];\n      }\n      \n      backupFiles[workflowName].push({\n        name: fileName,\n        timestamp: fileTimestamp,\n        sha: file.sha\n      });\n    }\n  }\n  // If it looks like a backup but doesn't match proper pattern, delete it\n  else if (fileName.includes('_') && fileName.endsWith('.json') && !fileName.startsWith('_cleanup_') && fileName.includes('2025-')) {\n    filesToDelete.push({\n      path: fileName,\n      sha: file.sha,\n      workflow: 'malformed_cleanup'\n    });\n  }\n});\n\n// Find old files to delete\nfor (const workflowName in backupFiles) {\n  const files = backupFiles[workflowName];\n  \n  // Sort by timestamp descending (newest first)\n  files.sort((a, b) => b.timestamp.localeCompare(a.timestamp));\n  \n  // Mark old files for deletion if more than RETENTION_COUNT\n  if (files.length > RETENTION_COUNT) {\n    const oldFiles = files.slice(RETENTION_COUNT); // Keep only RETENTION_COUNT newest files\n    oldFiles.forEach(file => {\n      filesToDelete.push({\n        path: file.name,\n        sha: file.sha,\n        workflow: workflowName\n      });\n    });\n  }\n}\n\n// Prepare outputs\nconst allOutputs = [];\n\n// Add debug info first\nallOutputs.push({\n  json: {\n    debug: \"summary\",\n    total_items: items.length,\n    workflows: workflows.length,\n    repo_files: repoFiles.length,\n    matched_backups: matchedBackups,\n    backup_groups: Object.keys(backupFiles).length,\n    files_to_delete: filesToDelete.length,\n    retention_count: RETENTION_COUNT\n  }\n});\n\n// Add each backup group info\nfor (const workflowName in backupFiles) {\n  const files = backupFiles[workflowName];\n  allOutputs.push({\n    json: {\n      debug: \"backup_group\",\n      workflow_name: workflowName,\n      total_files: files.length,\n      will_delete: Math.max(0, files.length - RETENTION_COUNT),\n      sample_filename: files[0]?.name || \"none\"\n    }\n  });\n}\n\n// Add deletion actions\nfilesToDelete.forEach(file => {\n  allOutputs.push({\n    json: {\n      action: 'delete',\n      path: file.path,\n      sha: file.sha,\n      message: `Delete old backup: ${file.path}`\n    }\n  });\n});\n\n// Create backup items for each workflow\nworkflows.forEach(workflow => {\n  if (workflow.name) {\n    // Create safe filename\n    const safeName = workflow.name.toLowerCase().replace(/[^a-z0-9-]/g, '');\n    const timestamp = new Date().toISOString().replace(/:/g, '-').split('.')[0];\n    const fileName = `${safeName}_${timestamp}.json`;\n    \n    allOutputs.push({\n      json: {\n        action: 'create',\n        path: fileName,\n        content: JSON.stringify(workflow, null, 2),\n        message: `Backup workflow: ${workflow.name}`\n      }\n    });\n  }\n});\n\nreturn allOutputs;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -944,
+        -64
+      ],
+      "id": "50a3c2d2-3b51-4a32-9893-00d828f2fa7e",
+      "name": "Code - Cleanup & Backup"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "condition-1",
+              "leftValue": "={{ $json.action }}",
+              "rightValue": "delete",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "85d367ac-5778-4061-be61-abff36cecdb6",
+              "leftValue": "={{ $json.action }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -720,
+        -64
+      ],
+      "id": "aa0c03ae-71ad-4f75-aceb-2d3f7c318e14",
+      "name": "IF Delete or Create"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "operation": "delete",
+        "owner": {
+          "__rl": true,
+          "value": "paul-z4z",
+          "mode": "name"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "n8n_Workflows",
+          "mode": "name"
+        },
+        "filePath": "={{ $json.path }}",
+        "commitMessage": "={{ $json.message }}"
+      },
+      "name": "Delete from GitHub",
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1,
+      "position": [
+        -496,
+        -160
+      ],
+      "id": "ccb644e4-899b-49d5-bc1a-949eb0976df8",
+      "webhookId": "b3031649-cbad-4045-8878-5cd52ace615a",
+      "credentials": {
+        "githubApi": {
+          "id": "9RWBslDcc6pPEYjG",
+          "name": "GitHub backup"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 12
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1616,
+        -64
+      ],
+      "id": "d607c573-a6d6-42fd-8d74-42ea2a7dc3bb",
+      "name": "Weekly Cleanup Trigger"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -1168,
+        -64
+      ],
+      "id": "13097933-679e-430b-a5a9-2c255340e3a0",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "owner": {
+          "__rl": true,
+          "value": "paul-z4z",
+          "mode": "name"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "n8n_Workflows",
+          "mode": "list",
+          "cachedResultName": "n8n_Workflows",
+          "cachedResultUrl": "https://github.com/paul-z4z/n8n_Workflows"
+        },
+        "filePath": "={{ $json.path }}",
+        "fileContent": "={{ $json.content }}",
+        "commitMessage": "Planned update"
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        -368,
+        176
+      ],
+      "id": "ab1c1ce4-e24a-4035-a4a3-9bc11a436bfc",
+      "name": "Upload to GitHub",
+      "webhookId": "1a52940b-d73e-4ec7-8e07-696de1a71342",
+      "credentials": {
+        "githubApi": {
+          "id": "9RWBslDcc6pPEYjG",
+          "name": "GitHub backup"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "9ffdc751-ad6e-409c-9648-5cb502b2fa94",
+              "leftValue": "={{ $json.action }}",
+              "rightValue": "create",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -512,
+        32
+      ],
+      "id": "8b9f3fe5-d5ec-4281-afa7-050626123a37",
+      "name": "Filter"
+    }
+  ],
+  "connections": {
+    "Get Workflows from DB": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Repository Files": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Code - Cleanup & Backup": {
+      "main": [
+        [
+          {
+            "node": "IF Delete or Create",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF Delete or Create": {
+      "main": [
+        [
+          {
+            "node": "Delete from GitHub",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Weekly Cleanup Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get Workflows from DB",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Repository Files",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Code - Cleanup & Backup",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Upload to GitHub",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-08-30T01:41:54.604Z",
+  "updatedAt": "2025-09-11T02:08:53.123Z",
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": {
+    "node:Weekly Cleanup Trigger": {
+      "recurrenceRules": [
+        0
+      ]
+    }
+  },
+  "pinData": {},
+  "versionId": "63f913e0-1cdb-4db4-9caf-9c2dee7a5fd1",
+  "triggerCount": 1,
+  "id": "icoer2tRy5Ke5osd",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "parentFolderId": "rOWRQBXvfTGFiZFy",
+  "isArchived": false
+}
