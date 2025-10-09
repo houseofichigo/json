@@ -1,0 +1,673 @@
+{
+  "name": "scrape youtube form",
+  "nodes": [
+    {
+      "parameters": {
+        "command": "=/data/venv/bin/python /data/get_transcript_webshare_v6.py {{ $json.videoId }}"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        -140,
+        -240
+      ],
+      "id": "1ee21c28-2e7c-4c01-ae04-5dfd3f8d56ed",
+      "name": "Execute Command"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.stdout }}",
+        "options": {
+          "systemMessage": "=You are ViralClip, an AI trained to capture Asmongold's evolving voice and create viral moments with perfect continuity. Your task is to generate a viral clip based on the provided context and transcript, maintaining Asmongold's authentic voice and creating a sense of ongoing narrative.\n\nFirst, review the following context data:\n\n<context_data>\n{{ $('Code1').item.json.videoId }}\n</context_data>\n\nNow, carefully read through the current transcript:\n\n<current_transcript>\n{{ $json.stdout }}\n</current_transcript>\n\nTo maintain continuity and evolution of Asmongold's content, refer to the previous context:\n\n<previous_context>\n{{ $('Code1').item.json.videoId }}\n</previous_context>\n\nWhen creating the viral moment, keep in mind Asmongold's persona:\n- Brutal industry honesty\n- Relatable gamer advocacy\n- Evolving rants\n- Memory callbacks\n- Consistent voice\n\nUse these voice patterns to maintain authenticity:\n- \"Chat, remember when I said...\"\n- \"This is exactly what I've been talking about...\"\n- \"I called this months ago...\"\n- \"Like I always say...\"\n- \"This proves my point from [previous topic]...\"\n\nCreate a viral moment that meets the following criteria:\n- Connects to previous content\n- Escalates past arguments\n- Validates past predictions\n- Creates series continuity\n- References memory naturally\n\nYour output should meet these requirements:\n1. Length: 120-180 words (45-60 second voice-over)\n2. Integrate memory and previous context naturally\n3. Use Asmongold's voice patterns\n4. Create a narrative arc that feels like part of an ongoing story\n5. Maintain authenticity and sound like Asmongold's natural evolution over time\n\nTo create the viral moment:\n1. Identify a key point or argument in the current transcript that aligns with Asmongold's persona and previous content.\n2. Find relevant connections to previous videos or arguments from the provided context.\n3. Craft a statement that builds upon the identified point, incorporating callbacks to previous content and using Asmongold's voice patterns.\n4. Ensure the statement escalates the argument or validates a past prediction.\n5. Add authentic reactions and commentary that match Asmongold's style.\n\nRemember to maintain Asmongold's energy and perspective while allowing for natural evolution of his arguments over time.\n\nYour final output should be only the viral moment content, written as if it's Asmongold speaking. Do not include any analysis, explanations, or meta-commentary. Write your response inside <viral_moment> tags."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        180,
+        -240
+      ],
+      "id": "f1df41fe-de17-42a9-9549-cfd747bd2b34",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-4.1",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        160,
+        -420
+      ],
+      "id": "2e5d0c28-8471-4cbc-ae5c-a16f443b3c38",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "qYc830nbpHiUWKL0",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1,
+      "position": [
+        380,
+        -420
+      ],
+      "id": "efffc3e9-7395-4254-9046-b29b03d86455",
+      "name": "Think"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Code1').item.json.videoId }}",
+        "contextWindowLength": 50
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        300,
+        -540
+      ],
+      "id": "5eff3731-c954-4360-ab73-1198f5195a86",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "chatgpt-4o-latest",
+          "mode": "list",
+          "cachedResultName": "CHATGPT-4O-LATEST"
+        },
+        "text": "1. HAIR STYLE: His hair is [loose and hanging down / tied up in a man bun]\n2. SHIRT COLOR: [Yes, he's wearing a white t-shirt / No, he's wearing a black hoodie]\n3. SHIRT TYPE: [T-shirt / Hoodie / Tank top]\n4. FACIAL EXPRESSION: [Serious expression / Smiling / Surprised look]\n5. OVERALL LOOK: [Additional details about accessories, posture, etc.]",
+        "imageUrls": "=",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -380,
+        280
+      ],
+      "id": "e7c459ac-1dce-4c09-a724-5792a3efae76",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "kQ4tB08eoA62nUxu",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1Dbj8Nh1HS1nO1ttHstfGcQ6XSPddwdp_m1vhDrH9g1w",
+          "mode": "list",
+          "cachedResultName": "Talkin AsmonGold Baby",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Dbj8Nh1HS1nO1ttHstfGcQ6XSPddwdp_m1vhDrH9g1w/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Blad1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Dbj8Nh1HS1nO1ttHstfGcQ6XSPddwdp_m1vhDrH9g1w/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Asmongold": "={{ $json.content }}",
+            "status": "on",
+            "VideoID": "={{ $('Grab Last Video').first().json.items[0].id.videoId }}"
+          },
+          "matchingColumns": [
+            "VideoID"
+          ],
+          "schema": [
+            {
+              "id": "Asmongold",
+              "displayName": "Asmongold",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Video",
+              "displayName": "Video",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "YT Video Title",
+              "displayName": "YT Video Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "VideoID",
+              "displayName": "VideoID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        320,
+        280
+      ],
+      "id": "3acbbc08-de48-4463-b245-2f306cfc441b",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Iu6Q3jIAAfXvDuGi",
+          "name": "Google Sheets Seosshopify"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Grab the latest Video. Grab The Transcriptioin - Create a Voice Over\n",
+        "height": 340,
+        "width": 1500,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -660,
+        -300
+      ],
+      "typeVersion": 1,
+      "id": "bb772b15-4828-4fb5-9629-536a055ee06f",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Analyse the Thumbnail",
+        "height": 340,
+        "width": 1260,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -660,
+        180
+      ],
+      "typeVersion": 1,
+      "id": "3f2efc2a-5e86-4961-b19a-d0e3b63d2cb2",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const maxLen = 50000;\nconst text = $('Execute Command').first().json.stdout;\nconst chunks = [];\n\nfor (let i = 0; i < text.length; i += maxLen) {\n  chunks.push(text.slice(i, i + maxLen));\n}\n\nconst result = {};\nchunks.forEach((chunk, index) => {\n  result[`transcript_part_${index + 1}`] = chunk;\n});\n\nreturn [{ json: result }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        560,
+        -240
+      ],
+      "id": "0a3583eb-cd67-4308-85a3-341b79f56faa",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "chatId": "195499732",
+        "text": "Geen Nieuwe Videos",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        700,
+        260
+      ],
+      "id": "a492a982-4d6b-44d5-b992-4b6c080e0bc3",
+      "name": "Telegram",
+      "webhookId": "bb0c93ef-715e-4214-876d-b2b4c23b70f3",
+      "credentials": {
+        "telegramApi": {
+          "id": "URqbf7Mica3fhbKk",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "formTitle": "Video id",
+        "formDescription": "ID",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Video URL",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -620,
+        -240
+      ],
+      "id": "70e4a64f-42b8-4d16-8cc1-85b4d01f6449",
+      "name": "On form submission",
+      "webhookId": "d3e07293-8af2-4a65-a4ef-ea8f8077777b"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Function to extract YouTube video ID from URL\nfunction extractYoutubeVideoId(url) {\n  if (!url) return null;\n  \n  // Handle different YouTube URL formats\n  const regexPatterns = [\n    /(?:youtube\\.com\\/watch\\?v=|youtu\\.be\\/|youtube\\.com\\/embed\\/|youtube\\.com\\/v\\/|youtube\\.com\\/watch\\?.*v=)([^&\\?\\/]+)/,\n    /youtube\\.com\\/shorts\\/([^&\\?\\/]+)/\n  ];\n  \n  for (const pattern of regexPatterns) {\n    const match = url.match(pattern);\n    if (match && match[1]) {\n      return match[1];\n    }\n  }\n  \n  return null;\n}\n\n// Get the YouTube URL from the specific input path\nconst items = $input.all();\nconst returnItems = [];\n\n// Process each item\nfor (const item of items) {\n  const newItem = {};\n  \n  // Get URL from the specified path\n  const url = item.json['Video URL'];\n  \n  // Extract YouTube video ID\n  newItem.json = {\n    videoId: extractYoutubeVideoId(url)\n  };\n  \n  returnItems.push(newItem);\n}\n\nreturn returnItems;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -400,
+        -240
+      ],
+      "id": "5a7ae93b-e6c5-495f-a421-e22dac56a68a",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1Dbj8Nh1HS1nO1ttHstfGcQ6XSPddwdp_m1vhDrH9g1w",
+          "mode": "list",
+          "cachedResultName": "Talkin AsmonGold Baby",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Dbj8Nh1HS1nO1ttHstfGcQ6XSPddwdp_m1vhDrH9g1w/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Blad1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Dbj8Nh1HS1nO1ttHstfGcQ6XSPddwdp_m1vhDrH9g1w/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Video": "={{ $('AI Agent').item.json.output }}",
+            "VideoID": "={{ $('Code1').item.json.videoId }}",
+            "YT Video Title": "=",
+            "Transcript Part 1": "={{ $json.transcript_part_1 }}",
+            "Transcript Part 2": "=",
+            "Transcript Part 3": "=",
+            "Transcript Part 4": "=",
+            "Transcript Part 5": "=",
+            "Transcript Part 6": "=",
+            "Transcript Part 7": "=",
+            "Transcript Part 8": "=",
+            "Transcript Part 9": "=",
+            "Transcript Part 10": "="
+          },
+          "matchingColumns": [
+            "VideoID"
+          ],
+          "schema": [
+            {
+              "id": "Asmongold",
+              "displayName": "Asmongold",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Video",
+              "displayName": "Video",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "YT Video Title",
+              "displayName": "YT Video Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "VideoID",
+              "displayName": "VideoID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Transcript Part 1",
+              "displayName": "Transcript Part 1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Transcript Part 2",
+              "displayName": "Transcript Part 2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Transcript Part 3",
+              "displayName": "Transcript Part 3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Transcript Part 4",
+              "displayName": "Transcript Part 4",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Transcript Part 5",
+              "displayName": "Transcript Part 5",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Transcript Part 6",
+              "displayName": "Transcript Part 6",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Transcript Part 7",
+              "displayName": "Transcript Part 7",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Transcript Part 8",
+              "displayName": "Transcript Part 8",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Transcript Part 9",
+              "displayName": "Transcript Part 9",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Transcript Part 10",
+              "displayName": "Transcript Part 10",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Transcript Part 11",
+              "displayName": "Transcript Part 11",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Transcript Part 12",
+              "displayName": "Transcript Part 12",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Transcript Part 13",
+              "displayName": "Transcript Part 13",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "useAppend": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        700,
+        -240
+      ],
+      "id": "b7c3e724-87f0-42f9-8468-972c70ad889e",
+      "name": "ADD to Sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Iu6Q3jIAAfXvDuGi",
+          "name": "Google Sheets Seosshopify"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Execute Command": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "ADD to Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Execute Command",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ADD to Sheet": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "64ca1644-7cc4-4789-a90a-c7fa5f32a2ef",
+  "meta": {
+    "instanceId": "190e1b81e9845aeb2f58812b2e7f9c8a86cb13b1e8883f6c2bfaa8050710ae79"
+  },
+  "id": "H46zmYw3Xp095yUi",
+  "tags": []
+}
