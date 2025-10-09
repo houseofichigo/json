@@ -1,0 +1,515 @@
+{
+  "name": "News Generator",
+  "nodes": [
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4",
+          "mode": "list",
+          "cachedResultName": "gpt-4"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -680,
+        -20
+      ],
+      "id": "08bae588-a001-4b74-bfd0-d820bd431477",
+      "name": "4",
+      "credentials": {
+        "openAiApi": {
+          "id": "YVjaGIDWEYEayX2l",
+          "name": "RAG Doc"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyHour"
+            }
+          ]
+        },
+        "feedUrl": "<YOUR_FEED_URL>"
+      },
+      "type": "n8n-nodes-base.rssFeedReadTrigger",
+      "typeVersion": 1,
+      "position": [
+        -780,
+        -240
+      ],
+      "id": "d98d8c7c-1f4e-4b70-a355-42a2205f5e9e",
+      "name": "RSS Feed Trigger"
+    },
+    {
+      "parameters": {
+        "inputText": "={{ $json.title }}\n{{ $json.content }}",
+        "categories": {
+          "categories": [
+            {
+              "category": "Interesting ✅",
+              "description": "=if the article concerns news about Artificial Intelligence / No Code / Ai Automations."
+            },
+            {
+              "category": "Not Interesting ❌",
+              "description": "=if the article concerns everything but except Artificial Intelligence / No Code / Ai Automations."
+            }
+          ]
+        },
+        "options": {
+          "systemPromptTemplate": "=## Role \nyou are a classifier agent. Your role is to retrieve the title & content of the article and then decide if it's matching my niche and my interest. \n\n## Mission \nAnalyze the article Title & content and choose the category \"Interesting\" if the article concerns news about Artificial Intelligence / No Code / Ai Automations.\nIf not choose the category \"Not Interesting\"",
+          "enableAutoFixing": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "typeVersion": 1,
+      "position": [
+        -540,
+        -240
+      ],
+      "id": "5e5bd792-3bb3-4860-9af5-d2725fd59ae0",
+      "name": "Classifier Agent"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 7
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -660,
+        420
+      ],
+      "id": "caf11e05-fe9a-47ff-a11f-7251fa6c4a6a",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Create the newsletter of the day\n\nToday's Date : {{ $now }}",
+        "options": {
+          "systemMessage": "=## Role \nYou are a newsletter assistant. Your role is to retrieve articles from the last 24 hours and to write a newsletter directly to my self. The newsletter should be divided into pragaraph summarizing each articles from the last 24 hours only keeping important informations. \n\n## Tools \n- \"retrieve_articles\" : retrieve the articles of the past 24 hours\n- \"think\" : use this tool to verify that each steps have been done correctly\n\n## Instructions \n1. Use the \"retrieve_articles\" tool to retrieve the last 24 hours article (by \"created_date\")\n2. Summarize each articles keeping a joyful tone and the important informations. You can use emojis but don't abuse it.\n3. Output the newsletter in HTML format. Feel free to have a nice display and presentation. \n\n## Final reminders\n- Don't invent informations, only keep informations from the articles \n- Output only the HTML format without anything else not necessary. "
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        -440,
+        420
+      ],
+      "id": "5b378ca6-a7f4-456c-8286-68226cd33ea1",
+      "name": "My Newsletter Agent 📨"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -500,
+        640
+      ],
+      "id": "880ea9fc-bc22-4700-96f5-e6ef9643a9e6",
+      "name": "4.1",
+      "credentials": {
+        "openAiApi": {
+          "id": "hPPhcVMtTyQFIcPh",
+          "name": "Short"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "app9C2gEnbvMkv3aY",
+          "mode": "list",
+          "cachedResultName": "My News",
+          "cachedResultUrl": "https://airtable.com/app9C2gEnbvMkv3aY"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblWMU3oEwqm414r1",
+          "mode": "list",
+          "cachedResultName": "Table 1",
+          "cachedResultUrl": "https://airtable.com/app9C2gEnbvMkv3aY/tblWMU3oEwqm414r1"
+        },
+        "filterByFormula": "=DATETIME_DIFF(TODAY(), {created_date}, 'days') <= 1",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        -260,
+        620
+      ],
+      "id": "91520a59-9787-43a9-8a21-7e0106f65680",
+      "name": "retrieve_articles",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "41qukQemgSFlu4LS",
+          "name": "Short"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "use this tool to verify that each steps have been done correctly\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1,
+      "position": [
+        -120,
+        620
+      ],
+      "id": "8365d385-2f68-4643-800e-be8bb3170360",
+      "name": "think"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Récupérer la chaîne du lien depuis le nœud source\nconst fullLink = $node[\"Classifier Agent\"].json[\"link\"];\n// Appliquer le regex et capturer le groupe\nconst match = fullLink.match(/url=(.*?)&ct=/);\n// Retourner seulement la partie capturée (ou vide si pas de match)\nreturn [{\n  extractedUrl: match ? match[1] : \"\"\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -120,
+        -520
+      ],
+      "id": "3e0eee7f-3971-4cad-ac96-135ce6b3f0ff",
+      "name": "REGEX URL"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.extractedUrl }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        60,
+        -520
+      ],
+      "id": "0e196893-3512-4091-97ee-b44c3bddefd5",
+      "name": "Extract Article"
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "body",
+              "cssSelector": "body"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        260,
+        -520
+      ],
+      "id": "f520f9ce-9379-4eac-bc43-373959ae4057",
+      "name": "Keep Body"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "app9C2gEnbvMkv3aY",
+          "mode": "list",
+          "cachedResultName": "My News",
+          "cachedResultUrl": "https://airtable.com/app9C2gEnbvMkv3aY"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblWMU3oEwqm414r1",
+          "mode": "list",
+          "cachedResultName": "Table 1",
+          "cachedResultUrl": "https://airtable.com/app9C2gEnbvMkv3aY/tblWMU3oEwqm414r1"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "title": "={{ $('Classifier Agent').item.json.title }}",
+            "content": "={{ $json.body }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "content",
+              "displayName": "content",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "created_date",
+              "displayName": "created_date",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        500,
+        -520
+      ],
+      "id": "95555e1a-f874-4094-a6b3-1da9ca6befdb",
+      "name": "Add Article",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "41qukQemgSFlu4LS",
+          "name": "Short"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "sansonjuju@gmail.com",
+        "subject": "=Today's Newsletter - {{ $now }}",
+        "message": "={{ $json.output }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -20,
+        420
+      ],
+      "id": "4bafda50-1111-4285-beb6-04fb24642f32",
+      "name": "Send Newsletter",
+      "webhookId": "37bc51b3-05ed-4103-9713-1e50b8137319",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "R2ls1E9UtTCEn1Bg",
+          "name": "Short"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# Newsletter Generator",
+        "height": 560,
+        "width": 1020,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -780,
+        280
+      ],
+      "id": "bef747db-c2e7-4fc1-b24a-803321de38f9",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Retrieve Article",
+        "height": 280,
+        "width": 620,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -180,
+        -600
+      ],
+      "id": "add25bf4-619f-49bf-8caf-99a6f2be999f",
+      "name": "Sticky Note1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "4": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Classifier Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Feed Trigger": {
+      "main": [
+        [
+          {
+            "node": "Classifier Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classifier Agent": {
+      "main": [
+        [
+          {
+            "node": "REGEX URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "My Newsletter Agent 📨",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "4.1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "My Newsletter Agent 📨",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "retrieve_articles": {
+      "ai_tool": [
+        [
+          {
+            "node": "My Newsletter Agent 📨",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "think": {
+      "ai_tool": [
+        [
+          {
+            "node": "My Newsletter Agent 📨",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "REGEX URL": {
+      "main": [
+        [
+          {
+            "node": "Extract Article",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Article": {
+      "main": [
+        [
+          {
+            "node": "Keep Body",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Keep Body": {
+      "main": [
+        [
+          {
+            "node": "Add Article",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "My Newsletter Agent 📨": {
+      "main": [
+        [
+          {
+            "node": "Send Newsletter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "7da98497-1c22-454f-8c9b-6acccde2d813",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2c4533c7a1e56e822a6fde3f376121580e6f7d83dda36974d922278fe743aa10"
+  },
+  "id": "nOVpYSg7AlhJqAad",
+  "tags": [
+    {
+      "createdAt": "2025-05-10T17:40:56.653Z",
+      "updatedAt": "2025-05-10T17:40:56.653Z",
+      "id": "LKPrgcXG9YOy7zZ5",
+      "name": "Short"
+    }
+  ]
+}
