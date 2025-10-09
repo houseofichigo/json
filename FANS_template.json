@@ -1,0 +1,727 @@
+{
+  "name": "FANS template",
+  "nodes": [
+    {
+      "parameters": {
+        "jsCode": "const signatureHeader = $input.first().json.headers[\"stripe-signature\"]\n// Split the header by comma\nconst parts = signatureHeader.split(',');\n\n// Build the object by splitting each part at the first '='\nconst result = {};\nfor (const part of parts) {\n  const [key, value] = part.split('=', 2);\n  result[key] = value;\n}\n\n// Output the object for use in your workflow\nreturn [{ json: result }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        200,
+        420
+      ],
+      "id": "b6e6fa03-a5ed-4339-bdf5-31c5372a72b8",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "action": "hmac",
+        "type": "SHA256",
+        "value": "={{ $json.t }}.{{ JSON.stringify($('Stripe Payment Webhook').item.json.body, null, 2) }}",
+        "dataPropertyName": "computedSignature",
+        "secret": "=whsec_6raIj0CCvFHASorz020H1TuLlqaZTPBMPA"
+      },
+      "type": "n8n-nodes-base.crypto",
+      "typeVersion": 1,
+      "position": [
+        420,
+        420
+      ],
+      "id": "4cae06f2-00a0-4b76-af32-d28fa8d0e609",
+      "name": "Crypto"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "8d392fdf-1787-4cd0-bbf2-8b40e7cbafae",
+              "leftValue": "={{ $json.v1 }}",
+              "rightValue": "={{ $json.computedSignature }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "782d4bad-4f32-4950-88fc-59829a77eb1f",
+              "leftValue": "={{ $('Stripe Payment Webhook').item.json.body.type }}",
+              "rightValue": "checkout.session.completed",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "f24fb433-5716-4254-883c-9f12570278b9",
+              "leftValue": "={{ ($now/1000) - $json.t }}",
+              "rightValue": "={{ 60 // This is in seconds }}",
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        640,
+        420
+      ],
+      "id": "1d594bd0-ddbd-4d0a-ab96-743d46e2908a",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "errorMessage": "Signature verification failed"
+      },
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        640,
+        600
+      ],
+      "id": "883a1c28-f693-4b7a-a5df-e6a34050da47",
+      "name": "Stop and Error"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.stripe.com/v1/payment_links",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer your_api_key"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "line_items[0][price]",
+              "value": "={{ $json.stripe_product_price_id }}"
+            },
+            {
+              "name": "line_items[0][quantity]",
+              "value": "=1"
+            },
+            {
+              "name": "after_completion[type]",
+              "value": "hosted_confirmation"
+            },
+            {
+              "name": "metadata[record_id]",
+              "value": "={{ $('Airtable').item.json.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1220,
+        -20
+      ],
+      "id": "4fc8bd58-a21b-4f12-bddc-6b9a582e2a9a",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appNVghWou9vRDPay",
+          "mode": "list",
+          "cachedResultName": "second base",
+          "cachedResultUrl": "https://airtable.com/appNVghWou9vRDPay"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblVOgqYLFs5YLclJ",
+          "mode": "list",
+          "cachedResultName": "FANS Professional Headshots",
+          "cachedResultUrl": "https://airtable.com/appNVghWou9vRDPay/tblVOgqYLFs5YLclJ"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $json.email }}",
+            "Payment Status": "UNPAID",
+            "Attachments": "[]",
+            "Name": "={{ $json.name }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Payment Status",
+              "displayName": "Payment Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "UNPAID",
+                  "value": "UNPAID"
+                },
+                {
+                  "name": "PAID",
+                  "value": "PAID"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Attachments",
+              "displayName": "Attachments",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        640,
+        -20
+      ],
+      "id": "25775cab-7196-4937-b70c-51f10baf8203",
+      "name": "Airtable",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "C57ZV0ROG1Rj41UZ",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"stripe_product_price_id\": \"price_1affWMIsvodfoKyZjcoH9Wb7f\"\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1040,
+        -20
+      ],
+      "id": "095cef49-d6fc-4199-a430-16cac0fc03f5",
+      "name": "Stripe Variables"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "999b6bfb-8e2f-468e-8ce0-c4e3f8280caa",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        -20
+      ],
+      "id": "07cf5fc3-dfda-4f44-9c15-29958765991e",
+      "name": "User Input from Form0",
+      "webhookId": "999b6bfb-8e2f-468e-8ce0-c4e3f8280caa"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "stripe",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        420
+      ],
+      "id": "11083bc0-cd2a-4df6-9da3-3be9aa840846",
+      "name": "Stripe Payment Webhook",
+      "webhookId": "40a2c6b8-787b-493b-93e7-73b303686df6"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"name\": \"{{ $('User Input from Form0').item.json.body.name }}\",\n  \"email\": \"{{ $('User Input from Form0').item.json.body.email }}\",\n  \"raw_image\": {{ $json.files.raw_image }}\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        420,
+        -20
+      ],
+      "id": "fcebcdbc-1056-4c1a-983e-454e889ad73c",
+      "name": "Input variables"
+    },
+    {
+      "parameters": {
+        "jsCode": "const files = $input.all().at(0)?.binary\nconst isfilesSent = typeof files === 'object' && Object.keys(files)?.length\n\nif(isfilesSent){\n  return { files }\n}\n\nreturn $input.all()"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        -20
+      ],
+      "id": "0861aa7e-c8cf-4a03-b7f9-2f19a3e99498",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"thankYouMessage\": \"<div class='flex flex-col items-center justify-center text-center space-y-4'><p>We've received your details, now please make the payment to confirm your order</p><a href='{{ $json.url || 'google.com' }}' target='_self' rel='noopener noreferrer'><button class='bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition'>Pay now & confirm my order</button></a></div>\"\n}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.2,
+      "position": [
+        1420,
+        -20
+      ],
+      "id": "efc095c3-060a-419b-95e6-ba15dfbff366",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://content.airtable.com/v0/appNVghWou9vRDPay/{{ $json.id }}/fldm8lojWy5hyLs3t/uploadAttachment",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "airtableTokenApi",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "contentType",
+              "value": "={{ $('Input variables').item.json.raw_image.mimeType }}"
+            },
+            {
+              "name": "file",
+              "value": "={{ $('Input variables').item.json.raw_image.data }}"
+            },
+            {
+              "name": "filename",
+              "value": "={{ $('Input variables').item.json.raw_image.fileName }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        840,
+        -20
+      ],
+      "id": "7be58c32-fbb1-4d24-ad42-5b82a7bd8d90",
+      "name": "Upload image",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "C57ZV0ROG1Rj41UZ",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"record_id\": \"{{ $('Stripe Payment Webhook').item.json.body.data.object.metadata.record_id }}\",\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        880,
+        420
+      ],
+      "id": "d7b5f312-9ea4-4307-9c81-e0283c88d044",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appNVghWou9vRDPay",
+          "mode": "list",
+          "cachedResultName": "second base",
+          "cachedResultUrl": "https://airtable.com/appNVghWou9vRDPay"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblVOgqYLFs5YLclJ",
+          "mode": "list",
+          "cachedResultName": "FANS Professional Headshots",
+          "cachedResultUrl": "https://airtable.com/appNVghWou9vRDPay/tblVOgqYLFs5YLclJ"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $json.record_id }}",
+            "Payment Status": "PAID"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Payment Status",
+              "displayName": "Payment Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "UNPAID",
+                  "value": "UNPAID"
+                },
+                {
+                  "name": "PAID",
+                  "value": "PAID"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Attachments",
+              "displayName": "Attachments",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1080,
+        420
+      ],
+      "id": "851f13df-a070-48e6-b071-e793da9bc58e",
+      "name": "Update user payment status",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "C57ZV0ROG1Rj41UZ",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# 1. Accept user input\n\nAccept user input from [Form0](https://form0.app) and store it in the database (Airtable)",
+        "height": 400,
+        "width": 1200
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -220,
+        -240
+      ],
+      "id": "52bf2242-151c-493f-9066-50696b0bdc87",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "# 2. Payment\n\nUse stripe to generate payment link and return it to user so they can pay",
+        "height": 400,
+        "width": 720
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1020,
+        -240
+      ],
+      "id": "579a75f6-d50b-4ced-806c-88a3a16c1753",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "# 3. Verify Payment\n\nSetup webhook to listen to stripe's successful payment event. [Watch this video](https://youtu.be/jtZbVZfIiZk) to learn how this works in detail.",
+        "height": 500,
+        "width": 1060
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -220,
+        260
+      ],
+      "id": "fc8ee6e3-0e9f-4c66-a71f-d9267d9097a2",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "# 4. Product/Service Delivery\n\nUser payment is successful, now it's time to deliver the promised product/service",
+        "height": 500,
+        "width": 560
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        860,
+        260
+      ],
+      "id": "4fe16c38-cfa2-4a44-a8d0-c1d697bd51d4",
+      "name": "Sticky Note3"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Crypto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crypto": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop and Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable": {
+      "main": [
+        [
+          {
+            "node": "Upload image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Stripe Variables": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "User Input from Form0": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Stripe Payment Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Input variables": {
+      "main": [
+        [
+          {
+            "node": "Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Input variables",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload image": {
+      "main": [
+        [
+          {
+            "node": "Stripe Variables",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Update user payment status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update user payment status": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "ed5cd80d-649f-45c7-a33a-610002131ac6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "89214beb80023fb6dd965ca995aa39ab8b01230f6dfebee590e804967a519975"
+  },
+  "id": "KR7ARMLzZifiBBzJ",
+  "tags": []
+}
