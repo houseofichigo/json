@@ -1,0 +1,614 @@
+{
+  "name": "Thumbnail Ideation",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Thumbnail Ideation",
+        "height": 440,
+        "width": 1680,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -100,
+        -120
+      ],
+      "id": "1ba9234b-3aec-43dc-843c-c3432f481d8a",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -40,
+        -60
+      ],
+      "id": "5bf08d0e-e66a-4ee2-a8ad-64bbfd4c212b",
+      "name": "Schedule Trigger1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "6e0f033c-5c93-4e86-a4ee-a23914a1384b",
+              "leftValue": "={{ $json.Status }}",
+              "rightValue": "Test",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        340,
+        -60
+      ],
+      "id": "07bbe875-ca89-444e-bf64-7bb690ec958e",
+      "name": "Filter1"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"thumbnails\": [\n    \"Insert thumbnail description 1\",\n    \"Insert thumbnail description 2\",\n    \"Insert thumbnail description 3\"\n  ]\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        700,
+        120
+      ],
+      "id": "d218e555-dd50-470e-b0c7-7e89b0aa080d",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "output.thumbnails",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        840,
+        -60
+      ],
+      "id": "4b0b769a-f5c3-4c64-aaa8-d993883001f2",
+      "name": "Split Out2"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Video Title:  {{ $json.Idea }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=#Role\nYou are a thumbnail creator specializing in generating high-impact, attention-grabbing thumbnail prompts for a YouTube channel focused on n8n automation and AI systems. Your task is to craft 3 descriptive thumbnail prompts for each provided video idea, designed to capture attention, increase click-through rates, and align with the core themes of the channel.\n\n#Task\nYou are given a video idea.\n\nFor each video idea, generate 3 unique thumbnail descriptions that:\n- **Highlight Key Concepts:** Clearly convey automation, efficiency, and tech power using n8n and AI systems.\n- **Trigger Curiosity:** Use powerful action words and emotional triggers like \"Breakthrough,\" \"Dominate,\" or \"Revolutionize\" to drive clicks.\n- **Stand Out Visually:** Use **Studio Ghibli anime style** as the default visual theme to create distinctive, emotionally resonant thumbnails.\n- **Avoid Brand Violations:** Focus on generic, creative elements without direct references to specific platforms (e.g., TikTok, Instagram) to avoid trademark issues.\n- **Make sure the image is generated in landscape view by adding \"Studio Ghibli anime style, landscape shot\" at the end of the prompt.**\n\n#Output Format\n```json\n{\n  \"thumbnails\": [\n    \"Insert thumbnail description 1\",\n    \"Insert thumbnail description 2\",\n    \"Insert thumbnail description 3\"\n  ]\n}\n```\n\n##Example 1\nVideo Title: Creating Viral Short-Form Content with AI Automations  \nThumbnails:  \n```json\n{\n  \"thumbnails\": [\n    \"A high-energy scene with a creator surrounded by glowing workflow icons and content nodes, text 'Go Viral with Automations!', Studio Ghibli anime style, landscape shot\",\n    \"A futuristic dashboard with exploding charts and bright neon lights, text 'Automate Your Reach!', Studio Ghibli anime style, landscape shot\",\n    \"A creator sitting in front of a giant smartphone screen with digital agents working in the background, text 'Crack the Algorithm!', Studio Ghibli anime style, landscape shot\"\n  ]\n}\n```\n\n##Example 2\nVideo Title: Building a 24/7 AI System with n8n  \nThumbnails:  \n```json\n{\n  \"thumbnails\": [\n    \"A creator pointing to a glowing automation workflow with interconnected AI nodes, text 'Automate Everything!', Studio Ghibli anime style, landscape shot\",\n    \"A split image showing a tired creator on one side and a relaxed one on the other with digital agents working behind, text 'Work Less, Automate More!', Studio Ghibli anime style, landscape shot\",\n    \"A glowing circuit board with digital nodes lighting up, connected to AI systems, text 'Power Up Your Workflow!', Studio Ghibli anime style, landscape shot\"\n  ]\n}\n```\n\n#Additional Considerations:\n- **Emotion Triggers:** Use power words like \"Breakthrough,\" \"Unleash,\" or \"Dominate\" for maximum impact.\n- **Contrast and Color:** Use bright, eye-catching colors that stand out in YouTube’s dark mode.\n- **Dynamic Elements:** Include elements like sparks, light trails, or intense glows for high-energy effects.\n- **Brand Safe Language:** Focus on creative language without direct brand names to avoid content policy violations.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        520,
+        -60
+      ],
+      "id": "270c7733-ad76-4ff6-9e4b-6a8bc1e7695e",
+      "name": "Thumbnail Generator Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1000,
+        -60
+      ],
+      "id": "8f80ee25-b889-43a5-838d-565f1824ec8b",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {
+        "name": "={{ $runIndex + 1 }}.png",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1Lbmw86iOQRSwVonZexjcuVXglHgDw6JY",
+          "mode": "list",
+          "cachedResultName": "73.1 Thumbnail Test ",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1Lbmw86iOQRSwVonZexjcuVXglHgDw6JY"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1040,
+        100
+      ],
+      "id": "2e03bf78-e958-4ed1-8985-be645bf19859",
+      "name": "Upload Images",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "9WRrz2c8ZemVzlPL",
+          "name": "Google Drive account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "model": "gpt-image-1",
+        "prompt": "={{ $json['output.thumbnails'] }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        1220,
+        -60
+      ],
+      "id": "db9731b7-a38b-48d8-95bb-ed818ef4cc8f",
+      "name": "AI Image Generator",
+      "credentials": {
+        "openAiApi": {
+          "id": "s5wn58j1UNzVGfuF",
+          "name": "OpenAI Account 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appiL64mFdOILekfb",
+          "mode": "list",
+          "cachedResultName": "Youtube Competitor Analysis",
+          "cachedResultUrl": "https://airtable.com/appiL64mFdOILekfb"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbl8uFdVhUSJaLhbk",
+          "mode": "list",
+          "cachedResultName": "Thumbnails",
+          "cachedResultUrl": "https://airtable.com/appiL64mFdOILekfb/tbl8uFdVhUSJaLhbk"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Thumbnail Prompt": "={{ $('Loop Over Items1').item.json['output.thumbnails'] }}",
+            "thumbnail": "={{ $json.webViewLink }}",
+            "Video Ideas": "={{[ $('Filter1').item.json.id ]}}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Thumbnail Prompt",
+              "displayName": "Thumbnail Prompt",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "thumbnail",
+              "displayName": "thumbnail",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Video Ideas",
+              "displayName": "Video Ideas",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1240,
+        100
+      ],
+      "id": "9e3b48b5-fad3-4761-b014-70f81b21f1d4",
+      "name": "Create New Image",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appiL64mFdOILekfb",
+          "mode": "list",
+          "cachedResultName": "Youtube Competitor Analysis",
+          "cachedResultUrl": "https://airtable.com/appiL64mFdOILekfb"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblqYq3gbpyADxMpe",
+          "mode": "list",
+          "cachedResultName": "Video Ideas",
+          "cachedResultUrl": "https://airtable.com/appiL64mFdOILekfb/tblqYq3gbpyADxMpe"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Filter1').item.json.id }}",
+            "Status": "Titles Thumbnails Generated"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true
+            },
+            {
+              "id": "Idea",
+              "displayName": "Idea",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Virality Value",
+              "displayName": "Virality Value",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Relevancy to Channel",
+              "displayName": "Relevancy to Channel",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Total Score (Out Of 20)",
+              "displayName": "Total Score (Out Of 20)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Test",
+                  "value": "Test"
+                },
+                {
+                  "name": "Titles Thumbnails Generated",
+                  "value": "Titles Thumbnails Generated"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Viral Title",
+              "displayName": "Viral Title",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Videos",
+              "displayName": "Videos",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1400,
+        -60
+      ],
+      "id": "dd2b7307-3f5e-43cf-916e-06a561797cdd",
+      "name": "Update Status1",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        480,
+        140
+      ],
+      "id": "c0d309aa-a6f8-4128-943b-f4b529354cb5",
+      "name": "gpt4o mini1",
+      "credentials": {
+        "openAiApi": {
+          "id": "s5wn58j1UNzVGfuF",
+          "name": "OpenAI Account 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appiL64mFdOILekfb",
+          "mode": "list",
+          "cachedResultName": "Youtube Competitor Analysis",
+          "cachedResultUrl": "https://airtable.com/appiL64mFdOILekfb"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblqYq3gbpyADxMpe",
+          "mode": "list",
+          "cachedResultName": "Video Ideas",
+          "cachedResultUrl": "https://airtable.com/appiL64mFdOILekfb/tblqYq3gbpyADxMpe"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        160,
+        -60
+      ],
+      "id": "c044ee33-38db-4148-bd1b-c2e6d0331427",
+      "name": "Search Airtable1",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Search Airtable1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter1": {
+      "main": [
+        [
+          {
+            "node": "Thumbnail Generator Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Thumbnail Generator Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Thumbnail Generator Agent": {
+      "main": [
+        [
+          {
+            "node": "Split Out2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [
+          {
+            "node": "Update Status1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI Image Generator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Images": {
+      "main": [
+        [
+          {
+            "node": "Create New Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Image Generator": {
+      "main": [
+        [
+          {
+            "node": "Upload Images",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create New Image": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "gpt4o mini1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Thumbnail Generator Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Airtable1": {
+      "main": [
+        [
+          {
+            "node": "Filter1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "df44c23f-18db-41cf-935f-f23fe1ada1a2",
+  "meta": {
+    "instanceId": "d8c459f4ebcadd20c3258ade09582fe0f02de933363f6184259e0c9a36784090"
+  },
+  "id": "kd37LDqNlONKnG2J",
+  "tags": [
+    {
+      "createdAt": "2025-05-14T06:57:42.256Z",
+      "updatedAt": "2025-05-14T06:58:02.365Z",
+      "id": "7vgDEtMqSnfZppPt",
+      "name": "W12: Youtube Scraper"
+    }
+  ]
+}
