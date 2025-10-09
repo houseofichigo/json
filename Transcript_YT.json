@@ -1,0 +1,198 @@
+{
+  "name": "Transcript YT",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "https://youtube-transcript3.p.rapidapi.com/api/transcript-with-url",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "url",
+              "value": "={{ $json.URL }}"
+            },
+            {
+              "name": "flat_text",
+              "value": "true"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-rapidapi-key",
+              "value": "<YOUR_API_KEY>"
+            },
+            {
+              "name": "x-rapidapi-host",
+              "value": "youtube-transcript3.p.rapidapi.com"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        320,
+        -500
+      ],
+      "id": "a97d6072-635c-4ed5-8818-d2bc34cff760",
+      "name": "Transcribe"
+    },
+    {
+      "parameters": {
+        "formTitle": "Get URL",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "URL",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        60,
+        -500
+      ],
+      "id": "8705b207-8674-4d62-a47d-2c49cfa8639a",
+      "name": "On form submission",
+      "webhookId": "1e8aa823-abac-4eab-b461-d1d0d2c69e22"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -40,
+        20
+      ],
+      "id": "35e6a7ed-6176-4187-ac74-43b5deb43cc3",
+      "name": "4.1",
+      "credentials": {
+        "openAiApi": {
+          "id": "YVjaGIDWEYEayX2l",
+          "name": "RAG Doc"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Here is the transcript : {{ $json.transcript }}",
+        "options": {
+          "systemMessage": "## Role\nYou are an assistant agent. \n\n\n## Mission\nYou will receive Youtube Videos transcripts ad your job is to extract key informations, keep complete informations but arrange it to be readable and organized. \n\nThe output must be in HTML format. "
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        40,
+        -220
+      ],
+      "id": "204d7e79-01f7-4e35-bce5-98cd6ab0a178",
+      "name": "Summary Agent"
+    },
+    {
+      "parameters": {
+        "sendTo": "<YOUR_EMAIL_ADDRESS>",
+        "subject": "Video Transcript",
+        "message": "={{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        420,
+        -220
+      ],
+      "id": "ebb7d149-3d6b-419e-b18e-89dcf2a4aaca",
+      "name": "Send Email",
+      "webhookId": "c1b0acf4-5408-4513-911d-56b6cf32f661",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "HolFUAtOWR2pZyuQ",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Transcribe": {
+      "main": [
+        [
+          {
+            "node": "Summary Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Transcribe",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "4.1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Summary Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summary Agent": {
+      "main": [
+        [
+          {
+            "node": "Send Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1785d56a-cba0-45e0-bf2f-bc4655b959dd",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2c4533c7a1e56e822a6fde3f376121580e6f7d83dda36974d922278fe743aa10"
+  },
+  "id": "iZmCeDG5oTOUVBCe",
+  "tags": [
+    {
+      "createdAt": "2025-05-10T17:40:56.653Z",
+      "updatedAt": "2025-05-10T17:40:56.653Z",
+      "id": "LKPrgcXG9YOy7zZ5",
+      "name": "Short"
+    }
+  ]
+}
