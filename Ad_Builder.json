@@ -1,0 +1,431 @@
+{
+  "name": "Ad Builder",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "adcreator",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -540,
+        -280
+      ],
+      "id": "b7fa5b24-8069-4e4b-b6e8-c0996d35796d",
+      "name": "Webhook",
+      "webhookId": "f1c8d668-594b-428d-a829-8f74c99b5491"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-4o",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -220,
+        220
+      ],
+      "id": "60b3622a-dd39-4794-8430-30d8c0ff72e9",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "y1vjMptfuqUZLu87",
+          "name": "Openrouter Key 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Google Drive').item.json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        220,
+        -20
+      ],
+      "id": "92b14d15-589d-453e-9e83-b84935e20b31",
+      "name": "Download File",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "9WRrz2c8ZemVzlPL",
+          "name": "Google Drive account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/images/edits",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "image",
+              "inputDataFieldName": "data"
+            },
+            {
+              "name": "prompt",
+              "value": "={{ $json.output }}"
+            },
+            {
+              "name": "model",
+              "value": "gpt-image-1"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        440,
+        -40
+      ],
+      "id": "a1da7c90-7a01-482f-a382-6ce4486dd669",
+      "name": "Create Ad Image",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "iMF3QDOGv5O2t2g2",
+          "name": "OpenAI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=1.Product name: {{ $('Webhook').item.json.body.name }}\n2.Ad Copy Request: {{ $('Webhook').item.json.body.copy }}\n3.Image Style: {{ $('Webhook').item.json.body.style }}\n4.Aspect Ratio: {{ $('Webhook').item.json.body.ratio }}",
+        "options": {
+          "systemMessage": "=# Role  \nYou are an advanced ad prompt generator for e-commerce. Your job is to produce exactly one concise, richly detailed paragraph (no more than 50 words) for image generation, and to include **only** the specific headline, caption, or supporting text the user requests—never invent extra copy.\n\n# Inputs  \n1. **Product Name**  \n2. **Ad Copy Request** (e.g., “Headline: …”, “Caption: …”, “no text”)  \n3. **Image Style**  \n4. **Aspect Ratio**  \n5. **Product Image**\n\n# Output Requirements  \n- **Image Generation Prompt:** one complete paragraph, ≤50 words, referencing the product image, style, aspect ratio, composition, mood, and any requested text.  \n- **Headline/Caption/Supporting Text:** include only if explicitly requested.\n\n# Tone and Voice  \nFollow any user-specified tone (e.g., playful, professional). Be precise and relevant—no extra flair.\n\n# Constraints  \n- Do not exceed 50 words in the image prompt.  \n- Do not add or omit text elements beyond the user’s request.\n\n#Examples\n\n##Example 1: Headline only\nInput:\nProduct Name: Bigobottle\nAd Copy Request: Headline: “Make Water Healthy Again”\nImage Style: Anime\nAspect Ratio: 1:1\nProduct Image: bigobottle.png\n\nOutput:\nClean anime-style 1:1 image of the provided Bigobottle centered on a bright yellow background with glossy water splash effects for freshness, minimal clutter, soft blue sparkles, and bold white headline text space at top.\nHeadline: Make Water Healthy Again\n\n## Example 2: No Text\nProduct Name: Lumino LED Lamp\nAd Copy Request: no text\nImage Style: Realistic\nAspect Ratio: 9:16\nProduct Image: lumino.png\n\nOutput:\nRealistic 9:16 portrait featuring the provided Lumino LED Lamp on a minimalist nightstand in a softly lit modern bedroom with blurred background, natural light highlighting the lamp’s sleek contours and subtle reflections, and no text anywhere in the image.\n\n## Example 3: Caption and Supporting Text\nInput:\nProduct Name: GreenSip Herbal Tea\nAd Copy Request: Caption: “Find Your Calm.” Supporting Text: “Soothing herbal blends for restful nights.”\nImage Style: Minimalist illustration\nAspect Ratio: 16:9\nProduct Image: greensip.png\n\nOutput:\nMinimalist 16:9 illustrated scene featuring the provided GreenSip Herbal Tea box and steaming cup centered on pale green background with faint leaf motifs, “Find Your Calm.” scripted elegantly at top left and “Soothing herbal blends for restful nights.” in simple font at bottom right.\nCaption: Find Your Calm.\nSupporting Text: Soothing herbal blends for restful nights."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        -160,
+        -20
+      ],
+      "id": "3038a957-feb7-4c8e-8b24-73a5ab1836ed",
+      "name": "Ad Prompt Agent"
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "data[0].b64_json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        640,
+        -60
+      ],
+      "id": "7ef53e9d-dd3c-4c2b-8069-417a413b14a2",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "name": "={{ $('Webhook').item.json.body.Name }}_ad",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1AsVxtyIOGbysg8AiWNGzcu7--wWYcpUy",
+          "mode": "list",
+          "cachedResultName": "74. Generated Images",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1AsVxtyIOGbysg8AiWNGzcu7--wWYcpUy"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        800,
+        -60
+      ],
+      "id": "5199ef69-48cf-40f9-9e51-d37b463add30",
+      "name": "Google Drive1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "9WRrz2c8ZemVzlPL",
+          "name": "Google Drive account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"imageUrl\": \"https://drive.google.com/uc?export=view&id={{$json.id}}\"\n}",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.2,
+      "position": [
+        960,
+        -60
+      ],
+      "id": "beb3391f-191f-42cd-9baf-4aef001cd898",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fb7c95b2-fc9d-424e-96d2-8318f0e96558",
+              "name": "data",
+              "value": "={{ $json.body.image.split(',')[1] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -320,
+        -280
+      ],
+      "id": "08ea08f6-ebf3-4238-bbef-6e66e4ed6a31",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "data",
+        "options": {
+          "fileName": "={{ $('Webhook').item.json.body.name }}_product",
+          "mimeType": "image/jpeg"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        -120,
+        -280
+      ],
+      "id": "5299f6d2-938d-444f-b457-fc89120faad5",
+      "name": "Convert to File1"
+    },
+    {
+      "parameters": {
+        "name": "={{ $('Webhook').item.json.body.name }}_product",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "16jO-HbU0zAENF0EAoYibLtorMllL8Ds3",
+          "mode": "list",
+          "cachedResultName": "Images For Ads",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/16jO-HbU0zAENF0EAoYibLtorMllL8Ds3"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        100,
+        -280
+      ],
+      "id": "f2418360-e1bd-453a-a363-352f54ffc6b7",
+      "name": "Google Drive",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "9WRrz2c8ZemVzlPL",
+          "name": "Google Drive account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        280,
+        240
+      ],
+      "id": "e99fad78-2a0a-4e0c-ac91-4327490d8e50",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "s5wn58j1UNzVGfuF",
+          "name": "OpenAI Account 1"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Ad Prompt Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download File": {
+      "main": [
+        [
+          {
+            "node": "Create Ad Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ad Prompt Agent": {
+      "main": [
+        [
+          {
+            "node": "Download File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Ad Image": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Google Drive1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Convert to File1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File1": {
+      "main": [
+        [
+          {
+            "node": "Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Ad Prompt Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "9bdc88f1-c049-47c2-84e5-da7628fc3557",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d8c459f4ebcadd20c3258ade09582fe0f02de933363f6184259e0c9a36784090"
+  },
+  "id": "QSshXPEQMmLZdLNC",
+  "tags": [
+    {
+      "createdAt": "2025-05-17T06:55:35.181Z",
+      "updatedAt": "2025-05-17T06:55:35.181Z",
+      "id": "tV05iegPfVF22lXX",
+      "name": "W13: Ad Image Generator"
+    }
+  ]
+}
