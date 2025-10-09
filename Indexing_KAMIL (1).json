@@ -1,0 +1,610 @@
+{
+  "name": "Indexing KAMIL",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "f3372663-c26c-4266-b5b9-3d559bc73524",
+      "name": "When clicking \"Test workflow\"",
+      "type": "n8n-nodes-base.manualTrigger",
+      "position": [
+        380,
+        440
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "urlset.url",
+        "options": {}
+      },
+      "id": "bd35f8f2-b52d-4288-914e-7cb0d713e825",
+      "name": "Split Out",
+      "type": "n8n-nodes-base.splitOut",
+      "position": [
+        1800,
+        340
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "url": "=https://indexing.googleapis.com/v3/urlNotifications/metadata?url={{ encodeURIComponent($json.loc) }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleOAuth2Api",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "id": "b7cf2bc8-a951-4494-a613-6e9ff4f800f7",
+      "name": "Check status",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        2860,
+        380
+      ],
+      "retryOnFail": false,
+      "typeVersion": 4.1,
+      "credentials": {
+        "googleOAuth2Api": {
+          "id": "tJ6w1AN1MPhDRZN8",
+          "name": "Google Account - Index - Seosshopify"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "0a799969-29a0-4513-ad5b-4779aea5833a",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "position": [
+        2660,
+        340
+      ],
+      "typeVersion": 3
+    },
+    {
+      "parameters": {
+        "amount": "={{ Math.min(1.5,0.3+3*Math.random()).toFixed(2) }}",
+        "unit": "seconds"
+      },
+      "id": "70634b70-0964-490b-87fb-2fb027501c03",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "position": [
+        3400,
+        380
+      ],
+      "webhookId": "a614dd7b-d222-4ad9-a384-6cca299cb29a",
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://indexing.googleapis.com/v3/urlNotifications:publish",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleOAuth2Api",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "url",
+              "value": "={{ $('Loop Over Items').item.json.loc }}"
+            },
+            {
+              "name": "type",
+              "value": "URL_UPDATED"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b0285cbf-d4a5-4098-b2e5-724f982ca0b8",
+      "name": "URL Updated",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        3160,
+        380
+      ],
+      "typeVersion": 4.1,
+      "credentials": {
+        "googleOAuth2Api": {
+          "id": "tJ6w1AN1MPhDRZN8",
+          "name": "Google Account - Index - Seosshopify"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 2,
+              "triggerAtMinute": 5
+            }
+          ]
+        }
+      },
+      "id": "ee2ce89e-7915-4ba5-9f7f-871197d61037",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [
+        380,
+        240
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "loose"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "c8566fc4-57cf-4272-841e-014bb354a37d",
+              "operator": {
+                "type": "dateTime",
+                "operation": "after"
+              },
+              "leftValue": "={{ $('Loop Over Items').item.json.lastmod }}",
+              "rightValue": "={{ $json.body.latestUpdate.notifyTime }}"
+            }
+          ]
+        },
+        "options": {
+          "looseTypeValidation": true
+        }
+      },
+      "id": "e7bad1e1-632c-4a52-9c43-c53fb7119735",
+      "name": "is new?",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        3020,
+        260
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "sitemapindex.sitemap",
+        "options": {}
+      },
+      "id": "572faf3f-af8d-4a18-8f2d-900443ac3d82",
+      "name": "Get content-specific sitemaps",
+      "type": "n8n-nodes-base.splitOut",
+      "position": [
+        1060,
+        340
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "a5cd648c-5242-4756-a7df-a15de419cbe6",
+      "name": "Convert sitemap to JSON",
+      "type": "n8n-nodes-base.xml",
+      "position": [
+        880,
+        340
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8d16114b-1d1a-4522-a550-6c799a44538a",
+              "name": "=urlset.url",
+              "type": "array",
+              "value": "={{ $json.urlset.url[0] ? $json.urlset.url : [$json.urlset.url] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "580d985d-a1b6-47ec-b354-d4e63798a576",
+      "name": "Force urlset.url to array",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        1640,
+        340
+      ],
+      "typeVersion": 3.3
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bb0e1337-6fda-4a22-9963-d0b1271fc2a6",
+              "name": "lastmod",
+              "type": "string",
+              "value": "={{ $json.lastmod }}"
+            },
+            {
+              "id": "e7517c23-f989-4d75-9078-d82c75e51c65",
+              "name": "loc",
+              "type": "string",
+              "value": "={{ $json.loc }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "45658b32-b342-455a-9cc5-6215433d8d15",
+      "name": "Assign mandatiry sitemap fields",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        2320,
+        340
+      ],
+      "typeVersion": 3.3
+    },
+    {
+      "parameters": {
+        "options": {
+          "explicitArray": false
+        }
+      },
+      "id": "7872f332-2ec1-4463-9585-80daf2c4b82c",
+      "name": "convert page data to JSON",
+      "type": "n8n-nodes-base.xml",
+      "position": [
+        1440,
+        340
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "url": "https://www.uniquetiles.com/sitemap_index.xml",
+        "options": {}
+      },
+      "id": "1c95fbb1-65d9-443c-8c42-1b8b2d92d872",
+      "name": "Get sitemap.xml",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        700,
+        340
+      ],
+      "typeVersion": 4.1
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.loc }}",
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1,
+              "batchInterval": 150
+            }
+          }
+        }
+      },
+      "id": "5e5902d4-6bfe-430a-8fe1-fd506dc52f37",
+      "name": "Get content of each sitemap",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        1260,
+        340
+      ],
+      "typeVersion": 4.1
+    },
+    {
+      "parameters": {
+        "sortFieldsUi": {
+          "sortField": [
+            {
+              "fieldName": "lastmod",
+              "order": "descending"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "755602db-630c-4cc0-96ad-152b111d4050",
+      "name": "Sort",
+      "type": "n8n-nodes-base.sort",
+      "position": [
+        1960,
+        340
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Check URL metadata and update, if:\n* Google returns error (404 error means that this URL was not previously added)\n* Date of article update is after the date of last request to re-index",
+        "height": 431.1089918072487,
+        "width": 504.2424242424241
+      },
+      "id": "c54c0207-939d-4e69-b119-7291e39b5044",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2820,
+        100
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Update the `lastmod` and `loc` fields\nThese are pre-defined fields according to [the XML schema for the Sitemap protocol](https://www.sitemaps.org/protocol.html).\n\nIf your CMS system has different field names, please rename them here:\n* the last modified field `lastmod`\n* URL of the page in `loc` field",
+        "height": 451.39712985292624,
+        "width": 459.2224448897797,
+        "color": 3
+      },
+      "id": "810597fd-22a7-4963-a988-ae846c442aaf",
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2140,
+        100
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Feel free to adapt this part depending on your website CMS\n",
+        "height": 453.3292476478371,
+        "width": 1458.468937875752,
+        "color": 6
+      },
+      "id": "10f71db8-8f66-4f34-8ac6-47acee92ce84",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        660,
+        100
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Collect list of URLs\n\nThis part extracts all pages from all sitemaps and sorts by the last modified date `lastmod` (from newest to oldest)",
+        "height": 340.39627039627067,
+        "width": 851.3475816949383
+      },
+      "id": "6adb342c-8672-4433-b9af-d7f334f2e0b8",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1220,
+        160
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Get sitemap.xml\nVarious CMS systems often have multiple sitemaps for different content (posts, tags, pages etc). Need to fetch all sitemaps first and then extract all pages from all sitemaps.\n### Remember to update the real sitemap URL!",
+        "height": 335.72259887005646,
+        "width": 515.8058994999984
+      },
+      "id": "62e80e0f-1bda-4d49-a17f-1a9b2be5ccef",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        680,
+        180
+      ],
+      "typeVersion": 1
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Sort": {
+      "main": [
+        [
+          {
+            "node": "Assign mandatiry sitemap fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "is new?": {
+      "main": [
+        [
+          {
+            "node": "URL Updated",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Sort",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "URL Updated": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check status": {
+      "main": [
+        [
+          {
+            "node": "is new?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "URL Updated",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get sitemap.xml": {
+      "main": [
+        [
+          {
+            "node": "Convert sitemap to JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Check status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get sitemap.xml",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert sitemap to JSON": {
+      "main": [
+        [
+          {
+            "node": "Get content-specific sitemaps",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Force urlset.url to array": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "convert page data to JSON": {
+      "main": [
+        [
+          {
+            "node": "Force urlset.url to array",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get content of each sitemap": {
+      "main": [
+        [
+          {
+            "node": "convert page data to JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get content-specific sitemaps": {
+      "main": [
+        [
+          {
+            "node": "Get content of each sitemap",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking \"Test workflow\"": {
+      "main": [
+        [
+          {
+            "node": "Get sitemap.xml",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Assign mandatiry sitemap fields": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "59b85552-3d2d-4914-85b8-b764a5fe8e21",
+  "meta": {
+    "templateId": "2210",
+    "instanceId": "190e1b81e9845aeb2f58812b2e7f9c8a86cb13b1e8883f6c2bfaa8050710ae79"
+  },
+  "id": "MBJdF7sl3vqYXVzP",
+  "tags": []
+}
