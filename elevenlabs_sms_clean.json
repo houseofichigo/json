@@ -1,0 +1,116 @@
+{
+  "name": "elevenlabs-send-sms",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "webhook-path-id",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -100,
+        0
+      ],
+      "id": "c2c72d3e-24a7-4492-884c-d515d991b194",
+      "name": "Webhook",
+      "webhookId": "webhook-path-id"
+    },
+    {
+      "parameters": {
+        "from": "+1XXXXXXXXXX",
+        "to": "={{ $json.query.number }}",
+        "message": "={{ $json.query.sms_message }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [
+        60,
+        0
+      ],
+      "id": "72ea6dfe-c473-4280-86ce-d78f319baffb",
+      "name": "Twilio",
+      "credentials": {
+        "twilioApi": {
+          "id": "your-twilio-credentials-id",
+          "name": "Twilio account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "tableId": "n8n_chat_histories",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "session_id",
+              "fieldValue": "={{ $('Webhook').item.json.query.number }}"
+            },
+            {
+              "fieldId": "message",
+              "fieldValue": "={\"type\": \"ai\", \"content\": \"{{ $('Webhook').item.json.query.sms_message }}\", \"additional_kwargs\": {}, \"response_metadata\": {}}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        220,
+        0
+      ],
+      "id": "7e8addfa-576e-483e-bb14-5aa4abd12c3e",
+      "name": "Supabase",
+      "credentials": {
+        "supabaseApi": {
+          "id": "your-supabase-credentials-id",
+          "name": "Supabase account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Twilio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Twilio": {
+      "main": [
+        [
+          {
+            "node": "Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "your-version-id",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "your-instance-id"
+  },
+  "id": "your-workflow-id",
+  "tags": [
+    {
+      "createdAt": "2025-03-27T09:59:28.159Z",
+      "updatedAt": "2025-03-27T09:59:28.159Z",
+      "id": "your-tag-id",
+      "name": "youtube"
+    }
+  ]
+}
