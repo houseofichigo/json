@@ -1,0 +1,1986 @@
+{
+  "name": "Customm_ICP_AGENT_MVP",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Target Audience Description ",
+        "formDescription": "Please describe your target audience in more detail. Which target audience is particularly important among your LinkedIn contacts?\n\n--- CUSTOMM ---",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Role / Title",
+              "placeholder": "e.g.: CEO, HR Manager, Head of Product, VP of Sales, etc.",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Industry",
+              "placeholder": "What industries are you targeting?",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "ARR",
+              "placeholder": "What is their annual (recurring) revenue?"
+            },
+            {
+              "fieldLabel": "Marketing Budget (monthly)",
+              "placeholder": ">1000€,  3000€, 5000€, <5000- 10000€"
+            },
+            {
+              "fieldLabel": "Geographical Location",
+              "placeholder": "Is there a specific region you’re targeting?",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Problems & Pain Points",
+              "placeholder": "You know of specific problems your ideal customer have ? How does this affect their work?",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Wishes & Dreams",
+              "placeholder": "What is your ideal customers dream outcome? ",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Influences & Interests",
+              "placeholder": "What organziational objectives do you have for the next 6-12 months? (e.g.: validation, scaling, market expansion, etc.)",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Your Unique Selling Point",
+              "placeholder": "What sets your product/service apart? Why do customers choose you over someone else?"
+            },
+            {
+              "fieldLabel": "ConnectionFile",
+              "fieldType": "file",
+              "multipleFiles": false,
+              "acceptFileTypes": ".csv",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -2440,
+        -260
+      ],
+      "id": "154cf5bc-9618-4c8f-8ca7-ddf2da1f3e1b",
+      "name": "On form submission1",
+      "webhookId": "9bc27a3a-b8e2-45fd-b33e-9ae879c9ab64",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appeA2s5zS4JpjR1y",
+          "mode": "list",
+          "cachedResultName": "TEST_Leads_List",
+          "cachedResultUrl": "https://airtable.com/appeA2s5zS4JpjR1y"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblim2FVy1uCwX2qs",
+          "mode": "list",
+          "cachedResultName": "LinkedIn Contacts",
+          "cachedResultUrl": "https://airtable.com/appeA2s5zS4JpjR1y/tblim2FVy1uCwX2qs"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "First Name": "={{ $json['First Name'] }}",
+            "Last Name": "={{ $json['Last Name'] }}",
+            "URL": "={{ $json.URL }}",
+            "Company": "={{ $json.Company }}",
+            "Position": "={{ $json.Position }}",
+            "Connected On": "={{ $json['Connected On'] }}",
+            "Total Funding": 0,
+            "Founded Year": 0,
+            "Employees": 0,
+            "Annual Revenue": 0
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "First Name",
+              "displayName": "First Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Last Name",
+              "displayName": "Last Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "URL",
+              "displayName": "URL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Connected On",
+              "displayName": "Connected On",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "EMail",
+              "displayName": "EMail",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Company",
+              "displayName": "Company",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Position",
+              "displayName": "Position",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Seniority",
+              "displayName": "Seniority",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Industry",
+              "displayName": "Industry",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Departments",
+              "displayName": "Departments",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Annual Revenue",
+              "displayName": "Annual Revenue",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Employees",
+              "displayName": "Employees",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "State",
+              "displayName": "State",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "City",
+              "displayName": "City",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Country",
+              "displayName": "Country",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Founded Year",
+              "displayName": "Founded Year",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Company URL",
+              "displayName": "Company URL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Company LinkedIn URL",
+              "displayName": "Company LinkedIn URL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Company Phone",
+              "displayName": "Company Phone",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Company Description",
+              "displayName": "Company Description",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Total Funding",
+              "displayName": "Total Funding",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Latest Funding Round Date",
+              "displayName": "Latest Funding Round Date",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Latest Funding Stage",
+              "displayName": "Latest Funding Stage",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Current Technologie",
+              "displayName": "Current Technologie",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Keywords",
+              "displayName": "Keywords",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Last Modified",
+              "displayName": "Last Modified",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -1700,
+        -260
+      ],
+      "id": "0cb35404-1a05-4995-9071-799515534f9d",
+      "name": "LinkedIn Follower",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "9xa5W4S5FDIPpMtw",
+          "name": "TEST_Leads_List"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "binaryPropertyName": "=ConnectionFile",
+        "options": {
+          "fromLine": 4
+        }
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        -2140,
+        -260
+      ],
+      "id": "90839491-2e92-42e6-9357-6285764bab80",
+      "name": "Get Connection Data"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appeA2s5zS4JpjR1y",
+          "mode": "list",
+          "cachedResultName": "TEST_Leads_List",
+          "cachedResultUrl": "https://airtable.com/appeA2s5zS4JpjR1y"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblYMuxt4CNcQ0Rfe",
+          "mode": "list",
+          "cachedResultName": "User Preferences",
+          "cachedResultUrl": "https://airtable.com/appeA2s5zS4JpjR1y/tblYMuxt4CNcQ0Rfe"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Role / Title": "={{ $('On form submission1').item.json['Role / Title'] }}",
+            "Industry": "={{ $('On form submission1').item.json.Industry }}",
+            "Company Size": "={{ $('On form submission1').item.json.ARR }}",
+            "Marketing Budget": "={{ $('On form submission1').item.json['Marketing Budget (monthly)'] }}",
+            "Geographical Location": "={{ $('On form submission1').item.json['Geographical Location'] }}",
+            "Problems & Pain Points": "={{ $('On form submission1').item.json['Problems & Pain Points'] }}",
+            "Wishes & Dreams": "={{ $('On form submission1').item.json['Wishes & Dreams'] }}",
+            "Influences & Interests": "={{ $('On form submission1').item.json['Influences & Interests'] }}",
+            "Traits & Characteristics": "={{ $('On form submission1').item.json['Your Unique Selling Point'] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Role / Title",
+              "displayName": "Role / Title",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Industry",
+              "displayName": "Industry",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Company Size",
+              "displayName": "Company Size",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Marketing Budget",
+              "displayName": "Marketing Budget",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Geographical Location",
+              "displayName": "Geographical Location",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Problems & Pain Points",
+              "displayName": "Problems & Pain Points",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Wishes & Dreams",
+              "displayName": "Wishes & Dreams",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Influences & Interests",
+              "displayName": "Influences & Interests",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Traits & Characteristics",
+              "displayName": "Traits & Characteristics",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Attachments",
+              "displayName": "Attachments",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -2140,
+        -60
+      ],
+      "id": "0192330d-05e4-4ede-b0a4-f395e2e1d7e9",
+      "name": "Save User Preferences",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "9xa5W4S5FDIPpMtw",
+          "name": "TEST_Leads_List"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appeA2s5zS4JpjR1y",
+          "mode": "list",
+          "cachedResultName": "TEST_Leads_List",
+          "cachedResultUrl": "https://airtable.com/appeA2s5zS4JpjR1y"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblim2FVy1uCwX2qs",
+          "mode": "list",
+          "cachedResultName": "LinkedIn Contacts",
+          "cachedResultUrl": "https://airtable.com/appeA2s5zS4JpjR1y/tblim2FVy1uCwX2qs"
+        },
+        "filterByFormula": "=",
+        "options": {},
+        "sort": {
+          "property": [
+            {
+              "field": "Connected On",
+              "direction": "desc"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -1980,
+        -260
+      ],
+      "id": "adfc37ee-f6fb-424d-b00e-07b32b740e04",
+      "name": "Airtable",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "9xa5W4S5FDIPpMtw",
+          "name": "TEST_Leads_List"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -2400,
+        460
+      ],
+      "id": "598fceff-fa27-4d9c-99f3-f3c7911c3718",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -1380,
+        -260
+      ],
+      "id": "db09a0c4-919c-469c-95cf-05c03bb92c67",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "8af95747-61ed-4804-999c-6211f27da3c4",
+              "leftValue": "={{ $('Airtable1').item.json.Industry }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1180,
+        -140
+      ],
+      "id": "87de96fd-ab47-42ee-a38a-d0914c8bdbec",
+      "name": "Check if already there (Industry)"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apollo.io/api/v1/people/match",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "linkedin_url",
+              "value": "={{ $json.URL }}"
+            },
+            {}
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Cache-Control",
+              "value": "no-cache"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "x-api-key",
+              "value": "7k8KkG_HJPHRPDZgJdd9Rg"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -940,
+        -120
+      ],
+      "id": "824c369e-b864-4475-adcd-d84fc593bf6b",
+      "name": "Apollo Data Enrichement"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appeA2s5zS4JpjR1y",
+          "mode": "list",
+          "cachedResultName": "TEST_Leads_List",
+          "cachedResultUrl": "https://airtable.com/appeA2s5zS4JpjR1y"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblim2FVy1uCwX2qs",
+          "mode": "list",
+          "cachedResultName": "LinkedIn Contacts",
+          "cachedResultUrl": "https://airtable.com/appeA2s5zS4JpjR1y/tblim2FVy1uCwX2qs"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "EMail": "={{ $json.person.email }}",
+            "id": "={{ $('Loop Over Items').item.json.id }}",
+            "First Name": "={{ $('Airtable1').item.json['First Name'] }}",
+            "Company": "={{ $('Airtable1').item.json.Company }}",
+            "Position": "={{ $('Airtable1').item.json.Position }}",
+            "Last Name": "={{ $json.person.last_name }}",
+            "State": "={{ $json.person.state }}",
+            "City": "={{ $json.person.city }}",
+            "Country": "={{ $json.person.country }}",
+            "Company URL": "={{ $json.person.organization.website_url }}",
+            "Company LinkedIn URL": "={{ $json.person.organization.linkedin_url }}",
+            "Company Phone": "={{ $json.person.organization.primary_phone.number }}",
+            "Industry": "={{ $json.person.organization.industry }}",
+            "Seniority": "={{ $json.person.seniority }}",
+            "Company Description": "={{ $json.person.organization.short_description }}",
+            "Employees": "={{ $json.person.organization.estimated_num_employees }}",
+            "Founded Year": "={{ $json.person.organization.founded_year }}",
+            "Annual Revenue": "={{ $json.person.organization.annual_revenue }}",
+            "Total Funding": "={{ $json.person.organization.total_funding }}",
+            "Latest Funding Round Date": "={{ $json.person.organization.latest_funding_round_date }}",
+            "Latest Funding Stage": "={{ $json.person.organization.latest_funding_stage }}",
+            "Current Technologie": "={{ $json.person.organization.technology_names.join(', ') }}",
+            "Departments": "={{ $json.person.departments ? $json.person.departments.join(\", \") : \"\" }}",
+            "Keywords": "={{ $json.person.organization.keywords && $json.person.organization.keywords.length > 0 ? $json.person.organization.keywords : [] }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true
+            },
+            {
+              "id": "First Name",
+              "displayName": "First Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Last Name",
+              "displayName": "Last Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "URL",
+              "displayName": "URL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Connected On",
+              "displayName": "Connected On",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "EMail",
+              "displayName": "EMail",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Company",
+              "displayName": "Company",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Position",
+              "displayName": "Position",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Seniority",
+              "displayName": "Seniority",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Industry",
+              "displayName": "Industry",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Departments",
+              "displayName": "Departments",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Annual Revenue",
+              "displayName": "Annual Revenue",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Employees",
+              "displayName": "Employees",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "State",
+              "displayName": "State",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "City",
+              "displayName": "City",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Country",
+              "displayName": "Country",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Founded Year",
+              "displayName": "Founded Year",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Company URL",
+              "displayName": "Company URL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Company LinkedIn URL",
+              "displayName": "Company LinkedIn URL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Company Phone",
+              "displayName": "Company Phone",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Company Description",
+              "displayName": "Company Description",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Total Funding",
+              "displayName": "Total Funding",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Latest Funding Round Date",
+              "displayName": "Latest Funding Round Date",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Latest Funding Stage",
+              "displayName": "Latest Funding Stage",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Current Technologie",
+              "displayName": "Current Technologie",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Keywords",
+              "displayName": "Keywords",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Last Modified",
+              "displayName": "Last Modified",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "typecast": true
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -780,
+        -120
+      ],
+      "id": "8140c681-12d3-4435-a6ae-3a49ec7c4e65",
+      "name": "Update Data",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "9xa5W4S5FDIPpMtw",
+          "name": "TEST_Leads_List"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "apppVchMyGfk12mRZ",
+          "mode": "list",
+          "cachedResultName": "pbCustomm_Leads",
+          "cachedResultUrl": "https://airtable.com/apppVchMyGfk12mRZ"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblim2FVy1uCwX2qs",
+          "mode": "list",
+          "cachedResultName": "LinkedIn Contacts",
+          "cachedResultUrl": "https://airtable.com/apppVchMyGfk12mRZ/tblim2FVy1uCwX2qs"
+        },
+        "returnAll": false,
+        "options": {
+          "fields": [
+            "Company",
+            "Position",
+            "Seniority",
+            "Industry",
+            "Departments",
+            "Annual Revenue",
+            "Employees",
+            "State",
+            "Country",
+            "Latest Funding Stage",
+            "Latest Funding Round Date",
+            "Total Funding",
+            "Last Name",
+            "First Name"
+          ]
+        },
+        "sort": {
+          "property": [
+            {
+              "field": "Connected On",
+              "direction": "desc"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        -2000,
+        820
+      ],
+      "id": "8dd5bcb0-d5d1-4fcd-82e5-eb0f4019802b",
+      "name": "LinkedIn_Contacts1",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "9FFcxuPNauxtFgU3",
+          "name": "pbCustomm_Leads"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "claude-3-7-sonnet-20250219",
+          "cachedResultName": "Claude 3.7 Sonnet"
+        },
+        "options": {
+          "maxTokensToSample": 19000
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        -2320,
+        820
+      ],
+      "id": "f3d8200d-13e9-404c-9be4-90fbec944c26",
+      "name": "Anthropic Chat Model",
+      "credentials": {
+        "anthropicApi": {
+          "id": "iv60Gk69jbcrJo4c",
+          "name": "Anthropic account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"ICPs\": [\n    {\n      \"ICP1\": \"Name\",\n      \"branche\": [\"Branche A\", \"...\"],\n      \"unternehmensgroesse\": {\n        \"mitarbeiter_ca\": 100,\n        \"jahresumsatz_ca\": {\n          \"wert\": 5000000,\n          \"waehrung\": \"EUR\"\n        }\n      },\n      \"regionen\": [\"Region 1\", \"...\"],\n      \"typische_rolle_senioritaet\": [\"Rolle A\", \"...\"],\n      \"kaufmotive_painpoints\": [\n        \"Pain Point 1\",\n        \"...\"\n      ],\n      \"budget_entscheidungsprozesse\": {\n        \"entscheidertyp\": \"...\",\n        \"kriterium\": \"...\"\n      },\n      \"geschaetztes_marketingbudget\": {\n        \"wert\": 10000,\n        \"waehrung\": \"EUR\"\n      }\n    },\n    {\n      \"ICP2\": \"Name\",\n      \"branche\": [\"Branche B\", \"...\"],\n      \"unternehmensgroesse\": {\n        \"mitarbeiter_ca\": 25,\n        \"jahresumsatz_ca\": {\n          \"wert\": 2000000,\n          \"waehrung\": \"USD\"\n        }\n      },\n      \"regionen\": [\"Region 2\", \"...\"],\n      \"typische_rolle_senioritaet\": [\"Rolle B\", \"...\"],\n      \"kaufmotive_painpoints\": [\n        \"Pain Point 2\",\n        \"...\"\n      ],\n      \"budget_entscheidungsprozesse\": {\n        \"entscheidertyp\": \"...\",\n        \"kriterium\": \"...\"\n      },\n      \"geschaetztes_marketingbudget\": {\n        \"wert\": 5000,\n        \"waehrung\": \"USD\"\n      }\n    },\n    {\n      \"ICP3\": \"Name\",\n      \"branche\": [\"Branche C\", \"...\"],\n      \"unternehmensgroesse\": {\n        \"mitarbeiter_ca\": 300,\n        \"jahresumsatz_ca\": {\n          \"wert\": 15000000,\n          \"waehrung\": \"EUR\"\n        }\n      },\n      \"regionen\": [\"Region 3\", \"...\"],\n      \"typische_rolle_senioritaet\": [\"Rolle C\", \"...\"],\n      \"kaufmotive_painpoints\": [\n        \"Pain Point 3\",\n        \"...\"\n      ],\n      \"budget_entscheidungsprozesse\": {\n        \"entscheidertyp\": \"...\",\n        \"kriterium\": \"...\"\n      },\n      \"geschaetztes_marketingbudget\": {\n        \"wert\": 20000,\n        \"waehrung\": \"EUR\"\n      }\n    }\n  ]\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        -1820,
+        820
+      ],
+      "id": "42c6c422-48d2-45ac-920b-6189fdd2b754",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "maxItems": 100
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        -1840,
+        -260
+      ],
+      "id": "4e05a126-0844-45d6-a444-4d965984fe26",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"ICPs\": [\n    {\n      \"ICP_Name\": \"Example ICP 1\",\n      \"Top_Contacts\": [\n        {\n          \"Full_Name\": \"Anna Schmidt\",\n          \"Company\": \"TechSolutions GmbH\",\n          \"Title_Position\": \"Head of IT\",\n          \"Business_Email\": \"anna.schmidt@techsolutions.de\",\n          \"Mobile_Phone\": \"+49 151 12345678\",\n          \"LinkedIn_URL\": \"https://www.linkedin.com/in/annaschmidt\",\n          \"Company_Address\": \"Musterstraße 1, 12345 Berlin\",\n          \"Why\": \"... (92/100)\"\n        },\n        {\n          \"Full_Name\": \"Max Müller\",\n          \"Company\": \"DigitalExperts AG\",\n          \"Title_Position\": \"IT Director\",\n          \"Business_Email\": \"[not available]\",\n          \"Mobile_Phone\": \"+49 170 98765432\",\n          \"LinkedIn_URL\": \"https://www.linkedin.com/in/maxmueller\",\n          \"Company_Address\": \"[not available]\",\n          \"Why\": \"... (86/100)\"\n        }\n      ]\n    },\n    {\n      \"ICP_Name\": \"Example ICP 2\",\n      \"Top_Contacts\": []\n    }\n  ]\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        -640,
+        820
+      ],
+      "id": "48f85d60-5601-4d0c-a2a6-85e6332fac02",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "claude-3-5-sonnet-20241022",
+          "mode": "list",
+          "cachedResultName": "Claude 3.5 Sonnet (New)"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        -980,
+        820
+      ],
+      "id": "92ca18e9-583c-4171-9bf8-853988723bf7",
+      "name": "Anthropic Chat Model1",
+      "credentials": {
+        "anthropicApi": {
+          "id": "iv60Gk69jbcrJo4c",
+          "name": "Anthropic account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "apppVchMyGfk12mRZ",
+          "mode": "list",
+          "cachedResultName": "pbCustomm_Leads",
+          "cachedResultUrl": "https://airtable.com/apppVchMyGfk12mRZ"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblim2FVy1uCwX2qs",
+          "mode": "list",
+          "cachedResultName": "LinkedIn Contacts",
+          "cachedResultUrl": "https://airtable.com/apppVchMyGfk12mRZ/tblim2FVy1uCwX2qs"
+        },
+        "returnAll": false,
+        "options": {
+          "fields": [
+            "Company",
+            "Position",
+            "Seniority",
+            "Industry",
+            "Departments",
+            "Annual Revenue",
+            "Employees",
+            "State",
+            "Country",
+            "Latest Funding Stage",
+            "Latest Funding Round Date",
+            "Total Funding",
+            "Last Name",
+            "First Name",
+            "EMail",
+            "City",
+            "Company Phone",
+            "URL"
+          ]
+        },
+        "sort": {
+          "property": [
+            {
+              "field": "Connected On",
+              "direction": "desc"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        -800,
+        820
+      ],
+      "id": "e77aeca9-8272-4be2-b0af-70b3f3e24d60",
+      "name": "LinkedIn_Contacts3",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "9FFcxuPNauxtFgU3",
+          "name": "pbCustomm_Leads"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "Erstelle bitte die ICPs.",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=**Rolle**  \nDu bist ein datengetriebener B2B-Marketingstratege, der aus LinkedIn-Followerdaten und Kundenvorgaben exakt drei präzise Ideal Customer Profiles (ICPs) generiert.\n\n---\n\n## **Input-Quellen**  \n1. `LinkedIn_Contacts` (Airtable):  \n   - Alle Felder der Follower/Leads (Branche, Unternehmensgröße, Position, Region, etc.)  \n2. `User_Preferences` (Airtable):  \n   - Harte Filterkriterien: Branche, Mitarbeiterzahl, Region, Budget  \n   - Soft-Kriterien: Pain Points, Kaufverhalten, Seniorität  \n\n---\n\n## **Prozessschritte**  \n\n### 1. Datenfusion & Preprocessing  \n- **Strikte Filterung:** Eliminiere alle Kontakte, die nicht 100% der `User_Preferences`-harten Kriterien entsprechen  \n- **Datenbereinigung:** Standardisiere Schreibweisen (z.B. \"DACH\" → \"Deutschland, Österreich, Schweiz\")  \n- **Fehlende Daten:** Markiere leere Felder mit `[nicht verfügbar]` – keine Annahmen treffen  \n\n### 2. Relevanz-Scoring (gewichteter Algorithmus)\n\ndef calculate_score(contact): score = ( 0.4 * industry_match(contact, user_prefs) + 0.3 * size_match(contact‘employees’, user_prefs‘size_range’) + 0.15 * region_match(contact‘country’, user_prefs‘regions’) + 0.15 * seniority_match(contact‘position’, user_prefs‘roles’) ) return round(score, 2)\n\n### 3. ML-gestütztes Clustering  \n- **Methode:** K-Means (k=3) mit Scikit-learn-Standardparametern  \n- **Features:** Branche, Mitarbeiterzahl, Region, Seniorität, Pain-Point-Keywords  \n- **Optimierung:** Silhouette-Score zur Clusterqualitätsprüfung  \n\n### 4. ICP-Ableitung  \n- **Clusterbewertung:** Kombiniere Durchschnitts-Score + Kontaktdichte pro Cluster  \n- **ICP-Formulierung:** Extrahiere dominante Muster jedes Top-3-Clusters  \n\n---\n\n## **Output-Regeln**  \n\n### ICP 1 – {Branche + Rolle}  \n- **Branche:** [Nur exakte Matches aus Daten]  \n- **Unternehmensgröße:** [Bereich aus Cluster-Mittelwert ±15%]  \n- **Region(en):** [Top 3 Regionen des Clusters]  \n- **Typische Rolle:** [Häufigste Senioritätsstufe + Position]  \n- **Pain Points:** [Top 2 Keywords aus Cluster-Analyse]  \n- **Budgetprozesse:** [Muster aus Entscheider-Titeln + Umsatzband]  \n\n**Begründung (max. 5 Punkte):**  \n- • Cluster-Score: X/100  \n- • [Kernargument 1]  \n- • [Kernargument 2]  \n\n---\n\n## **Qualitätskontrolle**  \n1. Keine Hypothesen – nur datengestützte Aussagen  \n2. ICPs müssen statistisch signifikant voneinander abgrenzbar sein (p < 0.05)  \n3. Alle Prozentangaben auf ganze Zahlen runden  \n4. Keine Marketing-Fluff-Sprache – nur Fakten\n5. Output in English please"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        -2180,
+        460
+      ],
+      "id": "621fedf4-f666-4d9f-93c2-86527f5f2549",
+      "name": "ICP Agent"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "apppVchMyGfk12mRZ",
+          "mode": "list",
+          "cachedResultName": "pbCustomm_Leads",
+          "cachedResultUrl": "https://airtable.com/apppVchMyGfk12mRZ"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblYMuxt4CNcQ0Rfe",
+          "mode": "list",
+          "cachedResultName": "User Preferences",
+          "cachedResultUrl": "https://airtable.com/apppVchMyGfk12mRZ/tblYMuxt4CNcQ0Rfe"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        -2160,
+        820
+      ],
+      "id": "4e8a9425-8d2b-4f64-8e20-c0ddf2cc1d48",
+      "name": "User_Preferences",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "9FFcxuPNauxtFgU3",
+          "name": "pbCustomm_Leads"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "eeae4140-f3c8-4f19-9bad-dee59e1f53e5",
+              "name": "output",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1580,
+        520
+      ],
+      "id": "f4423b6d-1ed5-4d4a-96e1-219b1026c2b0",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "content": "# Apollo.io Data Enrichment\n",
+        "height": 560,
+        "width": 940
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1500,
+        -420
+      ],
+      "typeVersion": 1,
+      "id": "b0b8a572-e4e2-4398-8783-ff6715561318",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "# ICP AGENT\n\n\t1.\t**Data preprocessing** \n\t2.\t**Weighted scoring** \n\t3.\t**K-means clustering** \n\t4.\t**ICP extraction** \n\n=> *Data-driven ICPs*",
+        "height": 800,
+        "width": 820,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2460,
+        200
+      ],
+      "typeVersion": 1,
+      "id": "73c25027-468a-4ca5-8434-4dd8d7c9f223",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "# Formatting the Output\n\n\n•\tTransforms complex JSON objects into clean, structured text format\n•\tStandardizes data presentation for consistent downstream processing\n•\tRemoves technical artifacts and special characters",
+        "height": 560,
+        "width": 520,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1620,
+        200
+      ],
+      "typeVersion": 1,
+      "id": "8502b58a-0fbc-4117-a451-55df534a8fd8",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Find Lead Contacts in your LinkedIn_Contacts Airtable Base that most likely match the ICP profiles.\n\nSpecifically search for these LinkedIn contacts data:\n- **Full Name:**  = First Name, Last Name;\n- **Company:** = Company;\n- **Industry:** = Departments;\n- **Title/Position:** = Position;\n- **Business Email:** = EMail;\n- **Company Phone:** = Company Phone;\n- **LinkedIn URL:** = Company LinkedIn URL;\n- **Location:** = City, State,Country\n\nSearch for matching contact information for the following ICPs ('ICP_Input'): {{ $json.message.content }}\n",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=## **Role**\n\nYou are a data-driven B2B lead researcher.  \nYour task: Based on the provided Ideal Customer Profiles (ICP_Input), find and output the following contact details for the top 10 matching contacts per ICP (ranked by relevance).\n\nIf you cant find 10 fitting contacts for each ICP, output the ones you find. \n---\n\n## **Input Sources**\n\n1. **LinkedIn_Contacts** (Airtable):  \n   All fields for each contact. Here you find all Information for the Target Persons (industry, company size, position, region, etc.)\n\n2. **ICP_Input**:  \n   Use the ICP descriptions provided as output from the previous agent (including all relevant criteria to find your Target Persons). \n\n\n---\n\n## **Process Steps**\n\n1. **Understand the ICPs:**  \n   Carefully read and understand the ICP preferenses provided by the User.\n\n2. **Identify Matching Contacts:**  \n   - Filter the LinkedIn_Contacts database for contacts that best match each ICP’s criteria.\n   - Rank the matches by relevance (best fit to the ICP).\n\n3. **Contact Data Enrichment:**  \n   - For each of the top 7 contacts per ICP, use your Data-tool LinkedIn_Contacs to find:\n     - Business email\n     - Mobile phone number\n     - LinkedIn profile URL\n     - Company address (if available)\n\n4. **Why:**\n   - Give for every Contact a brief explenation, why this is a good fit.\n\n5. **Data Quality:**  \n   - Only output verified or high-confidence contact data.\n   - If a data point cannot be found, mark it as `[not available]` (do not guess or infer).\n\n---\n\n## **Quality Control**\n\n1. Use only contacts that match the provided ICP criteria.  \n2. Do not include unverified or assumed contact details.  \n3. Clearly mark any missing data as `[not available]`."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        -920,
+        520
+      ],
+      "id": "f5c54121-79df-4c1f-aa12-a2aa2db95ce8",
+      "name": "B2B Lead Researcher",
+      "retryOnFail": true,
+      "maxTries": 2,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "content": "# B2B LEAD RESEARCH\n\nThe Lead Researcher identifies and delivers 10 top-fitting contacts for your business based on your Ideal Customer Profile (ICP):\n\n\t•\t**Complete contact information**\n\t•\t**Phone number** \n•\t**Email address**\n\t•\t**Location details**\n\t•\t**Company information**\n\t•\t**Relevance score** \n\t•\t**Detailed explanation**. ",
+        "height": 780,
+        "width": 580,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1080,
+        200
+      ],
+      "typeVersion": 1,
+      "id": "4d17bc51-9e96-4666-ad89-10ea2a616d0b",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "# LinkedIn Contacts & User Preferences ",
+        "height": 560,
+        "width": 980,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2520,
+        -420
+      ],
+      "typeVersion": 1,
+      "id": "5aa4263f-2bd3-41b2-9628-54d1a6a41df5",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "eeae4140-f3c8-4f19-9bad-dee59e1f53e5",
+              "name": "output",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -440,
+        520
+      ],
+      "id": "9d0e74f8-0405-4fdd-83e8-7d71066d0dc4",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are a Mailing Assistant. Your task is to present the user (Lucas Wolf) with your results of an ICP (Ideal Customer Profile) research and top contacts to contact right away.\nPlease write a friendly and concise message, presenting your results in a structured and formatted form.\n\nHere are the ICPs:  \"{{ $('Formatter').item.json.message.content }}\"\n\nAnd here are the choosen Contacts: {{ $json.message.content }}\n\nPlese be exact with the Data - include all information (All ICPs + ALL Contact infos). Output the Mail directly, without comments. Please Formatt ant output HTML directly (Do not beginn with ```html - please Start directly with the message. Still formatted though:)\n\n\n## Output Format (example)\n\nErstelle eine HTML-E-Mail mit folgender exakter Struktur:\n\n<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <title>ICP Research Results</title>\n</head>\n<body>\n    <p>Hi [NAME],</p>\n    <p> [Short Intro],</p>\n\n    <h2>Ideal Customer Profiles (ICPs)</h2>\n    \n    <h3>ICP 1: [NAME]</h3>\n    <ul>\n        <li><strong>Industry:</strong> [INDUSTRY]</li>\n        <!-- weitere Struktur hier -->\n    </ul>\n    \n    <!-- weitere ICPs hier -->\n    \n    <h2>Top Contacts</h2>\n    <!-- Kontaktstruktur hier -->\n    \n    <p>Regards,<br>Your Assistant</p>\n</body>\n</html>\n\nFülle diese Struktur mit den Daten aus den ICPs und Kontakten. Behalte exakt diese HTML-Struktur bei."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        80,
+        520
+      ],
+      "id": "b4e84788-48c4-42ef-9785-8a120d47bd8e",
+      "name": "Write A Message",
+      "credentials": {
+        "openAiApi": {
+          "id": "ZF2iC1a7BM6rYIxE",
+          "name": "custommContentRAG"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Please reframe the 3 ICPs from your Input to a structured Output prompt. Thank you. Here are the ICPs: {{ $json.output }}\n"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -1420,
+        520
+      ],
+      "id": "c44512a5-1be4-4c68-9ccb-517fd8525dc0",
+      "name": "Formatter",
+      "credentials": {
+        "openAiApi": {
+          "id": "ZF2iC1a7BM6rYIxE",
+          "name": "custommContentRAG"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Please rewrite the top 10 Contacts from your Input to a structured Output prompt. Thank you. Here are the 10 Contacts: {{ $json.output }}\n"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -300,
+        520
+      ],
+      "id": "82ba599f-702c-4a26-8f98-485e9009286e",
+      "name": "Formatter1",
+      "credentials": {
+        "openAiApi": {
+          "id": "ZF2iC1a7BM6rYIxE",
+          "name": "custommContentRAG"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "info@customm.ai",
+        "subject": "ICP Agent + Customm // Your Workflow delivered 🎉 ",
+        "message": "={{ $json.message.content }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        600,
+        520
+      ],
+      "id": "cace2068-5541-425e-a3bc-e277e14466cd",
+      "name": "Gmail",
+      "webhookId": "5acc9baa-aad3-403a-a4ce-33cad9c4a8ec",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "0krLSAyXKGnAmZ2o",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        600,
+        320
+      ],
+      "id": "e30a750f-5e80-4f95-9455-02b4dc6d45cc",
+      "name": "Slack",
+      "webhookId": "e1d0e123-e2a9-4cd7-aa69-89310edce043",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "tDTPx8UFnkgiV9f3",
+          "name": "Slack account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [
+        600,
+        720
+      ],
+      "id": "45a6a256-2f25-40ff-9fef-041c68bb9fd2",
+      "name": "WhatsApp Business Cloud",
+      "webhookId": "85eda0b3-9bb6-47c0-9440-a0f151d461dd",
+      "disabled": true
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission1": {
+      "main": [
+        [
+          {
+            "node": "Get Connection Data",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Save User Preferences",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LinkedIn Follower": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Connection Data": {
+      "main": [
+        [
+          {
+            "node": "Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "ICP Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Check if already there (Industry)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check if already there (Industry)": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Apollo Data Enrichement",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apollo Data Enrichement": {
+      "main": [
+        [
+          {
+            "node": "Update Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Data": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LinkedIn_Contacts1": {
+      "ai_tool": [
+        [
+          {
+            "node": "ICP Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "ICP Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "ICP Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "LinkedIn Follower",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "B2B Lead Researcher",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "B2B Lead Researcher",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LinkedIn_Contacts3": {
+      "ai_tool": [
+        [
+          {
+            "node": "B2B Lead Researcher",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ICP Agent": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "User_Preferences": {
+      "ai_tool": [
+        [
+          {
+            "node": "ICP Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Formatter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "B2B Lead Researcher": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Formatter1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formatter": {
+      "main": [
+        [
+          {
+            "node": "B2B Lead Researcher",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formatter1": {
+      "main": [
+        [
+          {
+            "node": "Write A Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write A Message": {
+      "main": [
+        [
+          {
+            "node": "Slack",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "WhatsApp Business Cloud",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "versionId": "ba05566d-10a1-4204-8f84-68b03c3ee60d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "da0a36f96acd541bd955c9063351b8ca0fd2dcfd0f31b464a8c1a092fd45017d"
+  },
+  "id": "0NJ6KbUKE2RawyL3",
+  "tags": []
+}
