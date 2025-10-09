@@ -1,0 +1,138 @@
+{
+  "name": "Webhook Protection",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "58920fb3-8cab-407e-97b8-96a194f15d67",
+        "authentication": "jwtAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -120,
+        0
+      ],
+      "id": "37856fe3-65d3-4542-9cf0-8df0551c106e",
+      "name": "Webhook",
+      "webhookId": "58920fb3-8cab-407e-97b8-96a194f15d67",
+      "credentials": {
+        "jwtAuth": {
+          "id": "mKj7qZE6GFhfkWkD",
+          "name": "JWT Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.message }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        120,
+        0
+      ],
+      "id": "f417b3aa-64da-49bf-9206-f1d5e54a07b2",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        40,
+        200
+      ],
+      "id": "2bab73f0-f411-4efd-929f-1bab351a78c8",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "fpo6OUh9TcHg29jk",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        480,
+        0
+      ],
+      "id": "d05d3598-71fe-46bc-bdbe-6e8fa2fcda9d",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "content": "## Which Auth Do I Use?\n\nAuthor: [Nate Herk](https://www.youtube.com/@nateherk)\n\n### **Start here:**  \n\n**Does the external service already support a specific auth method?**\n- **Yes** → Use what they support  \n- **No** → Continue below\n\n---\n**Do you need time-limited access or user metadata?**\n- **Yes** → Use **JWT**  \n- **No** → Continue below\n\n---\n**Are you using a simple API key or token?**\n- **Yes** → Use **Header Auth**  \n- **No** → Continue below\n\n---\n**Does the service support standard HTTP Basic Auth?**\n- **Yes** → Use **Basic Auth**  \n- **No** → Use **Header Auth** (most flexible)\n\n---\n\n\n### 🌍 Real-World Examples\n- **Basic Auth**:  \n  Connecting to enterprise systems like **Jira**, **Jenkins**, or older **CRM systems**\n\n- **Header Auth**:  \n  Integrating with modern APIs like **Slack**, **Discord**, or custom apps using API keys\n\n- **JWT**:  \n  Building **microservices**, **mobile app backends**, or systems needing **user-specific permissions**\n",
+        "height": 800,
+        "width": 700
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -900,
+        -280
+      ],
+      "id": "ede00ecd-b0d3-4280-95ed-c836204c1bae",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "eefd5d6c-44bb-49e6-8f42-61a40f38d834",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "95e5a8c2e51c83e33b232ea792bbe3f063c094c33d9806a5565cb31759e1ad39"
+  },
+  "id": "X8ok7WZ2K4r3uwSb",
+  "tags": []
+}
