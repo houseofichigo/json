@@ -1,0 +1,594 @@
+{
+  "name": "Video Auto Scripts",
+  "nodes": [
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "Eres un asistente administrador inteligente y útil.",
+              "role": "system"
+            },
+            {
+              "content": "=Llevo un canal de automatización con IA para creadores de contenido en Instagram. Estoy buscando en otros vídeos herramientas útil para hablar sobre ellas en mis vídeos.\n\nTu tarea es analizar un transcript que te voy a enviar y determinar si se trata de una herramienta, teconología o IA del estilo que pueda resubir a mi canal.\n\nSi detectas que el contenido es útil para resubir: En tal caso, identificas la herramienta, escribes una lista de paso a paso para usar la herramienta facilmente (idealmente gratis o por un buen precio), y una sugerencia de como mostrar este contenido de una forma que sea atractivo para una audiencia como la mía (Automatización con IA para creadores de contenido).\n\nDas tu respuesta en formato JSON: \n\n{\n \"herramienta\": \"herramienta que se menciona en el vídeo, si son dos pon una y la otra\",\n \"stepbystep\": \"instrucciones detalladas para usar la herramienta(s)\",\n \"sugerencia\": \"Instrucciones en profundidad de cómo puedo proponer este contenido para mi audiencia de automatización con IA para creadores de contenido de forma que resulte atractivo para ellos\"\n}\n\nSi detectas que el contenido no es útil para subir: Deja el resto de las casillas vacías."
+            },
+            {
+              "content": "={{ $json.message.content }}"
+            }
+          ]
+        },
+        "simplify": false,
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        760,
+        160
+      ],
+      "id": "5b2d2b1a-a4a3-44a9-8566-56df2bdb3fd5",
+      "name": "Filtra y Adapta el vídeo",
+      "credentials": {
+        "openAiApi": {
+          "id": "IAbUnts2qOU2SSnO",
+          "name": "Prueba Video"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        280,
+        160
+      ],
+      "id": "6e5a9259-573b-4a6c-883d-2612020e3771",
+      "name": "Transcript",
+      "credentials": {
+        "openAiApi": {
+          "id": "IAbUnts2qOU2SSnO",
+          "name": "Prueba Video"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.videoUrl }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        100,
+        160
+      ],
+      "id": "7d3f388b-5306-43ad-8a24-6859c75d104f",
+      "name": "Descarga Video"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/apify~instagram-post-scraper/run-sync-get-dataset-items",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer [AQUI TU API KEY DE APIFY]"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"resultsLimit\": 10,\n    \"skipPinnedPosts\": true,\n    \"username\": [\n      \"[AQUI TU COMPETENCIA 1]\",\n      \"[AQUI TU COMPETENCIA 2...]\"\n    ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -420,
+        180
+      ],
+      "id": "c5de5e54-66d8-460c-8bdc-a72d87b2bbab",
+      "name": "Apify - Extrae Vídeos"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "Eres un experto traduciendo textos de inglés a español castellano (de españa). Traduces siempre hablando en segunda persona del singular y sin usted, tratas de tú.",
+              "role": "system"
+            },
+            {
+              "content": "Traduces el transcript que te envío de inglés a español intentando mantener el tono y el estilo de el transcript original.\n\nSolo devuelves el transcript traducido, nada más."
+            },
+            {
+              "content": "={{ $json.text }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        440,
+        160
+      ],
+      "id": "e47abc0c-418c-4075-984d-84eabcf85359",
+      "name": "Traduccion Transcript",
+      "credentials": {
+        "openAiApi": {
+          "id": "IAbUnts2qOU2SSnO",
+          "name": "Prueba Video"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.perplexity.ai/chat/completions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer [AQUI TU API KEY DE PERPLEXITY]"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"sonar-pro\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"Be precise and concise\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"Dime 3 cosas interesantes de esta herramienta: {{ $json.choices[0].message.content.herramienta[0] ?? $json.choices[0].message.content.herramienta }}\"\n    }\n  ]\n}",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1080,
+        160
+      ],
+      "id": "6a3efa40-352a-48b8-b669-893fed4772ae",
+      "name": "Perplexity - Busca más info"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "[AQUI EL ID DE TU DOCUMENTO DE SHEETS]",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Scripts",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/18RXdx5tRy2ulTGBXG3WA8NwXyjI_nGU0P3B5av7Cjg8/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Usuario": "={{ $('Apify - Extrae Vídeos').item.json.inputUrl }}",
+            "Visitas": "={{ $('Apify - Extrae Vídeos').item.json.videoPlayCount }}",
+            "Likes": "={{ $('If').item.json.likesCount }}",
+            "Comentarios": "={{ $('If').item.json.commentsCount }}",
+            "Me gustas": "={{ $('If').item.json.timestamp }}",
+            "Link": "={{ $('If').item.json.url }}",
+            "Transcript": "={{ $('Transcript').item.json.text }}",
+            "Script": "={{ $json.choices[0].message.content }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Usuario",
+              "displayName": "Usuario",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Visitas",
+              "displayName": "Visitas",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Likes",
+              "displayName": "Likes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Me gustas",
+              "displayName": "Me gustas",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Comentarios",
+              "displayName": "Comentarios",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Link",
+              "displayName": "Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Transcript",
+              "displayName": "Transcript",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Script",
+              "displayName": "Script",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Estado",
+              "displayName": "Estado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Video Raw",
+              "displayName": "Video Raw",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Video Final",
+              "displayName": "Video Final",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1560,
+        160
+      ],
+      "id": "f8d6700e-710e-43f4-b052-b85233b4a798",
+      "name": "Guarda en Base Datos",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "tvDlaP6l5sw4dtU8",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "task": "Q0FkUGxGNlp3ZzQwTHA3WA",
+        "title": "🟣 Grabar Reels y mandar editor",
+        "additionalFields": {
+          "notes": "={{ $('Traduccion Transcript').item.json.message.content }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleTasks",
+      "typeVersion": 1,
+      "position": [
+        1560,
+        -60
+      ],
+      "id": "392dea23-0d76-4d46-b687-01c287e34582",
+      "name": "Crea Tarea",
+      "credentials": {
+        "googleTasksOAuth2Api": {
+          "id": "RkIrGchfk2OuaFp7",
+          "name": "Google Tasks account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# Hola, soy Mario\n\n(esto no lo ha hecho la IA, para variar un poco)\n\nLo primero gracias por verme. Lo segundo, en esta plantilla tienes uno de los procesos que más útiles para crear Reels de forma automática.\n\nEsta automatización me ha generado a mi y a mis clientes muuuchas visitas y un ahorro de tiempo enorme.\n\n## Qué hace?\n\n1. Scrapea a la competencia (de habla inglesa) seleccionada (una vez por semana, o el tiempo que pongas en el trigger) y extrae los datos de sus últimas (10, también modificable) publicaciones\n\n2. Obtiene el transcript de cada una de esas publicaciones, además de información como número de likes o visitas.\n\n3. Traduce el transcript al español.\n\n4. A partir de ese transcript añade información de utilidad utilizando Perplexity y un prompt (modificable, te recomiendo adaptarlo a ti) de GPT.\n\n5. Crea un nuevo scripts y lo guarda en Sheets.",
+        "height": 820,
+        "width": 2580,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -740,
+        -380
+      ],
+      "id": "074b4ad9-fc36-44ca-baf4-3ddfeb0623bb",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c51132fb-9222-42ce-aaac-db4d7982e185",
+              "leftValue": "={{ $json.videoUrl }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -200,
+        180
+      ],
+      "id": "6e9ed83c-b341-42e2-9927-a3d0badac461",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Haces un script para un vídeo de 1 minuto teniendo en cuenta esta información:\n\nHerramienta de la que se habla en el vídeo: {{ $('Filtra y Adapta el vídeo').item.json.choices[0].message.content.herramienta }}\n\nPaso a paso para usarla: {{ $('Filtra y Adapta el vídeo').item.json.choices[0].message.content.stepbystep }}\n\nSugerencia para añadir al script: {{ $('Filtra y Adapta el vídeo').item.json.choices[0].message.content.sugerencia }} (opcional)\n\nBase del Script: {{ $('Traduccion Transcript').item.json.message.content }} (lo más importante es esto)\n\nMás información: {{ $json.choices[0].message.content }}\n\nNo incluyes ninguna información que no esté en los textos que te envío, ni ninguna indicación de cómo hacer el vídeo, simplemente combinas la información que te doy y la sintetizas para hacer un script que yo pueda copiar y pegar y leer directamente.\n\nNo devuelves nada más."
+            }
+          ]
+        },
+        "simplify": false,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        1240,
+        160
+      ],
+      "id": "533b3d9e-39a9-4755-824c-589a23453e3c",
+      "name": "Hace el Script2",
+      "credentials": {
+        "openAiApi": {
+          "id": "IAbUnts2qOU2SSnO",
+          "name": "Prueba Video"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtHour": 10
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -640,
+        180
+      ],
+      "id": "252cc959-1186-4aee-89c5-e8d5a7fc8d2c",
+      "name": "Trigger - 1vez/semana"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Filtra y Adapta el vídeo": {
+      "main": [
+        [
+          {
+            "node": "Perplexity - Busca más info",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcript": {
+      "main": [
+        [
+          {
+            "node": "Traduccion Transcript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Descarga Video": {
+      "main": [
+        [
+          {
+            "node": "Transcript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apify - Extrae Vídeos": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Traduccion Transcript": {
+      "main": [
+        [
+          {
+            "node": "Filtra y Adapta el vídeo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Perplexity - Busca más info": {
+      "main": [
+        [
+          {
+            "node": "Hace el Script2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guarda en Base Datos": {
+      "main": [
+        []
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Descarga Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hace el Script2": {
+      "main": [
+        [
+          {
+            "node": "Guarda en Base Datos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger - 1vez/semana": {
+      "main": [
+        [
+          {
+            "node": "Apify - Extrae Vídeos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "69077b2e-edbb-41f3-8420-1495e02e104b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "161ef4ae33ce65770cbacc969b7a8a7dea7b6f882504adaad3ed796f23a9dcb7"
+  },
+  "id": "aGE2fHZPl1OBrc5T",
+  "tags": []
+}
