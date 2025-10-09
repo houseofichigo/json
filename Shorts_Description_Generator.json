@@ -1,0 +1,365 @@
+{
+  "name": "Shorts Description Generator",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "event": "pagedUpdatedInDatabase",
+        "databaseId": {
+          "__rl": true,
+          "value": "7d7251a1-46d4-4a29-b93b-efb7656d5ccd",
+          "mode": "list",
+          "cachedResultName": "Backlog Vidéos",
+          "cachedResultUrl": "https://www.notion.so/7d7251a146d44a29b93befb7656d5ccd"
+        }
+      },
+      "type": "n8n-nodes-base.notionTrigger",
+      "typeVersion": 1,
+      "position": [
+        -260,
+        0
+      ],
+      "id": "4c69e4bc-c847-4a94-a350-7f3ca70f9aa3",
+      "name": "Trigger",
+      "credentials": {
+        "notionApi": {
+          "id": "NBomvC1U6m12Gj4r",
+          "name": "n8n <> notion"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "d2015a81-cf66-4b47-b7d0-0e85c467c28c",
+              "leftValue": "={{ $json['🔴'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "2b8be7a4-5313-4acc-8d69-ecd78c99ac86",
+              "leftValue": "={{ $json['Sujet de la vidéo'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "6b424013-4709-49dd-b185-fe0d941cb618",
+              "leftValue": "={{ $json.Keywords }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "a61f8542-94db-4e18-974f-ca02cfc6e4e2",
+              "leftValue": "={{ $json['Script Short'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -20,
+        0
+      ],
+      "id": "1f67a15c-540d-4f68-8fe2-6128db15fbf6",
+      "name": "Check if Informations are filled"
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "operation": "get",
+        "pageId": {
+          "__rl": true,
+          "value": "<YOUR_PAGE_URL>",
+          "mode": "url"
+        }
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        240,
+        -160
+      ],
+      "id": "abb494b3-572a-4c07-afb5-0c0a10a15a73",
+      "name": "Retrieve Business Informations",
+      "credentials": {
+        "notionApi": {
+          "id": "NBomvC1U6m12Gj4r",
+          "name": "n8n <> notion"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Titre de la vidéo : \n{{ $('Trigger').item.json['Sujet de la vidéo'] }}\n\nContenu de la vidéo : \n{{ $('Trigger').item.json['Script Short'] }}\n\nMots-clés à intégrer dans la description : \n{{ $('Trigger').item.json.Keywords }}\n\nInformations de mon business : \nNiche :  {{ $json.property_niche }}\nAudience Cible : {{ $json.property_audience }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=## Role \nTu es un copywriter qui m'aide à rédiger les descriptions de mes vidéos de type \"Short\" sur les différents réseaux sociaux. \n\n## Mission\nGénère une description par réseau social. Il y en a trois : Youtube, Instagram et TikTok. Pour chacun je vais te soumettre un prompt à suivre pour rédiger la description en fonction. \nTu devras m'output le résultat selon le format JSON suivant : \n\n{\n\"Youtube\":\"Description du Short Youtube\",\n\"Instagram\":\"Description du Réel Instagram\",\n\"TikTok\":\"Description du TikTok\"\n}\n\nVoici le prompt pour réaliser la description de chacun des posts : \n\n### Prompt Youtube : \n\" Je veux que tu m'écrives une description de 200 mots pour ma vidéo Youtube. je veux qu'elle soit remplie de mots-clés reliés à ma niche et optimisée SEO pour qu'elle soit mentrée aux personnes cherchant des vidéos comme la mienne. Je t'ai fourni au préalable des infos relatives à ma niche, mon audience et la vidéo. \"\n\n### Prompt Instagram : \n\" Je veux que tu m'écrives une description de 100-150 mots pour ma vidéo Instagram. je veux qu'elle soit remplie de mots-clés reliés à ma niche et optimisée SEO pour qu'elle soit mentrée aux personnes cherchant des vidéos comme la mienne. Elle doit aussi comporter un appel à l'action et tu peux rajouter des emojis pour animer le texte et le rendre plus attrayant ! N'en abuse pas non plus. Je t'ai fourni au préalable des infos relatives à ma niche, mon audience et la vidéo. \"\n\n### Prompt TikTok : \n\" Je veux que tu m'écrives une description de 200 mots pour ma vidéo TikTok. je veux qu'elle soit remplie de mots-clés reliés à ma niche et optimisée SEO pour qu'elle soit mentrée aux personnes cherchant des vidéos comme la mienne. Je t'ai fourni au préalable des infos relatives à ma niche, mon audience et la vidéo. \"\n\n# Outils\n'Tool' : Utilise ce tool afin de vérifier que les trois descriptions (pour chacun des réseaux sociaux) ont bien été générées. SI ce n'est pas le cas, relance l'agent afin de générer les trois.\n\n## Règles\n- N'invente pas d'informations qui ne sont pas dans le résumé de la vidéo\n- Ne génère aucun contenu tendancieux ou pouvant être amené à être bloqué\n- Génère uniquement l'OUTPUT en JSON \n- Ne rajoute pas de hashtags dans les descriptions\n- Ne rajoute pas d'appel à l'action si je ne te le demande pas\n- Ne rajoute pas d'emoji si ce n'est pas demandé\n- Pour chaque description, output uniquement le contenu de la description, sans description ou réflexion de l'IA"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        500,
+        -160
+      ],
+      "id": "133bcf90-0dd3-425f-9bf4-36af494b929f",
+      "name": "Generate Shorts Description"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        420,
+        120
+      ],
+      "id": "e5f228c1-2bdf-41f7-9cdd-d4790ca4b7bd",
+      "name": "4.1",
+      "credentials": {
+        "openAiApi": {
+          "id": "YVjaGIDWEYEayX2l",
+          "name": "RAG Doc"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "Utilise ce tool afin de vérifier que les trois descriptions (pour chacun des réseaux sociaux) ont bien été générées. SI ce n'est pas le cas, relance l'agent afin de générer les trois."
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1,
+      "position": [
+        640,
+        120
+      ],
+      "id": "d0b286b3-de37-47f3-b4c8-586d56157b9f",
+      "name": "Think"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\"Youtube\":\"Description du Short Youtube\",\n\"Instagram\":\"Description du Réel Instagram\",\n\"TikTok\":\"Description du TikTok\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        840,
+        120
+      ],
+      "id": "23531dc0-de62-4b5e-a643-03980f0df56e",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "operation": "update",
+        "pageId": {
+          "__rl": true,
+          "value": "={{ $('Trigger').first().json.id }}",
+          "mode": "id"
+        },
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Description YT|rich_text",
+              "richText": true,
+              "text": {
+                "text": [
+                  {
+                    "text": "={{ $json.output.Youtube }}",
+                    "annotationUi": {}
+                  }
+                ]
+              }
+            },
+            {
+              "key": "Description Insta|rich_text",
+              "richText": true,
+              "text": {
+                "text": [
+                  {
+                    "text": "={{ $json.output.Instagram }}",
+                    "annotationUi": {}
+                  }
+                ]
+              }
+            },
+            {
+              "key": "Description TikTok|rich_text",
+              "richText": true,
+              "text": {
+                "text": [
+                  {
+                    "text": "={{ $json.output.TikTok }}",
+                    "annotationUi": {}
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        900,
+        -160
+      ],
+      "id": "fdd7156e-5ac3-4e44-9e83-1312704b5383",
+      "name": "Update Short Descriptions",
+      "credentials": {
+        "notionApi": {
+          "id": "NBomvC1U6m12Gj4r",
+          "name": "n8n <> notion"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Trigger": {
+      "main": [
+        [
+          {
+            "node": "Check if Informations are filled",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check if Informations are filled": {
+      "main": [
+        [
+          {
+            "node": "Retrieve Business Informations",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retrieve Business Informations": {
+      "main": [
+        [
+          {
+            "node": "Generate Shorts Description",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "4.1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Generate Shorts Description",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "Generate Shorts Description",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Generate Shorts Description",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Shorts Description": {
+      "main": [
+        [
+          {
+            "node": "Update Short Descriptions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e105c211-e00d-4b31-9e04-02e08eb89c50",
+  "meta": {
+    "instanceId": "2c4533c7a1e56e822a6fde3f376121580e6f7d83dda36974d922278fe743aa10"
+  },
+  "id": "t5aeLDQoOXzz31sC",
+  "tags": [
+    {
+      "createdAt": "2025-03-18T10:01:14.778Z",
+      "updatedAt": "2025-03-18T10:01:14.778Z",
+      "id": "0cQoEbTZrq4kEZUe",
+      "name": "Template"
+    },
+    {
+      "createdAt": "2025-05-10T17:40:56.653Z",
+      "updatedAt": "2025-05-10T17:40:56.653Z",
+      "id": "LKPrgcXG9YOy7zZ5",
+      "name": "Short"
+    }
+  ]
+}
