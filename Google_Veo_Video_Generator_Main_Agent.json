@@ -1,0 +1,331 @@
+{
+  "name": "Google Veo Video Generator Main Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -240,
+        0
+      ],
+      "id": "dfb6d453-101f-44ce-ac0e-9460ef5cdc9e",
+      "name": "Telegram Trigger",
+      "webhookId": "ca8e340c-1a1b-4337-8292-b9fb732b9e41",
+      "credentials": {
+        "telegramApi": {
+          "id": "rajpDvuc5KDPLJEx",
+          "name": "Veo Video Agent"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "options": {
+          "systemMessage": "=# System Prompt: Adaptive Main Video Agent for Video Creation & Posting\n\nYou are the Main Video Agent.  \nYour job is to assist users with video-related tasks by understanding their requests, clarifying details, and using the correct tools for each action.\n\n## Tools\n- **searchAirtable:** Search Airtable to find videos that are ready to be posted.\n- **veovideoagent:** Generate a new video (requires both a name and a descriptive prompt).\n- **postingagent:** Post a ready video to social platforms.\n\n---\n\n## General Instructions\n\n- Always clarify the user’s intent.  \n- You may be asked to:  \n  - Search for videos that are ready to post  \n  - Generate a new video  \n  - Post a ready video  \n- Use only the relevant tool(s) for the user’s request.\n\n---\n\n## Video Generation Workflow\n\n**If the user wants to generate a new video:**\n\n1. **Ask clarifying questions** to gather all essential details:\n    - **Name:** What would you like to call this video? (Short, memorable, and related to the content)\n    - **Subject:** (object/person/animal/scenery)\n    - **Context:** (background/setting)\n    - **Action:** (what’s happening)\n    - **Style:** (cartoon, noir, TikTok, cinematic, etc.)\n    - **Speech/dialogue:** Every main character should have a speech/dialogue line, unless user requests a silent video.\n    - **[Optional]** Camera motion, composition, ambiance\n\n2. **Draft the prompt** with all the details. Ensure the prompt is descriptive and vivid, similar to the example format below.\n\n3. **Show both the name and the prompt to the user for approval.**  \n   - Ask: “Is this correct and ready for video generation?”\n\n4. **Once approved, call `veovideoagent` with BOTH:**\n    - `name`: [Short video title]\n    - `prompt`: [Full, descriptive video prompt]\n\n---\n\n## Example Output to veovideoagent\nname: Yeti Snowboarding\nprompt: A first-person POV shot of a snowboarding yeti gliding down a frosty alpine slope. The handheld camera shakes slightly, capturing the adrenaline of the ride. Snowflakes sparkle in the sunlight, and the yeti’s excited growl echoes: \"This powder is unreal! I’m flying down the mountain like a furry rocket!\" His fur blows in the wind as he performs a mid-air flip, shouting, \"Veeeee! Yeehaw!\" The scene transitions to a wide shot of the snowy wilderness, ending with the yeti high-fiving a snowman.\n\n---\n\n## Posting Workflow\n\n**If the user wants to post a video:**\n1. Use `searchAirtable` to check for a video that is ready to be posted.\n2. Reply the name of the ready video and ask the user if that is what he wants to post\n3. Once approved, call `postingagent` to publish it.\n4. If no video is ready, inform the user and offer to generate a new one.\n\n---\n\n## Search Workflow\n\n**If the user wants to search for ready videos:**  \n- Use `searchAirtable` and return the results to the user.\n\n___\n\n## Key Notes\n\n- Never post a video unless you have confirmed via `searchAirtable` that it is ready.\n- Never generate a video without both a user-approved prompt and a name.\n- Always remain in chat mode for clarifications, approvals, or follow-up tasks.\n- Every character in video prompts must have a speech/dialogue line unless the user requests a silent video.\n- Switch tasks as needed based on the user's input.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -60,
+        0
+      ],
+      "id": "4115f85a-f706-4490-b33d-9125179b1b95",
+      "name": "Main Video Agent"
+    },
+    {
+      "parameters": {
+        "model": "qwen/qwen3-30b-a3b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        220
+      ],
+      "id": "886917bf-fdcb-4f16-b0a2-9fde695712ef",
+      "name": "Qwen 3",
+      "credentials": {
+        "openRouterApi": {
+          "id": "y1vjMptfuqUZLu87",
+          "name": "Openrouter Key 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.message.chat.id }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -40,
+        220
+      ],
+      "id": "2252b16a-0d78-4450-a1c2-9c404a25031b",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "description": "Call this tool to publish ready video onto Social platforms.",
+        "workflowId": {
+          "__rl": true,
+          "value": "H2seyBKPJZp9APpm",
+          "mode": "list",
+          "cachedResultName": "VEO 3 Posting Agent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Post": "true"
+          },
+          "matchingColumns": [
+            "Post"
+          ],
+          "schema": [
+            {
+              "id": "Post",
+              "displayName": "Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        360,
+        220
+      ],
+      "id": "20089645-e78c-427c-a00f-29a40b5e40cb",
+      "name": "postingagent"
+    },
+    {
+      "parameters": {
+        "description": "Call this tool to generate a new video.",
+        "workflowId": {
+          "__rl": true,
+          "value": "qATpZdA7ehVojeHy",
+          "mode": "list",
+          "cachedResultName": "VEO 3 Video Generator Agent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "prompt": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('prompt', ``, 'string') }}",
+            "name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('name', ``, 'string') }}"
+          },
+          "matchingColumns": [
+            "prompt"
+          ],
+          "schema": [
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "prompt",
+              "displayName": "prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        220,
+        220
+      ],
+      "id": "8b137cc6-64b3-45b7-8f74-b5c6900818e3",
+      "name": "veovideoagent"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appJt0NXgy4Qdiwme",
+          "mode": "list",
+          "cachedResultName": "VEO 3 Videos",
+          "cachedResultUrl": "https://airtable.com/appJt0NXgy4Qdiwme"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblH2A94diY7VjjH7",
+          "mode": "list",
+          "cachedResultName": "Videos",
+          "cachedResultUrl": "https://airtable.com/appJt0NXgy4Qdiwme/tblH2A94diY7VjjH7"
+        },
+        "filterByFormula": "Status = \"Ready To Post\"",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        100,
+        220
+      ],
+      "id": "b46e29e7-72f3-436c-a3fb-0de717bc6a97",
+      "name": "searchAirtable",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "{insert chat id}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        320,
+        0
+      ],
+      "id": "39e799d5-c986-4c3c-bec9-90f38747cf7b",
+      "name": "Telegram (update chat id)",
+      "webhookId": "d4b7b0dc-cedb-4612-9cce-1f4ed01d8083",
+      "credentials": {
+        "telegramApi": {
+          "id": "rajpDvuc5KDPLJEx",
+          "name": "Veo Video Agent"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Main Video Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Qwen 3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Main Video Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Main Video Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "postingagent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Main Video Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "veovideoagent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Main Video Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "searchAirtable": {
+      "ai_tool": [
+        [
+          {
+            "node": "Main Video Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Main Video Agent": {
+      "main": [
+        [
+          {
+            "node": "Telegram (update chat id)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "148b430c-e18f-46b4-b4e8-bce7ed6a2a54",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d8c459f4ebcadd20c3258ade09582fe0f02de933363f6184259e0c9a36784090"
+  },
+  "id": "MnSj9RHtCEDuQf5B",
+  "tags": [
+    {
+      "createdAt": "2025-06-09T07:35:33.006Z",
+      "updatedAt": "2025-06-09T07:35:33.006Z",
+      "id": "OozOX9dMuHatAFQJ",
+      "name": "W18: VEO 3 Video"
+    }
+  ]
+}
