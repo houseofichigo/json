@@ -1,0 +1,625 @@
+{
+  "name": "YT Content Research",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        140,
+        120
+      ],
+      "id": "e5dbf77e-e8dd-45b5-9388-3b3ff58a0a05",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "url": "https://www.googleapis.com/youtube/v3/search",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "={{ $json['Channel Username'] }}"
+            },
+            {
+              "name": "type",
+              "value": "channel"
+            },
+            {
+              "name": "maxResults",
+              "value": "1"
+            },
+            {
+              "name": "part",
+              "value": "snippet"
+            },
+            {
+              "name": "key",
+              "value": "{insert api key}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        560,
+        120
+      ],
+      "id": "b0f83ad5-e7e8-46cc-88d2-6a376b96b0a8",
+      "name": "Youtube Get Channel"
+    },
+    {
+      "parameters": {
+        "url": "https://www.googleapis.com/youtube/v3/channels",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "part",
+              "value": "snippet,statistics,contentDetails"
+            },
+            {
+              "name": "id",
+              "value": "={{ $json.items[0].snippet.channelId }}"
+            },
+            {
+              "name": "key",
+              "value": "{insert api key}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        760,
+        120
+      ],
+      "id": "96d8cbe4-6736-4586-95e1-1d0cce54ac1c",
+      "name": "Get info"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "items",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        420,
+        320
+      ],
+      "id": "cc3f1002-0c1a-4223-a014-ccb18848e88d",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appiL64mFdOILekfb",
+          "mode": "list",
+          "cachedResultName": "Youtube Competitor Analysis",
+          "cachedResultUrl": "https://airtable.com/appiL64mFdOILekfb"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbllIEipEFkmGe3FA",
+          "mode": "list",
+          "cachedResultName": "Channels",
+          "cachedResultUrl": "https://airtable.com/appiL64mFdOILekfb/tbllIEipEFkmGe3FA"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Channel Username": "={{ $json.items[0].snippet.customUrl }}",
+            "Channel Name": "={{ $json.items[0].snippet.title }}",
+            "Link": "=https://www.youtube.com/{{ $json.items[0].snippet.customUrl }}",
+            "Channel Id": "={{ $json.items[0].id }}",
+            "Video Count": "={{ Math.round($json.items[0].statistics.viewCount) }}",
+            "Subscribers": "={{ Math.round($json.items[0].statistics.subscriberCount) }}",
+            "Average View Per Video": "={{Math.round($json.items[0].statistics.viewCount/$json.items[0].statistics.videoCount)}}",
+            "Views Per Sub": "={{Math.round($json.items[0].statistics.viewCount/$json.items[0].statistics.subscriberCount)}}"
+          },
+          "matchingColumns": [
+            "Channel Username"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Channel Username",
+              "displayName": "Channel Username",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Channel Name",
+              "displayName": "Channel Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Link",
+              "displayName": "Link",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Channel Id",
+              "displayName": "Channel Id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Video Count",
+              "displayName": "Video Count",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Subscribers",
+              "displayName": "Subscribers",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Average View Per Video",
+              "displayName": "Average View Per Video",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Views Per Sub",
+              "displayName": "Views Per Sub",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        980,
+        120
+      ],
+      "id": "33a7154c-9ace-4f0d-aedd-1171e62ffc32",
+      "name": "Update Channel Info",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://www.googleapis.com/youtube/v3/search",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "part",
+              "value": "snippet"
+            },
+            {
+              "name": "order",
+              "value": "viewCount"
+            },
+            {
+              "name": "maxResults",
+              "value": "5"
+            },
+            {
+              "name": "key",
+              "value": "{insert api key}"
+            },
+            {
+              "name": "channel_id",
+              "value": "={{ $json.fields['Channel Id'] }}"
+            },
+            {
+              "name": "publishedAfter",
+              "value": "={{ (new Date(Date.now() - (60 * 24 * 60 * 60 * 2000))).toISOString() }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1200,
+        120
+      ],
+      "id": "6c7d6bc0-1059-48bb-af5c-2508fa861303",
+      "name": "Get Videos"
+    },
+    {
+      "parameters": {
+        "url": "https://www.googleapis.com/youtube/v3/videos",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "part",
+              "value": "snippet,statistics"
+            },
+            {
+              "name": "id",
+              "value": "={{ $json.items[0].id.videoId }},{{ $json.items[1].id.videoId }},{{ $json.items[2].id.videoId }},{{ $json.items[3].id.videoId }},{{ $json.items[4].id.videoId }}"
+            },
+            {
+              "name": "key",
+              "value": "{insert api key}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        240,
+        320
+      ],
+      "id": "a3b4895f-aee1-45a0-9937-eb329d92c42d",
+      "name": "Get Top 5 Videos"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appiL64mFdOILekfb",
+          "mode": "list",
+          "cachedResultName": "Youtube Competitor Analysis",
+          "cachedResultUrl": "https://airtable.com/appiL64mFdOILekfb"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblPIvB3Z7X4aOzy9",
+          "mode": "list",
+          "cachedResultName": "Videos",
+          "cachedResultUrl": "https://airtable.com/appiL64mFdOILekfb/tblPIvB3Z7X4aOzy9"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Title": "={{ $json.snippet.title }}",
+            "Views": "={{ $json.statistics.viewCount }}",
+            "Likes": "={{ $json.statistics.likeCount }}",
+            "Comments": "={{ $json.statistics.commentCount }}",
+            "Outlier": "={{ ($json.statistics.viewCount / $('Update Channel Info').item.json.fields['Average View Per Video']).toFixed() }}",
+            "Channel": "={{ $('Update Channel Info').item.json.fields['Channel Name'] }}",
+            "URL": "={{ 'https://www.youtube.com/watch?v=' + $json.id }}",
+            "Date Created": "={{ new Date($json.snippet.publishedAt).toISOString() }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Views",
+              "displayName": "Views",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Likes",
+              "displayName": "Likes",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Comments",
+              "displayName": "Comments",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Outlier",
+              "displayName": "Outlier",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Channel",
+              "displayName": "Channel",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Date Created",
+              "displayName": "Date Created",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "URL",
+              "displayName": "URL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "typecast": true
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        580,
+        320
+      ],
+      "id": "5384f6dc-974a-4580-9c46-faa4f516de61",
+      "name": "Update Video",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appiL64mFdOILekfb",
+          "mode": "list",
+          "cachedResultName": "Youtube Competitor Analysis",
+          "cachedResultUrl": "https://airtable.com/appiL64mFdOILekfb"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbllIEipEFkmGe3FA",
+          "mode": "list",
+          "cachedResultName": "Channels",
+          "cachedResultUrl": "https://airtable.com/appiL64mFdOILekfb/tbllIEipEFkmGe3FA"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        360,
+        120
+      ],
+      "id": "81b70a93-77f9-49b1-af6c-998dd5131128",
+      "name": "Search Airtable",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## YT Content Research System\n",
+        "height": 480,
+        "width": 1520
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -20,
+        20
+      ],
+      "id": "e026bc4f-a11b-438e-ab56-1960587c3a82",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Search Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Youtube Get Channel": {
+      "main": [
+        [
+          {
+            "node": "Get info",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get info": {
+      "main": [
+        [
+          {
+            "node": "Update Channel Info",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Update Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Channel Info": {
+      "main": [
+        [
+          {
+            "node": "Get Videos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Videos": {
+      "main": [
+        [
+          {
+            "node": "Get Top 5 Videos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Top 5 Videos": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Airtable": {
+      "main": [
+        [
+          {
+            "node": "Youtube Get Channel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e78690d5-74fe-4321-af82-7e9854384d67",
+  "meta": {
+    "instanceId": "d8c459f4ebcadd20c3258ade09582fe0f02de933363f6184259e0c9a36784090"
+  },
+  "id": "KptzVYIfkkCU3IBa",
+  "tags": [
+    {
+      "createdAt": "2025-05-14T06:57:42.256Z",
+      "updatedAt": "2025-05-14T06:58:02.365Z",
+      "id": "7vgDEtMqSnfZppPt",
+      "name": "W12: Youtube Scraper"
+    }
+  ]
+}
