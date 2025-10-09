@@ -1,0 +1,101 @@
+{
+  "name": "elevenlabs-get-conversation",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "webhook-path-id",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        60,
+        40
+      ],
+      "id": "76a8ca88-da4a-4aae-b737-e48284c10818",
+      "name": "Webhook",
+      "webhookId": "webhook-path-id"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "n8n_chat_histories",
+        "limit": 100,
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "session_id",
+              "condition": "eq",
+              "keyValue": "={{ $json.query.number }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        200,
+        40
+      ],
+      "id": "35e08a71-c756-4e7c-abb3-7f2ab33f6d2b",
+      "name": "Supabase",
+      "credentials": {
+        "supabaseApi": {
+          "id": "your-supabase-credentials-id",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.3,
+      "position": [
+        340,
+        40
+      ],
+      "id": "9c70ad10-7db9-4c75-afeb-51c7c3ba2f5f",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "your-version-id",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "your-instance-id"
+  },
+  "id": "your-workflow-id",
+  "tags": []
+}
