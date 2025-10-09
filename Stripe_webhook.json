@@ -1,0 +1,248 @@
+{
+  "name": "Stripe webhook",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "stripe",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "1f626912-c502-44d6-ae70-7d6100b800ac",
+      "name": "Webhook",
+      "webhookId": "40a2c6b8-787b-493b-93e7-73b303686df6"
+    },
+    {
+      "parameters": {
+        "jsCode": "const signatureHeader = $input.first().json.headers[\"stripe-signature\"]\n// Split the header by comma\nconst parts = signatureHeader.split(',');\n\n// Build the object by splitting each part at the first '='\nconst result = {};\nfor (const part of parts) {\n  const [key, value] = part.split('=', 2);\n  result[key] = value;\n}\n\n// Output the object for use in your workflow\nreturn [{ json: result }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        180,
+        0
+      ],
+      "id": "80fe0b7e-c84a-436a-9f99-de9948e35309",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "action": "hmac",
+        "type": "SHA256",
+        "value": "={{ $json.t }}.{{ JSON.stringify($('Webhook').item.json.body, null, 2) }}",
+        "dataPropertyName": "computedSignature",
+        "secret": "=replace_this_with_your_webhook_secret"
+      },
+      "type": "n8n-nodes-base.crypto",
+      "typeVersion": 1,
+      "position": [
+        340,
+        0
+      ],
+      "id": "96d87c34-11a3-4b19-8a2a-d1d12e9619ae",
+      "name": "Crypto"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "8d392fdf-1787-4cd0-bbf2-8b40e7cbafae",
+              "leftValue": "={{ $json.v1 }}",
+              "rightValue": "={{ $json.computedSignature }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "782d4bad-4f32-4950-88fc-59829a77eb1f",
+              "leftValue": "={{ $('Webhook').item.json.body.type }}",
+              "rightValue": "checkout.session.completed",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "f24fb433-5716-4254-883c-9f12570278b9",
+              "leftValue": "={{ ($now/1000) - $json.t }}",
+              "rightValue": "={{ 60 // This is in seconds }}",
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        500,
+        0
+      ],
+      "id": "bec1a466-361c-4e6e-b500-364ebaf29940",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "errorMessage": "Signature verification failed"
+      },
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        400,
+        220
+      ],
+      "id": "a6b0a27b-bf0d-400f-8c47-eee3a17636c7",
+      "name": "Stop and Error"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.stripe.com/v1/payment_links",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer replace_this_with_your_secret_key"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "line_items[0][price]",
+              "value": "=replace_this_with_your_price_id"
+            },
+            {
+              "name": "line_items[0][quantity]",
+              "value": "=1"
+            },
+            {
+              "name": "after_completion[type]",
+              "value": "hosted_confirmation"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        0,
+        -280
+      ],
+      "id": "35a37d3d-d9ea-4bc7-8a5e-1a579a5448c8",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "content": "# Payment Link Generation\n\nThis node generates a Stripe payment link based on your defined product, pricing, and payment settings.\n\n- Configure the HTTP Request node with your keys & product details.\n- Once triggered, this node communicates directly with the Stripe API to create a unique payment link that you can share with your customer.\n- Easily reuse this link in emails, forms, or automations.\n- Customize the payload as needed to fit your use case.\n\nNeeds:\n- Stripe Product Price ID\n- Stripe Secret Key\n",
+        "height": 340,
+        "width": 560
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -620,
+        -480
+      ],
+      "id": "f68bd796-687f-4be9-b35a-c01fcaecfcc6",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "# Stripe Webhook Handling & Signature Verification\n\nThis workflow processes Stripe’s payment status webhooks and ensures security by verifying the webhook signature and checking the timestamp to block replay attacks.\n\n- Starts with the Webhook node to receive events from Stripe.\n- Uses a Code node to extract signature headers and timestamp.\n- The Crypto (HMAC) node verifies the Stripe signature using your webhook secret—protecting against fake requests.\n- The If node also checks the timestamp so only recent, non-replayed events pass through.\n- If verification fails, the Stop and Error node halts execution and logs an error, keeping your workflow safe and reliable.\n\nAdjust the accepted event types or add more validation as your integration grows.\n\nNeeds:\n- Stripe Webhook Secret Key(inside Crypto node)",
+        "height": 500,
+        "width": 560
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -620,
+        -60
+      ],
+      "id": "1c016230-4820-4001-af73-5fd9c8b348a0",
+      "name": "Sticky Note1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crypto": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Crypto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Stop and Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "a0d0194d-0ecd-4c4d-85b2-56dbc7a9ebd4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "89214beb80023fb6dd965ca995aa39ab8b01230f6dfebee590e804967a519975"
+  },
+  "id": "0QjHGbFChr8UWMq8",
+  "tags": []
+}
