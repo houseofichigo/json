@@ -1,0 +1,170 @@
+{
+  "name": "Notification email",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Tu es un assistant ai qui reprend juste cese information sans rien rajouter avec ''vous avez reçu un email\"\n\nVoilà le détail à communiquer : \n\nSujet du mail : {{ $json.Subject }}\nMessage : {{ $json.snippet }}\nId email :  {{ $json.threadId }}\nAdresse email : {{ $json.From }}\n",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        20,
+        -100
+      ],
+      "id": "4ee862a6-4494-4188-853f-53bffbcc47a4",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -40,
+        120
+      ],
+      "id": "3dc1b8dc-ffaf-4b14-b1f9-29a235dd6a39",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "x0tQpNXNP6v5Ovtd",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "892959162"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        120,
+        120
+      ],
+      "id": "01109fe1-e670-4901-9663-dc4c79d9784b",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "chatId": "892959162",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        380,
+        -100
+      ],
+      "id": "e423ac39-2aa3-4ff4-bd74-5e43ca43a34f",
+      "name": "Telegram",
+      "webhookId": "6f222313-305d-4071-9242-04da37d3bb74",
+      "credentials": {
+        "telegramApi": {
+          "id": "lNY2NyTYBc6YUziG",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {
+          "labelIds": [
+            "INBOX"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -240,
+        -60
+      ],
+      "id": "ad3036ac-41ca-4aaf-9d1e-538ef3ba68d7",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "P70o3W6SApRM8qjK",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "a42b7af3-ce46-422e-ab68-409a4c937f82",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2ee8293be0fa6380527ab247a1eb95264d17c994507730562aa1c31ddb264f82"
+  },
+  "id": "5GRcebjUnqOG4AcV",
+  "tags": []
+}
