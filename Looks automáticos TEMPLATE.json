@@ -1,0 +1,1171 @@
+{
+  "name": "Looks automáticos TEMPLATE",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -592,
+        288
+      ],
+      "id": "22219e47-8641-47a4-82ca-9c7f0a428571",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image-preview:generateContent",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-goog-api-key",
+              "value": "={{ $json.api_key }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"contents\": [\n    {\n      \"parts\": [\n        {\n          \"text\": \"Explain how AI works in a few words\"\n        }\n      ]\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1360,
+        576
+      ],
+      "id": "29d2f12b-b5f5-4391-86ba-3631ccf42c3f",
+      "name": "Request texto"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image-preview:generateContent",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-goog-api-key",
+              "value": "={{ $('API KEY').item.json.api_key }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"contents\": [\n    {\n      \"parts\": [\n        {\n          \"text\": \"Create a picture of my cat eating a nano-banana in a fancy restaurant under the Gemini constellation\"\n        },\n        {\n          \"inline_data\": {\n            \"mime_type\": \"image/jpeg\",\n            \"data\": \"BASE64_IMAGE_DATA\"\n          }\n        }\n      ]\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1136,
+        576
+      ],
+      "id": "80e605c4-b940-477d-8b19-5b5f8e9bc253",
+      "name": "Request Imagen"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        512,
+        496
+      ],
+      "id": "02bb7d7c-d545-41b6-8181-ae7e4c6040c5",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "hRE5nwsFAI0GT08F",
+          "name": "prueba (02/09/25)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('NUMERO LOOKS (X)').item.json.id }}",
+        "contextWindowLength": 100
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        672,
+        496
+      ],
+      "id": "6779a346-dd1e-4ceb-862e-2b4abe58c3b0",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "content": "## LOOKS INFINITOS AUTOMATICOS ",
+        "height": 624,
+        "width": 2320
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -816,
+        112
+      ],
+      "id": "ea25515e-2f28-4ceb-b630-49f193f98c2c",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "20bc3836-de4c-443f-a135-69c323acb2cc",
+              "name": "api_key",
+              "value": "[TU API KEY]",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -384,
+        288
+      ],
+      "id": "0b5a3f37-62ab-4cc0-b5b8-c93b7f7ed416",
+      "name": "API KEY"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "1O-qsnsMqzivll7rbLriNbcgypvguxgzF",
+          "mode": "list",
+          "cachedResultName": "pykaso-output-1756141615531.png",
+          "cachedResultUrl": "https://drive.google.com/file/d/1O-qsnsMqzivll7rbLriNbcgypvguxgzF/view?usp=drivesdk"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -176,
+        288
+      ],
+      "id": "dec28b2d-7595-431e-91b1-5b08512a0d5b",
+      "name": "IMAGEN BASE",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "dfMxc6aDik41YzFR",
+          "name": "KAIZENSYSTEMS (16/09)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "binaryToPropery",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        32,
+        288
+      ],
+      "id": "4fe28e88-3b68-4704-9aa4-4934eb2e85ec",
+      "name": "IMAGEN A BASE 64"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "69fd2b75-5450-4789-906f-8039226f2312",
+              "name": "id",
+              "value": "[EJ: 8379238]",
+              "type": "string"
+            },
+            {
+              "id": "b8ddff1f-f961-4b78-9bef-90b0fad7e152",
+              "name": "numero_repeticiones",
+              "value": "[EJ: 5]",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        288
+      ],
+      "id": "90e00652-50a8-46ea-b1f8-7b8050b48d6a",
+      "name": "NUMERO LOOKS (X)"
+    },
+    {
+      "parameters": {
+        "jsCode": "let result = [];\nfor (let i = 0; i < $input.first().json.numero_repeticiones; i++) {\n  result.push({ json: { index: i+1 } });\n}\nreturn result;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        416,
+        288
+      ],
+      "id": "ee8293c9-d86b-4231-a4db-da5c68fa12e4",
+      "name": "CREA (X) ITEMS"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image-preview:generateContent",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-goog-api-key",
+              "value": "={{ $('API KEY').item.json.api_key }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"contents\": [\n    {\n      \"parts\": [\n        {\n          \"text\": \"keep avatar, just change look: {{ $json.output }}\"\n        },\n        {\n          \"inline_data\": {\n            \"mime_type\": \"image/jpeg\",\n            \"data\": \"{{ $('IMAGEN A BASE 64').item.json.data }}\"\n          }\n        }\n      ]\n    }\n  ],\n  \"safety_settings\": [\n    { \"category\": \"HARM_CATEGORY_SEXUALLY_EXPLICIT\", \"threshold\": \"BLOCK_NONE\" },\n    { \"category\": \"HARM_CATEGORY_HARASSMENT\", \"threshold\": \"BLOCK_NONE\" },\n    { \"category\": \"HARM_CATEGORY_HATE_SPEECH\", \"threshold\": \"BLOCK_NONE\" },\n    { \"category\": \"HARM_CATEGORY_DANGEROUS_CONTENT\", \"threshold\": \"BLOCK_NONE\" }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        912,
+        288
+      ],
+      "id": "3b974b42-5ca4-476d-9bca-bc0659ab5cea",
+      "name": "EDITA LA IMAGEN BASE"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=crea un look nuevo para una influencer de 25-30 años.\n\nsolo menciona una descripción de la ropa que lleva puesta\n\nsolo describe cambios en la parte superior del cuerpo que es lo único visible\n\nda estilos que pudiera llevar una influencer real de hoy en día con 25-30 años\n\nno envíes nada más en tu mensaje\n\npara crear el prompt ten tu memoria en cuenta y reduce la frecuencia con la que repites la composición de los looks\n\ndame el prompt en inglés",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        576,
+        288
+      ],
+      "id": "e2933234-c5f9-4dd4-8104-b577ab291259",
+      "name": "CREADOR (X) PROMPTS LOOKS"
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "candidates[0].content.parts[0].inlineData.data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1136,
+        288
+      ],
+      "id": "73029dbd-3c4f-4d08-9c18-a22a36dd3ed8",
+      "name": "BASE 64 A IMAGEN"
+    },
+    {
+      "parameters": {
+        "url": "https://api.heygen.com/v2/avatars",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            },
+            {
+              "name": "x-api-key",
+              "value": "[TU API KEY]"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -688,
+        1360
+      ],
+      "id": "d00fc2c1-aee7-45c9-a81c-c5084ba3687b",
+      "name": "GET AVATAR IDS"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.heygen.com/v2/video/generate",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            },
+            {
+              "name": "x-api-key",
+              "value": "[TU API KEY]"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"caption\": false,\n  \"callback_id\": \"string\",\n  \"dimension\": {\n    \"width\": 1280,\n    \"height\": 720\n  },\n  \"video_inputs\": [\n    {\n      \"character\": {\n        \"type\": \"talking_photo\",\n        \"talking_photo_id\": \"e9e2e31bc23d4ec3a4655847d4ebd8ea\"\n        },\n      \"voice\": {\n        \"type\": \"text\",\n        \"voice_id\": \"5d61b4c7e1894f4c9fc045be54528ead\",\n        \"input_text\": \"Hola buenos días, hoy te traigo un vídeo de inteligencia artificial\",\n        \"speed\": 1.2\n      }\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -480,
+        1360
+      ],
+      "id": "a7824b2b-2e56-4e4f-acc4-d3235629ed59",
+      "name": "POST video creation"
+    },
+    {
+      "parameters": {
+        "content": "## HTTPs HEYGEN\n",
+        "height": 272,
+        "width": 624,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -816,
+        1280
+      ],
+      "id": "0b9787ea-502e-46e6-91dd-52ef64265ed1",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/apify~instagram-post-scraper/run-sync-get-dataset-items",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer [TU API KEY]"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"resultsLimit\": 10,\n    \"skipPinnedPosts\": true,\n    \"username\": [\n        \"[NOMBRE DE LA FUENTE]\"\n    ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -448,
+        960
+      ],
+      "id": "c6e7700d-c342-4578-a1bd-8cbaf789e032",
+      "name": "Apify - Extrae Vídeos1"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.videoUrl }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -240,
+        960
+      ],
+      "id": "a44a55e6-46fc-4c2a-94a9-bdd803c8c8e7",
+      "name": "Descarga Video1"
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -16,
+        960
+      ],
+      "id": "6b462b50-124f-4af3-b371-077aab502b88",
+      "name": "Transcript1",
+      "credentials": {
+        "openAiApi": {
+          "id": "hRE5nwsFAI0GT08F",
+          "name": "prueba (02/09/25)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## SCRIPTS DE EJEMPLO",
+        "height": 304,
+        "width": 1584,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -816,
+        880
+      ],
+      "id": "2a264a02-166d-45ca-b6fb-e5c90a3f201c",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Traduce convirtiendo al español como si fueras nativo:  {{ $json.text }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        192,
+        960
+      ],
+      "id": "506d3d1c-4903-42c9-99b6-c65d780f1cf2",
+      "name": "Traduce",
+      "credentials": {
+        "openAiApi": {
+          "id": "hRE5nwsFAI0GT08F",
+          "name": "prueba (02/09/25)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appS8HNz9D5smUtV1",
+          "mode": "list",
+          "cachedResultName": "Zena",
+          "cachedResultUrl": "https://airtable.com/appS8HNz9D5smUtV1"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblzqYxUX04w91qvx",
+          "mode": "list",
+          "cachedResultName": "Verticales",
+          "cachedResultUrl": "https://airtable.com/appS8HNz9D5smUtV1/tblzqYxUX04w91qvx"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Revisado": false,
+            "Script": "={{ $('Traduce').item.json.message.content }}",
+            "Fuente": "={{ $('Apify - Extrae Vídeos1').item.json.url }}",
+            "Visitas Fuente": "={{ $('Apify - Extrae Vídeos1').item.json.videoPlayCount }}",
+            "Fecha Fuente": "={{ $('Apify - Extrae Vídeos1').item.json.latestComments[0].timestamp }}",
+            "Titulo": "=",
+            "Visitas": 0,
+            "Likes": 0,
+            "Transcript": "={{ $('Transcript1').item.json.text }}",
+            "Pie de Foto": "=",
+            "Duracion": "={{ $('Apify - Extrae Vídeos1').item.json.videoDuration }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Titulo",
+              "displayName": "Titulo",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Fecha Fuente",
+              "displayName": "Fecha Fuente",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Fuente",
+              "displayName": "Fuente",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Visitas Fuente",
+              "displayName": "Visitas Fuente",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Transcript",
+              "displayName": "Transcript",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Pie de Foto",
+              "displayName": "Pie de Foto",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Script",
+              "displayName": "Script",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Revisado",
+              "displayName": "Revisado",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Video",
+              "displayName": "Video",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Fuentes para Videos",
+              "displayName": "Fuentes para Videos",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Fecha Creacion",
+              "displayName": "Fecha Creacion",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Estado",
+              "displayName": "Estado",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Subido",
+                  "value": "Subido"
+                },
+                {
+                  "name": "Subir",
+                  "value": "Subir"
+                },
+                {
+                  "name": "Revisar",
+                  "value": "Revisar"
+                },
+                {
+                  "name": "Miniatura",
+                  "value": "Miniatura"
+                },
+                {
+                  "name": "Editar",
+                  "value": "Editar"
+                },
+                {
+                  "name": "Grabar",
+                  "value": "Grabar"
+                },
+                {
+                  "name": "recurso",
+                  "value": "recurso"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Record ID",
+              "displayName": "Record ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Descripcion IG y TT",
+              "displayName": "Descripcion IG y TT",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Publicacion LDN",
+              "displayName": "Publicacion LDN",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Plataforma",
+              "displayName": "Plataforma",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "options": [
+                {
+                  "name": "linkedin",
+                  "value": "linkedin"
+                },
+                {
+                  "name": "tiktok",
+                  "value": "tiktok"
+                },
+                {
+                  "name": "instagram",
+                  "value": "instagram"
+                },
+                {
+                  "name": "youtube",
+                  "value": "youtube"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Visitas",
+              "displayName": "Visitas",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Likes",
+              "displayName": "Likes",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Fecha de Subida",
+              "displayName": "Fecha de Subida",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "ID IG",
+              "displayName": "ID IG",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "ID TT",
+              "displayName": "ID TT",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "ID YT",
+              "displayName": "ID YT",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "ID LKD",
+              "displayName": "ID LKD",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Hashtags",
+              "displayName": "Hashtags",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Duracion",
+              "displayName": "Duracion",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Descripcion YT",
+              "displayName": "Descripcion YT",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Miniatura",
+              "displayName": "Miniatura",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Audio",
+              "displayName": "Audio",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Video Horizontal",
+              "displayName": "Video Horizontal",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        512,
+        960
+      ],
+      "id": "e98868c9-f20b-4ba6-b8d6-232784d61578",
+      "name": "Añade Scripts Propuestos1",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "dpBN66LrfaIknoCG",
+          "name": "Prueba Video Autopublicar (14/05)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtHour": 12,
+              "triggerAtMinute": 1
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -704,
+        960
+      ],
+      "id": "830654b5-4fd6-417c-a3da-a3303eeda89b",
+      "name": "Schedule (Insta)"
+    },
+    {
+      "parameters": {
+        "content": "![Mario Kaizen](https://i.imgur.com/NxJ1ZvB.jpg)\n\n## Conecta conmigo\n\n## [➡️ YouTube](https://www.youtube.com/@mario.kaizen)\n\n## [➡️ Comunidad Kaizen Academy](https://skool.com/kaizenacademy)",
+        "height": 1000,
+        "width": 580,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        128,
+        -1056
+      ],
+      "id": "b26dbfd5-75ad-4da3-a1da-addf20946b81",
+      "name": "Links Mario"
+    },
+    {
+      "parameters": {
+        "content": "![Logo Mario Kaizen](https://i.imgur.com/8fsiM5V.png)\n\n## ¿Quieres una solución personalizada?\n\n## ➡️ [Haz clic aquí para contactar con nuestro equipo](https://kaizensystems.typeform.com/mario-n8n)",
+        "height": 794,
+        "width": 618,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        736,
+        -1056
+      ],
+      "id": "8e14fc3f-1880-43a7-ac99-098cd203a890",
+      "name": "Soluciones personalizadas"
+    },
+    {
+      "parameters": {
+        "content": "# ![Portada Kaizen Academy](https://assets.skool.com/f/6d0680502d574b7fb977f8894b6385f7/61ebd496e2264d6793b8efecb4aaf202488f494026f94acd9c7507e553ad5548-md.jpg)\n\n## Las plantillas están muy bien, pero, si quieres aprender de verdad a vender soluciones con IA debes ir un paso más allá.\n\n\n\n## Accede a:\n\n## - ✅ Formaciones\n\n## - ✅ Oportunidades pagadas\n\n## - ✅ Círculo de personas que te potencian día a día:\n\n\n\n\n# [Haz clic aquí para unirte al equipo 🚀🥷](https://skool.com/kaizenacademy)\n\n\n\n## ⚠️ Vamos a subir el precio Hoy, pero si entras desde este Link, \n## aseguras tu precio de Entrada de por Vida.\n",
+        "height": 1104,
+        "width": 916,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -816,
+        -1056
+      ],
+      "id": "51253be0-8ea8-4752-ba50-90de2a642c64",
+      "name": "Comunidad Kaizen1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "API KEY",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Request texto": {
+      "main": [
+        []
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "CREADOR (X) PROMPTS LOOKS",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "CREADOR (X) PROMPTS LOOKS",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "API KEY": {
+      "main": [
+        [
+          {
+            "node": "IMAGEN BASE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IMAGEN BASE": {
+      "main": [
+        [
+          {
+            "node": "IMAGEN A BASE 64",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IMAGEN A BASE 64": {
+      "main": [
+        [
+          {
+            "node": "NUMERO LOOKS (X)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "NUMERO LOOKS (X)": {
+      "main": [
+        [
+          {
+            "node": "CREA (X) ITEMS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CREA (X) ITEMS": {
+      "main": [
+        [
+          {
+            "node": "CREADOR (X) PROMPTS LOOKS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "EDITA LA IMAGEN BASE": {
+      "main": [
+        [
+          {
+            "node": "BASE 64 A IMAGEN",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CREADOR (X) PROMPTS LOOKS": {
+      "main": [
+        [
+          {
+            "node": "EDITA LA IMAGEN BASE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apify - Extrae Vídeos1": {
+      "main": [
+        [
+          {
+            "node": "Descarga Video1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Descarga Video1": {
+      "main": [
+        [
+          {
+            "node": "Transcript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcript1": {
+      "main": [
+        [
+          {
+            "node": "Traduce",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Traduce": {
+      "main": [
+        [
+          {
+            "node": "Añade Scripts Propuestos1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule (Insta)": {
+      "main": [
+        [
+          {
+            "node": "Apify - Extrae Vídeos1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "5c850bae-2baf-4201-bd65-d00ab53dca18",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "161ef4ae33ce65770cbacc969b7a8a7dea7b6f882504adaad3ed796f23a9dcb7"
+  },
+  "id": "2grPRpRlpUWKWBnL",
+  "tags": []
+}
