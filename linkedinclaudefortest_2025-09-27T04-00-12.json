@@ -1,0 +1,262 @@
+{
+  "name": "Linkedin (Claude) for test",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "You are a Content Researcher and Creator for Agentic Vibe. Generate a complete LinkedIn post with hashtags in a single response.\n\n**Brand Focus Areas:**\n- AI for Content Creation & Workflow Automation\n- LinkedIn Growth Strategies & Automation\n- Solopreneur Productivity with AI\n- Systems Thinking for Personal Brands\n- Future of Work & Automated Influence\n- No-Code Tools for Content & Lead Generation\n\n**Output Requirements:**\nGenerate ONE complete LinkedIn post including:\n1. **Compelling Hook** (1-2 lines that grab attention)\n2. **Value-Rich Content** (150-300 words with actionable insights)\n3. **Engagement Element** (question or CTA)\n4. **Professional Hashtags** (8-12 relevant hashtags)\n5. **Image Description** (for DALL-E generation)\n\n**Style Guide:**\n- Founder-level confidence with slight contrarian edge\n- Practical over theoretical\n- Future-focused and systemized\n- Avoid jargon and hype\n- Target ambitious solopreneurs and creators\n\n**Response Format:**\n```json\n{\n  \"post_title\": \"Brief descriptive title\",\n  \"post_content\": \"Full LinkedIn post content with line breaks and formatting\",\n  \"hashtags\": [\"#AI\", \"#LinkedInGrowth\", \"#Automation\", \"#Solopreneur\", \"#ContentCreation\", \"#Productivity\", \"#FutureOfWork\", \"#NoCode\"],\n  \"image_description\": \"Professional image description for DALL-E: clean, modern, business-appropriate visual that reinforces the main concept\"\n}\n```",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "id": "133dc56e-da8b-4410-b7bc-15829c24e083",
+      "name": "Unified Content Generator",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        -160,
+        -208
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {
+          "maxTokens": 1000,
+          "temperature": 0.7
+        }
+      },
+      "id": "604ed28f-babb-4f4f-9353-0bff5400135e",
+      "name": "Optimized Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        -160,
+        0
+      ],
+      "typeVersion": 1.2,
+      "credentials": {
+        "openAiApi": {
+          "id": "T6jALHM6FIHsU7i3",
+          "name": "OpenAi API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"post_title\": \"AI as Your First Content Hire: Why Founders Shouldn't Wait\",\n  \"post_content\": \"Ghostwriters are outdated.\\n\\nTrain GPT once, and it ships LinkedIn gold in your voice daily.\\n\\nMost solopreneurs delay content scaling because they think hiring a ghostwriter is the next step. But AI can handle 80% with proper systems.\\n\\n→ Create your voice prompt library\\n→ Build content templates\\n→ Set up automated workflows\\n→ Review and refine outputs\\n\\nThis shifts content from a creative bottleneck to a scalable growth lever.\\n\\nWhat's stopping you from treating AI as your first content hire?\",\n  \"hashtags\": [\"#AI\", \"#LinkedInGrowth\", \"#Automation\", \"#Solopreneur\", \"#ContentCreation\", \"#Productivity\", \"#FutureOfWork\", \"#NoCode\"],\n  \"image_description\": \"A clean, modern workspace showing a laptop with AI interface, content calendar visible on screen, professional lighting, minimalist desk setup with plants, conveying productivity and automation\"\n}"
+      },
+      "id": "4a0f05d3-7030-42cd-8af5-064a125a3ef7",
+      "name": "Structured Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "position": [
+        48,
+        0
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "model": "dall-e-2",
+        "prompt": "={{ $json.output.image_description }}. Professional LinkedIn post image, realistic, clean, modern business aesthetic.",
+        "options": {
+          "size": "1024x1024"
+        }
+      },
+      "id": "949dbe94-9775-4eda-8c20-c5fe8f52da9c",
+      "name": "Parallel Image Generator",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "position": [
+        224,
+        -112
+      ],
+      "typeVersion": 1.8,
+      "credentials": {
+        "openAiApi": {
+          "id": "T6jALHM6FIHsU7i3",
+          "name": "OpenAi API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {
+          "includeUnpaired": true
+        }
+      },
+      "id": "9273f8db-8559-43e1-9469-3d7eefaed653",
+      "name": "Final Merge",
+      "type": "n8n-nodes-base.merge",
+      "position": [
+        384,
+        -304
+      ],
+      "typeVersion": 3.2
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -352,
+        -208
+      ],
+      "id": "9bbc8cfb-426a-4edc-82f8-766e51079361",
+      "name": "Manual Trigger"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://webhook.site/d9508c66-5ec8-4633-891a-316c72132ef9",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ \n{\n  \"post_title\": $('Unified Content Generator').first().json.output.post_title,\n  \"post_content\": $('Unified Content Generator').first().json.output.post_content,\n  \"hashtags\": $('Unified Content Generator').first().json.output.hashtags.join(' '),\n  \"hashtags_array\": $('Unified Content Generator').first().json.output.hashtags,\n  \"image_info\": {\n    \"mime_type\": $json.mimeType,\n    \"file_size\": $json.fileSize,\n    \"file_name\": $json.fileName,\n    \"has_binary_data\": $binary.data ? \"Yes\" : \"No\"\n  },\n  \"linkedin_ready_post\": $('Unified Content Generator').first().json.output.post_content + \"\\n\\n\" + $('Unified Content Generator').first().json.output.hashtags.join(' '),\n  \"processing_time\": new Date().toISOString()\n}\n}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        688,
+        -400
+      ],
+      "id": "3e0ce96d-ff98-410e-a14f-c1afd3a69b8e",
+      "name": "Optimized Output"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get the LinkedIn post data\nconst data = $input.first().json.output || $input.first().json;\n\n// Create formatted display\nconst formattedOutput = {\n  \"📝 POST TITLE\": data.post_title || \"No title\",\n  \"📄 CONTENT\": data.post_content || \"No content\",\n  \"🏷️ HASHTAGS\": data.hashtags ? data.hashtags.join(' ') : \"No hashtags\",\n  \"📱 LINKEDIN READY\": \"=== COPY BELOW ===\\n\\n\" + (data.post_content || \"\") + \"\\n\\n\" + (data.hashtags ? data.hashtags.join(' ') : \"\"),\n  \"🖼️ IMAGE\": \"Generated successfully\",\n  \"📊 STATS\": {\n    \"Content Length\": (data.post_content || \"\").length + \" characters\",\n    \"Hashtag Count\": Array.isArray(data.hashtags) ? data.hashtags.length : 0\n  }\n};\n\nreturn { json: formattedOutput };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        704,
+        -96
+      ],
+      "id": "e98cda56-a102-4cd4-bb64-4ecd3da890a1",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "fromEmail": "paul@z4z.ai",
+        "toEmail": "paul@z4z.ai",
+        "subject": "{{ $('Unified Content Generator').first().json.output.post_title }}",
+        "html": "={{ `\n<html>\n<head>\n  <style>\n    body { font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #f5f5f5; }\n    .container { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }\n    .header { color: #0077b5; border-bottom: 2px solid #0077b5; padding-bottom: 10px; margin-bottom: 20px; }\n    .content { background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0; }\n    .hashtags { background: #e3f2fd; padding: 15px; border-radius: 8px; margin: 20px 0; }\n    .image-container { text-align: center; margin: 20px 0; padding: 20px; background: #f9f9f9; border-radius: 8px; }\n    .linkedin-ready { background: #e8f5e8; padding: 20px; border-radius: 8px; margin: 20px 0; border: 2px solid #4caf50; }\n    img { max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }\n    .copy-section { background: #fff3cd; padding: 15px; border-radius: 8px; border-left: 4px solid #ffc107; margin-bottom: 10px; }\n  </style>\n</head>\n<body>\n  <div class=\"container\">\n    <h1 class=\"header\">🚀 Your LinkedIn Content is Ready!</h1>\n    \n    <h2 style=\"color: #333; margin-bottom: 10px;\">📝 ${$('Unified Content Generator').first().json.output.post_title}</h2>\n    \n    <div class=\"content\">\n      <h3 style=\"color: #0077b5; margin-top: 0;\">📄 Post Content:</h3>\n      <div style=\"white-space: pre-line; line-height: 1.6;\">${$('Unified Content Generator').first().json.output.post_content}</div>\n    </div>\n    \n    <div class=\"image-container\">\n      <h3 style=\"color: #0077b5; margin-top: 0;\">🖼️ Generated Image:</h3>\n      ${$binary.data ? \n        `<img src=\"data:${$binary.data.mimeType};base64,${$binary.data.data}\" alt=\"AI Generated LinkedIn Image\" style=\"max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);\" />` : \n        '<p style=\"color: #999; font-style: italic;\">🚫 Image not available - check image generation step</p>'\n      }\n      <p style=\"font-size: 12px; color: #666; margin-top: 10px;\">AI-generated image optimized for LinkedIn</p>\n    </div>\n    \n    <div class=\"hashtags\">\n      <h3 style=\"color: #0077b5; margin-top: 0;\">🏷️ Hashtags:</h3>\n      <p style=\"color: #0077b5; font-weight: bold; font-size: 16px;\">${$('Unified Content Generator').first().json.output.hashtags.join(' ')}</p>\n    </div>\n    \n    <div class=\"linkedin-ready\">\n      <h3 style=\"color: #2e7d32; margin-top: 0;\">📱 Ready to Copy & Paste:</h3>\n      <div class=\"copy-section\">\n        <strong>👆 Copy everything below and paste directly into LinkedIn:</strong>\n      </div>\n      <div style=\"background: white; padding: 15px; border-radius: 4px; border: 1px solid #ddd; white-space: pre-line; font-family: 'Courier New', monospace; font-size: 14px;\">${$('Unified Content Generator').first().json.output.post_content}\n\n${$('Unified Content Generator').first().json.output.hashtags.join(' ')}</div>\n    </div>\n    \n    <div style=\"border-top: 1px solid #ddd; padding-top: 20px; margin-top: 30px; color: #666; font-size: 12px; text-align: center;\">\n      <p><strong>🤖 Generated by Agentic Vibe AI</strong></p>\n      <p>📅 ${new Date().toLocaleDateString()} | ⏰ ${new Date().toLocaleTimeString()}</p>\n      <p>📊 Content: ${$('Unified Content Generator').first().json.output.post_content.length} chars | 🏷️ Hashtags: ${$('Unified Content Generator').first().json.output.hashtags.length}</p>\n      <p style=\"margin-top: 15px;\">💡 <em>Don't forget to upload the generated image when posting to LinkedIn!</em></p>\n    </div>\n  </div>\n</body>\n</html>\n` }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        464,
+        64
+      ],
+      "id": "89e620b4-0209-4525-a870-3e73931ac8fb",
+      "name": "Send email",
+      "webhookId": "122e484f-1148-4c5b-889f-12d3e97ebf56",
+      "credentials": {
+        "smtp": {
+          "id": "Htk6b3a0HhoEWmS6",
+          "name": "SMTP paul@z4z.ai"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Unified Content Generator": {
+      "main": [
+        [
+          {
+            "node": "Parallel Image Generator",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Final Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Optimized Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Unified Content Generator",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Unified Content Generator",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parallel Image Generator": {
+      "main": [
+        [
+          {
+            "node": "Final Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Final Merge": {
+      "main": [
+        [
+          {
+            "node": "Send email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Unified Content Generator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Optimized Output": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "createdAt": "2025-08-16T18:39:28.373Z",
+  "updatedAt": "2025-08-19T20:03:26.197Z",
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "versionId": "5a6eba33-e042-4b35-a5ee-39d75e793feb",
+  "triggerCount": 0,
+  "id": "9JAm1mEpqyPhnnhc",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "parentFolderId": "WxkLNiYI2I4KBiMN",
+  "isArchived": false
+}
