@@ -1,0 +1,268 @@
+{
+  "name": "Follow-up prompts generator workflow template",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "mode": "webhook",
+        "options": {
+          "allowedOrigins": "*",
+          "responseMode": "responseNode"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        380,
+        -140
+      ],
+      "id": "84b366cf-9fa2-4bcc-83ed-422a901b20a0",
+      "name": "When chat message received",
+      "webhookId": "1d29cb75-2994-4983-b607-670654666d6d"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('When chat message received').item.json.chatInput }}",
+        "options": {
+          "systemMessage": "=You are a helpful assistant to help users answering their questions.",
+          "passthroughBinaryImages": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        580,
+        -140
+      ],
+      "id": "bc1680e7-df45-448c-938d-f2f1d28a7806",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.1,
+      "position": [
+        480,
+        60
+      ],
+      "id": "22b0c881-437f-4fb5-a0d7-d411f382aa2b",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "vrRxazDFUH3pr4Ac",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.1,
+      "position": [
+        920,
+        80
+      ],
+      "id": "b98d3e84-f0e3-48fa-a1c7-94831fe7a1e3",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "vrRxazDFUH3pr4Ac",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Chatbot response: {{ $json.output }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=# Role\nYou are an AI assistant specialized in generating concise, highly relevant follow-up prompts (auto-suggestion responses) for a chatbot interface. Your objective is to enhance user engagement by suggesting what the user might naturally want to ask next, based on the chatbot’s latest response and the conversation history.\n\n# Context\nYou will receive:\n- The final chatbot response (the most recent message sent by the bot to the user).\n- The complete conversation history up to that point. \n\nYour task is to analyze both the final response and the preceding conversation to understand the user’s needs, intentions, and possible next steps. The follow-up prompts you generate should help the user continue the conversation seamlessly, clarify information, or explore related topics.\n\n# Examples\n\n#### Example 1:\n**Final bot response:**\n\"Your order has been shipped and is on its way.\"\n**Generated follow-up prompts:**\n```json\n[\n  \"Track my order\",\n  \"Order details\",\n  \"Cancel order\"\n]\n```\n\n#### Example 2:\n**Final bot response:**\n\"The weather today is sunny with a high of 28°C.\"\n**Generated follow-up prompts:**\n```json\n[\n  \"Tomorrow's forecast\",\n  \"Rain this week?\",\n  \"UV index\"\n]\n```\n\n#### Example 3:\n**Final bot response:**\n\"You can reset your password from the account settings page.\"\n**Generated follow-up prompts:**\n```json\n[\n  \"Reset password\",\n  \"Account help\",\n  \"Contact support\"\n]\n```\n\n# Strict Rules & Boundaries\n\n- **Context Awareness:** All prompts must be directly relevant to both the final bot response and the conversation.\n- **Relevance:** Suggestions should reflect what the user is most likely to ask next, based on the current context.\n- **Brevity:** Each prompt must be concise (ideally under 5 words).\n- **Actionable:** Write prompts as clickable suggestions that encourage further interaction.\n- **Format:** Output only a JSON array of strings, with no extra explanation, formatting, or text.\n- **No Repetition:** Do not repeat prompts already present in the conversation.\n- **No Questions for the AI:** Prompts should be phrased as user actions or queries, not as instructions for the AI.\n- **No Out-of-Scope Prompts:** Avoid generic or unrelated suggestions; keep all prompts tightly focused on the immediate context.\n- **Limit:** Always provide exactly 3 suggestions—never more, never fewer."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        940,
+        -140
+      ],
+      "id": "bdfb3c69-348f-4186-813e-82b0c6c85f78",
+      "name": "Follow-Up Prompt Generator Agent"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        700,
+        80
+      ],
+      "id": "f06f3dcf-dc58-4070-898a-0a02505b4f01",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "[\"prompt 1\", \"prompt 2\", \"prompt 3\"]"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        1120,
+        80
+      ],
+      "id": "7b5c64ba-6cf5-406b-b50a-99bb317a00b9",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"output\": {{ JSON.stringify($('AI Agent').item.json.output) }},\n  \"followUpPrompts\": {{ $json.output }}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1300,
+        -140
+      ],
+      "id": "802b0e3f-b76c-4149-be63-e6a0a36c2ed2",
+      "name": "Edit Fields",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1520,
+        -140
+      ],
+      "id": "7b9a7a42-eefe-4f00-a062-4ae14e6b2b53",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "content": "## Generate follow-up prompts",
+        "height": 560,
+        "width": 860
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        860,
+        -280
+      ],
+      "id": "37957ae3-00bf-442f-b220-ffe348d605e9",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Follow-Up Prompt Generator Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Follow-Up Prompt Generator Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Follow-Up Prompt Generator Agent": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Follow-Up Prompt Generator Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "8eb32895-43f0-4d08-ab7a-1e52a58c0060",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f4dd5b60c05bfb4ca5603ddefa4138fe48ae0ac47126ed818b7edb8456906e5a"
+  },
+  "id": "HDymOTjXufrETw2b",
+  "tags": []
+}
