@@ -1,0 +1,325 @@
+{
+  "name": "Content Automation",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -740,
+        100
+      ],
+      "id": "d834aab4-aea1-4cba-82da-40af73e3afff",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1Y8dy4ToJ7PSRgB5Eeg4gBBvcwwnsrvbnh6HSaVxR62k",
+          "mode": "list",
+          "cachedResultName": "Content IDEAS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Y8dy4ToJ7PSRgB5Eeg4gBBvcwwnsrvbnh6HSaVxR62k/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1140024863,
+          "mode": "list",
+          "cachedResultName": "Content",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Y8dy4ToJ7PSRgB5Eeg4gBBvcwwnsrvbnh6HSaVxR62k/edit#gid=1140024863"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -560,
+        100
+      ],
+      "id": "b4035d2c-0fc9-4910-aae3-ee0eeaed7b6e",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "DL3FPXna5x5uGkop",
+          "name": "R&D Google Sheet"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"Content Types\": [\n    \"Educational Content\",\n    \"Conversion Focused\",\n    \"Service-Based Content\",\n    \"Community & Trust\",\n    \"Seasonal & Trending Content\"\n  ]\n}\n",
+        "includeOtherFields": true,
+        "include": "except",
+        "excludeFields": "row_number",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -180,
+        180
+      ],
+      "id": "977d1292-d31d-4993-8552-68d4bee839a7",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are an expert {{ $json['ChatGPT Role'] }} copywriter creating engaging and compliant social media content copies for a client named {{ $json.Client }}. You must strictly follow these rules:\n\n**Input Data:**\n- Content Type: {{ $json['[\\'Content Types\\']'] }}\n- Industry: {{ $json['Industry'] }}\n- Primary Service: {{ $json['Primary Service'] }}\n- Target Condition: {{ $json['Target Condition'] }}\n- Audience: {{ $json.Audience }}\n- Content Goal: {{ $json['Content Goal'] }}\n- USP: {{ $json.USP }}\n- Call To Action: {{ $json['Call To Action'] }}\n- Compliance Layer: {{ $json[\"Compliance Layer\"] }}\n- Tone: {{ $json[\"Tone\"] }}\n- Special Add-ons: {{ $json[\"Special Add-ons\"] }}\n- Content Pillar: {{ $json['Content Pillar'] }}\n- Platform: {{ $json.Platform }}\n\n\n**Instructions:**\n\n1. For the given Content Type, generate a unique **topic_name**.\n\n2. Based on the topic, generate **3 distinct sets** of social media content copies. Each set must include:\n   - Hook: (Short, punchy, eye-catching headline focused on {{ $json['Industry'] }})\n   - Subtitle: (Will be based on the hook & make sure it has enough information to validate the hook)\n   - CTA: (Actionable, relevant, and must include {{ $json['Call To Action'] }}\n\n3. Ensure all content complies with:\n   - Compliance Layer: {{ $json[\"Compliance Layer\"] }}\n   - Special Add-ons: {{ $json[\"Special Add-ons\"] }}\n\n4. Ensure the tone is {{ $json[\"Tone\"] }}.\n\n5. **Return the result as a JSON object with these three keys only:**\n   - `\"topic_name\"`: a short descriptive topic name for this content type\n   - `\"content_type\"`: the given Content Type as a string\n   - `\"contents\"`: an array of 3 objects, each containing keys: `hook`, `subtitle`, `cta`, and `visual_aid`.\n\n6. Make sure each of the 3 content sets is unique but stays under the same topic.\n\nYour life depends on creating content that not only engages but also converts while maintaining absolute compliance with all specified requirements.\n\n**Example output format:**\n\n```json\n{{ $json.Example }}\n\n\n"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        140,
+        180
+      ],
+      "id": "279bcac2-ed00-44b3-b7ed-1d06599aad5a",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "g9ap4RILVWw7sGux",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "['Content Types']",
+        "include": "allOtherFields",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -20,
+        180
+      ],
+      "id": "76c4ddd3-b42d-40da-b700-9f40b7cbeacf",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nconst updatedItems = items.map(item => {\n  const contentsArray = item.json.message.content.contents;\n\n  // Map each content item to formatted string with numbering\n  const combinedContents = contentsArray\n    .map((content, index) => {\n      return `${index + 1}. hook: ${content.hook},\\nsubtitle: ${content.subtitle},\\ncta: ${content.cta}\\n`;\n    })\n    .join('\\n');  // Join all with an extra newline for readability\n\n  // Replace contents array with single combined string\n  item.json.message.content.contents = combinedContents;\n\n  return item;\n});\n\nreturn updatedItems;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        460,
+        180
+      ],
+      "id": "46fd05d9-482e-46ef-b840-25284dbee3f8",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "resource": "list",
+        "operation": "getAll",
+        "id": "=wjdCMABb",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.trello",
+      "typeVersion": 1,
+      "position": [
+        -1080,
+        300
+      ],
+      "id": "4d9fbd01-3cc0-45c7-a4bf-8f72a64ba6e2",
+      "name": "Find Trello Card Backlog",
+      "credentials": {
+        "trelloApi": {
+          "id": "db7CjvUz1Acmn6kI",
+          "name": "AI Automation "
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "#",
+        "height": 480,
+        "width": 1700,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -820,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "1e77b990-125e-4eb1-a774-4518aa7e0201",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Content Automation\n\n\n* **Step 1:** Get client's information directly from a Google Sheet.\n* **Step 2:** Create 3 new content ideas for each topic using ChatGPT.\n* **Step 3:** A card with the new content idea is automatically created in your client's Trello backlog.\n* **Step 4:** Use this Trello node to get Backlog Bard ID of client & update on Google Sheet manually.",
+        "height": 480,
+        "width": 300,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1160,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "2b1a0450-ad98-40c0-ab5e-7c090a3c2f9f",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -380,
+        100
+      ],
+      "id": "705e9c2b-c2d8-4a59-b999-f31c67995a30",
+      "name": "Loop Items"
+    },
+    {
+      "parameters": {
+        "listId": "={{ $('Split Out').item.json.Backlog }}",
+        "name": "={{ $now.format(\"MMMM\") + \" | \" + $json.message.content.topic_name}}\n",
+        "description": "=Type: {{ $json.message.content.content_type }}\n\n{{ $json.message.content.contents }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.trello",
+      "typeVersion": 1,
+      "position": [
+        640,
+        180
+      ],
+      "id": "c2f74585-16a9-434a-8d80-5c32a19c3979",
+      "name": "New Card in Trello",
+      "credentials": {
+        "trelloApi": {
+          "id": "db7CjvUz1Acmn6kI",
+          "name": "AI Automation "
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Loop Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "New Card in Trello",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Trello Card Backlog": {
+      "main": [
+        []
+      ]
+    },
+    "Loop Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "New Card in Trello": {
+      "main": [
+        [
+          {
+            "node": "Loop Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "de7d13a9-57e7-453f-ae81-b604cbdabb69",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6bb5339e67011e36cf93cf54a8bca6b7e3857fbcd93e9f5eeac8f6e87022da02"
+  },
+  "id": "yiEebyv1pl6tujse",
+  "tags": []
+}
