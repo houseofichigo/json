@@ -1,0 +1,613 @@
+{
+  "name": "Video Idea Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Video Idea Agent\n",
+        "height": 460,
+        "width": 1520,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "512464b0-3727-4e7b-ae02-65b5ac69f5f4",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        100,
+        100
+      ],
+      "id": "41c49f46-2708-45af-ba7b-758cbc7b31dc",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "cf070d89-20f0-4ecb-b3c3-6ef9870f5021",
+              "leftValue": "={{ $json.Status }}",
+              "rightValue": "Approved",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        420,
+        100
+      ],
+      "id": "75956d61-6bfc-4d1f-9fca-7222fb537e20",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Here's the information about the outlier video to use as reference: \nTitle: {{ $json.Title }}\nUrl: {{ $json.URL }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=#Role\nYou are an idea agent task to create 5 viral ideas for a channel based on an outlier video provided. \n\n#Task \nYou are to create 5 viral video ideas based on the information given by the outlier video and score them based on the following: \n1) Virality: How unique or trendy is this topic? (10 Points)\n2) Relevancy to Channel: How relevant is it to the audience of our channel? (10 Points)\n3) Total score (20 Points)\n\nChannel Context: \n- A channel focused on teaching n8n tutorials for content creation \n- Target audience: Content creators and marketers \n\nReturn your output in this JSON format: \n[\n  {\n    \"idea\": \"Insert video idea 1\",\n    \"viralscore\": 8,\n    \"relevancescore\": 9\n  },\n  {\n    \"idea\": \"Insert video idea 2\",\n    \"viralscore\": 7,\n    \"relevancescore\": 8\n  },\n  {\n    \"idea\": \"Insert video idea 3\",\n    \"viralscore\": 9,\n    \"relevancescore\": 9\n  },\n  {\n    \"idea\": \"Insert video idea 4\",\n    \"viralscore\": 10,\n    \"relevancescore\": 10\n  },\n  {\n    \"idea\": \"Insert video idea 5\",\n    \"viralscore\": 6,\n    \"relevancescore\": 7\n  }\n]\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        600,
+        100
+      ],
+      "id": "ab89706e-3be0-4c75-99c7-7671e48ac00e",
+      "name": "Idea Agent"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "[\n  {\n    \"idea\": \"Insert video idea 1\",\n    \"viralscore\": 8,\n    \"relevancescore\": 9\n  },\n  {\n    \"idea\": \"Insert video idea 2\",\n    \"viralscore\": 7,\n    \"relevancescore\": 8\n  },\n  {\n    \"idea\": \"Insert video idea 3\",\n    \"viralscore\": 9,\n    \"relevancescore\": 9\n  },\n  {\n    \"idea\": \"Insert video idea 4\",\n    \"viralscore\": 10,\n    \"relevancescore\": 10\n  },\n  {\n    \"idea\": \"Insert video idea 5\",\n    \"viralscore\": 6,\n    \"relevancescore\": 7\n  }\n]\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        780,
+        280
+      ],
+      "id": "c8c69ca2-10b0-471c-9a33-6365a1ff84a7",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1100,
+        100
+      ],
+      "id": "67097af1-0f89-47c5-99f4-daa59ad47998",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "output",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        920,
+        100
+      ],
+      "id": "098193f7-f2ff-436e-9962-594eb9a13907",
+      "name": "Split Out1"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appiL64mFdOILekfb",
+          "mode": "list",
+          "cachedResultName": "Youtube Competitor Analysis",
+          "cachedResultUrl": "https://airtable.com/appiL64mFdOILekfb"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblqYq3gbpyADxMpe",
+          "mode": "list",
+          "cachedResultName": "Video Ideas",
+          "cachedResultUrl": "https://airtable.com/appiL64mFdOILekfb/tblqYq3gbpyADxMpe"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Idea": "={{ $json.idea }}",
+            "Virality Value": "={{ $json.viralscore }}",
+            "Relevancy to Channel": "={{ $json.relevancescore }}",
+            "Videos": "={{ [$('Filter').item.json.id] }}",
+            "Total Score (Out Of 20)": "={{ $json.viralscore + $json.relevancescore }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Idea",
+              "displayName": "Idea",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Virality Value",
+              "displayName": "Virality Value",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Relevancy to Channel",
+              "displayName": "Relevancy to Channel",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Total Score (Out Of 20)",
+              "displayName": "Total Score (Out Of 20)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Viral Title",
+              "displayName": "Viral Title",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Videos",
+              "displayName": "Videos",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "typecast": false
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        980,
+        280
+      ],
+      "id": "c252f858-c3db-4ed2-a9cb-7e047ebb560f",
+      "name": "Create New Idea",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appiL64mFdOILekfb",
+          "mode": "list",
+          "cachedResultName": "Youtube Competitor Analysis",
+          "cachedResultUrl": "https://airtable.com/appiL64mFdOILekfb"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblPIvB3Z7X4aOzy9",
+          "mode": "list",
+          "cachedResultName": "Videos",
+          "cachedResultUrl": "https://airtable.com/appiL64mFdOILekfb/tblPIvB3Z7X4aOzy9"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Filter').item.json.id }}",
+            "Status": "Ideas Generated"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Views",
+              "displayName": "Views",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Likes",
+              "displayName": "Likes",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Comments",
+              "displayName": "Comments",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Outlier",
+              "displayName": "Outlier",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Declined",
+                  "value": "Declined"
+                },
+                {
+                  "name": "Approved",
+                  "value": "Approved"
+                },
+                {
+                  "name": "Ideas Generated",
+                  "value": "Ideas Generated"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Channel",
+              "displayName": "Channel",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Date Created",
+              "displayName": "Date Created",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "URL",
+              "displayName": "URL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Video Ideas",
+              "displayName": "Video Ideas",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1280,
+        100
+      ],
+      "id": "dd36afc8-c1f0-460b-ac8e-61b73c2cecc8",
+      "name": "Update Status",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        540,
+        320
+      ],
+      "id": "8989b53c-3ae5-410c-b46b-6a29dd5df13a",
+      "name": "gpt4o mini",
+      "credentials": {
+        "openAiApi": {
+          "id": "s5wn58j1UNzVGfuF",
+          "name": "OpenAI Account 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appiL64mFdOILekfb",
+          "mode": "list",
+          "cachedResultName": "Youtube Competitor Analysis",
+          "cachedResultUrl": "https://airtable.com/appiL64mFdOILekfb"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblPIvB3Z7X4aOzy9",
+          "mode": "list",
+          "cachedResultName": "Videos",
+          "cachedResultUrl": "https://airtable.com/appiL64mFdOILekfb/tblPIvB3Z7X4aOzy9"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        260,
+        100
+      ],
+      "id": "dd89e625-1cd2-49be-86e1-f06006295f6d",
+      "name": "Search Airtable2",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Search Airtable2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Idea Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Idea Agent": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Idea Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Update Status",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create New Idea",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create New Idea": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "gpt4o mini": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Idea Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Airtable2": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "2b3e77dd-a895-4826-924a-eeae48f9f412",
+  "meta": {
+    "instanceId": "d8c459f4ebcadd20c3258ade09582fe0f02de933363f6184259e0c9a36784090"
+  },
+  "id": "M2QhuhOZhldfQxLm",
+  "tags": [
+    {
+      "createdAt": "2025-05-14T06:57:42.256Z",
+      "updatedAt": "2025-05-14T06:58:02.365Z",
+      "id": "7vgDEtMqSnfZppPt",
+      "name": "W12: Youtube Scraper"
+    }
+  ]
+}
