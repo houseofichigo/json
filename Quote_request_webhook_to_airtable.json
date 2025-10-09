@@ -1,0 +1,173 @@
+{
+  "name": "Quote request webhook to airtable",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appjvcjxVklJPf01y",
+          "mode": "list",
+          "cachedResultName": "First base",
+          "cachedResultUrl": "https://airtable.com/appjvcjxVklJPf01y"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblkH1Y8qKTI3wUV6",
+          "mode": "list",
+          "cachedResultName": "Quotation requests",
+          "cachedResultUrl": "https://airtable.com/appjvcjxVklJPf01y/tblkH1Y8qKTI3wUV6"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $json.name }}",
+            "Email": "={{ $json.email }}",
+            "Service of Interest": "={{ $json.service_of_interest }}",
+            "Notes": "={{ $json.additional_notes }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Service of Interest",
+              "displayName": "Service of Interest",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Last Modified Time",
+              "displayName": "Last Modified Time",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        380,
+        0
+      ],
+      "id": "7c6ffbbd-70e1-4544-bc69-1792812586cc",
+      "name": "Airtable",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "DYFZckg0ZYJOMdE9",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"name\": \"{{ $json.body.name }}\",\n  \"email\": \"{{ $json.body.email }}\",\n  \"service_of_interest\": \"{{ $json.body.service_of_interest }}\",\n  \"additional_notes\": \"{{ $json.body.additional_notes }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        200,
+        0
+      ],
+      "id": "d90fbb59-0d62-41e0-b2c3-4e58916ca765",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "save-quote-request",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "aa5fc4bc-7f5b-431a-a9da-bcffd8ef4f06",
+      "name": "Webhook",
+      "webhookId": "75432ab3-4dc8-44ae-a18f-47e2d6ec755b"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "0015ed3b-9ff1-4930-9c03-70424c4f6a99",
+  "meta": {
+    "instanceId": "c8b86720b4fdd38fd6a8db785bac2e884ff9c4ffc0fc6a3113a5800720897617"
+  },
+  "id": "iTJES9KeWdKFWjBI",
+  "tags": []
+}
