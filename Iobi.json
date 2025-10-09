@@ -1,0 +1,370 @@
+{
+  "name": "Video Facturas",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -200,
+        0
+      ],
+      "id": "c0979ea9-c700-4bab-a704-5b3fd32c4159",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "1U8fF7R5qZXDO2g9aqGVhEbyvJr_22hXV",
+            "mode": "list",
+            "cachedResultName": "Video Facturas",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1U8fF7R5qZXDO2g9aqGVhEbyvJr_22hXV"
+          }
+        },
+        "options": {
+          "fields": [
+            "*"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        20,
+        0
+      ],
+      "id": "b1416aa1-60f3-434e-b7e6-8fedae350707",
+      "name": "GET Imagenes",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "BRVzUEvOpTbnqusa",
+          "name": "Prueba video facturas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        480,
+        0
+      ],
+      "id": "e5670385-b90c-4ffc-8d79-d1f0d2aa7fa3",
+      "name": "Download images",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "BRVzUEvOpTbnqusa",
+          "name": "Prueba video facturas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "efcf9c1d-fa9f-49de-ab6d-2230cb94bd40",
+              "leftValue": "={{ $json.mimeType }}",
+              "rightValue": "image/jpeg",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        240,
+        0
+      ],
+      "id": "c070ea60-7a27-4883-8df1-5178ac1e1439",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "text": "En esta imagen tienes una factura de una empresa española que comienza con el texto PIZCA Y PUÑAO seguido de B67949107. Seguido de 3 cuadrados en la misma línea (o altura). El primero pone \"Caja\" y un número de un dígito debajo. El segundo ARQUEO Z y un número de 3 dígitos debajo. El tercero pone una fecha con este formato: \"DD MMM. AAAA\".\nLuego la imagen continúa con un texto que dice: \"DOCUMENTOS POR SERIE\".\nDe todo esto, solo necesito que me devuelvas la fecha. En el mismo formato que está en la imagen sin texto añadido.\n\nLa imagen continúa como había dicho antes con varios bloques de información: \"DOCUMENTOS POR SERIE\", luego \"CONTROL DE EFECTIVO (Euro)\", luego \"RESUMEN POR MONEDA (Euro)\", luego \"VENTAS POR CAJERO\". Todos estos bloques de información ignóralos.\n\nDespués de ellos viene el bloque \"RESUMEN DE IMPUESTOS\", este bloque es importante. Aquí vienen desglosados los impuestos, vienen en máximo 5 filas: IVA 21%, IVA 10%, IVA 4%, IVA 2%, IVA 7.5%. La mayoría de veces solo hay 4 filas, porque hay algún IVA que no aplica. A cada fila le corresponden 2 columnas, la primera Importe Base (el total de ingresos que caen dentro de una franja de IVA), Cuota (el resultado de aplicar el porcentaje de IVA correspondiente al Importe Base).\n\nDe este bloque necesito que me devuelvas cada Franja de IVA con su Importe base y su Cuota. Siguiendo este formato: IVA 21%: (Importe base), (Cuota). IVA 10%: (Importe base), (Cuota). IVA 4%: (Importe base), (Cuota). IVA 2%: (Importe base), (Cuota). IVA 7.5%: (Importe base), (Cuota). TOTAL: (Importe base), (Cuota). No hagas ningun cálculo, devuelve las cifras exactamente como están en la imagen sin modificar absolutamente nada, nunca. Siempre sigue este formato exactamente como te lo indico para devolver este resultado.\n\nluego vienen otros bloques de información: \"VENTAS POR FAMILIA\", luego \"VENTAS POR SERIE\".\n\nEstos 2 bloques de información ignóralos.\n\nLuego, el último se titula: \"RESUMEN DE VENTAS\"\n\nAquí vienen varias cantidades y abajo del todo después de \"TOTAL\" la última cantidad de la factura.\n\nDe este bloque ecesito que me devuelvas únicamente esa cifra.\n\nCon todo tu respuesta debería ser: La fecha, los datos de IVA, el total final de la factura. Nada más. Deberías devolverlos exactamente como se pide a lo largo de esta solicitud. De ninguna otra forma.",
+        "inputType": "base64",
+        "simplify": false,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        720,
+        0
+      ],
+      "id": "422bf749-f2b9-4b12-974a-14492a044330",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "7K0rQlgSYaebhXRl",
+          "name": "Video Facturas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.choices[0].message.content }}",
+        "attributes": {
+          "attributes": [
+            {
+              "name": "fecha",
+              "description": "la primera parte, una fecha."
+            },
+            {
+              "name": "impuestos",
+              "description": "un desglose de impuestos que finaliza en un total, no incluyas el total solo el desglose por IVAs"
+            },
+            {
+              "name": "total_impuestos",
+              "description": "seguido de un título TOTAL, después del desglose de impuestos. Solo devuelve el total."
+            },
+            {
+              "name": "total_final",
+              "description": "la última cifra, solo devuelve esta cifra."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1,
+      "position": [
+        960,
+        0
+      ],
+      "id": "3a0e901a-9361-47a2-ae3a-d53879562bc1",
+      "name": "Information Extractor"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1040,
+        240
+      ],
+      "id": "449b4d18-4880-4acb-bf57-c956cbd69285",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "7K0rQlgSYaebhXRl",
+          "name": "Video Facturas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "15jk7qyPvDtnzaH4V06jnQReZxAN1V0XJj_lfrRNN6Yw",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/15jk7qyPvDtnzaH4V06jnQReZxAN1V0XJj_lfrRNN6Yw/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Fecha": "={{ $json.output.fecha }}",
+            "IVA": "={{ $json.output.impuestos }}",
+            "Total IVA": "={{ $json.output.total_impuestos }}",
+            "Total Final": "={{ $json.output.total_final }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Fecha",
+              "displayName": "Fecha",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "IVA",
+              "displayName": "IVA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Total IVA",
+              "displayName": "Total IVA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Total Final",
+              "displayName": "Total Final",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1320,
+        0
+      ],
+      "id": "c2ff203a-2ee1-4b6a-bbf7-c6cc6b43ff8a",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "RfxSkLEfJjN9I3oO",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "GET Imagenes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GET Imagenes": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Download images",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download images": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Information Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Information Extractor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Information Extractor": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "5cfe3112-b33c-466f-bebc-b59837c26fff",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "161ef4ae33ce65770cbacc969b7a8a7dea7b6f882504adaad3ed796f23a9dcb7"
+  },
+  "id": "iHim4jkxea35O3Ev",
+  "tags": []
+}
