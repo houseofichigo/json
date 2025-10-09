@@ -1,0 +1,1297 @@
+{
+  "name": "Descripcion y Post Youtube TEMPLATE",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Optimizar Video y Publicar\n1. Comparar los datos de los anteriores vídeos\n2. Analizar el esquema de descripción y título que mejor funciona en base a las visitas\n3. Obtener el transcript de el nuevo vídeo\n4. Crear descripción y título basado en los que ya funcionaron pero con los datos del nuevo video\n5. Actualizar el vídeo con la data\n\nLuego se pone en público solo, a la hora que haya programado el editor",
+        "height": 652,
+        "width": 3520
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -400,
+        -144
+      ],
+      "id": "b28307da-064b-4799-a495-f0eb3aebd0d3",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "url": "https://api.apify.com/v2/acts/deeper~youtube-channel-scrapper/run-sync-get-dataset-items?token=[API_KEY]",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"details\": true,\n    \"max_comments\": 0,\n    \"max_videos\": 30,\n    \"scrap_captions\": false,\n    \"start_urls\": [\n        {\n            \"url\": \"https://www.youtube.com/@[TU_CANAL]\",\n            \"method\": \"GET\"\n        }\n    ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -96,
+        720
+      ],
+      "id": "7a61540c-3da1-491f-958c-67cad74e86ee",
+      "name": "Recupera Data Ult 30 videos"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -320,
+        720
+      ],
+      "id": "9c68893c-063a-4e8b-854a-8477973ffb25",
+      "name": "1 / semana"
+    },
+    {
+      "parameters": {
+        "url": "https://www.googleapis.com/youtube/v3/channels?part=contentDetails&mine=true",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "youTubeOAuth2Api",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -64,
+        240
+      ],
+      "id": "3e79eba5-c1e7-4fee-b118-1cc3ca2c0596",
+      "name": "Identifica la playlist Upload",
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "OEd6dCZkftrJ85pz",
+          "name": "Mario Kaizen (09/07/2025)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://www.googleapis.com/youtube/v3/playlistItems?part=contentDetails,snippet,status&playlistId={{ $json.items[0].contentDetails.relatedPlaylists.uploads }}&maxResults=1",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "youTubeOAuth2Api",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        176,
+        240
+      ],
+      "id": "e1ac4d3f-1434-48b7-94b6-de8e089b93bd",
+      "name": "Identifica el ultimo video",
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "OEd6dCZkftrJ85pz",
+          "name": "Mario Kaizen (09/07/2025)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "34b506a6-b2ae-4fd8-9e5e-97e98ff8abf7",
+              "leftValue": "={{ $json.items[0].status.privacyStatus }}",
+              "rightValue": "=private",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "b524a510-1b55-4d44-afcf-0f0895f00c6b",
+              "leftValue": "={{ new Date($json.items[0].contentDetails.videoPublishedAt).toISOString() }}",
+              "rightValue": "={{ new Date (new Date().setDate(new Date().getDate() - 0.5)).toISOString() }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "after"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        400,
+        240
+      ],
+      "id": "a4f04c2c-ebcc-4d26-aea0-a7c083aed876",
+      "name": "Si Privado + Ult 12h"
+    },
+    {
+      "parameters": {
+        "resource": "video",
+        "operation": "update",
+        "videoId": "={{ $('Identifica el ultimo video').all().first().json.items[0].contentDetails.videoId }}",
+        "title": "=",
+        "regionCode": "ES",
+        "categoryId": "27",
+        "updateFields": {
+          "description": "={{ $('Descripcion').item.json.message.content }}\n\n-----\n\n{{ $('Timestamp').item.json.choices[0].message.content }}"
+        }
+      },
+      "type": "n8n-nodes-base.youTube",
+      "typeVersion": 1,
+      "position": [
+        2656,
+        240
+      ],
+      "id": "cecab977-e381-41bd-9012-c9cde13fc05b",
+      "name": "Actualiza descripcion y titulo",
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "OEd6dCZkftrJ85pz",
+          "name": "Mario Kaizen (09/07/2025)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://www.googleapis.com/youtube/v3/captions?part=snippet&videoId={{ $json.items[0].snippet.resourceId.videoId }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "youTubeOAuth2Api",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        624,
+        240
+      ],
+      "id": "057a1bd3-7c2b-422c-a33c-59819103533e",
+      "name": "Identifica los captions",
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "OEd6dCZkftrJ85pz",
+          "name": "Mario Kaizen (09/07/2025)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://www.googleapis.com/youtube/v3/captions/{{ $json.items[0].id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "youTubeOAuth2Api",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        816,
+        240
+      ],
+      "id": "44c94d61-8463-4b29-b53f-6f71d685b4d9",
+      "name": "Descarga los captions",
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "OEd6dCZkftrJ85pz",
+          "name": "Mario Kaizen (09/07/2025)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        1008,
+        240
+      ],
+      "id": "120aafb5-100d-4968-958b-51e7348d8990",
+      "name": "Extraer texto"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=[ADAPTAR A TU CANAL]\n\nTengo un canal de automatización con IA en el que subo principalmente tutoriales de n8n y make.com para crear sistemas de IA para escalar la creación de contenido o automatizar negocios online.\n\nTe voy a enviar los captions de mi vídeo, la idea es que generes unos cuantos timestamps para mi video de youtube, de forma que directamente pueda copiar y pegar tu mensaje en mi descripción de youtube y este en el formato correcto.\n\nHazlo de forma que sea óptimo para mi canal de youtube\n\nNunca devuelvas nada más que el timestamp apto para copiar y pegar directamente en mi descripción de youtube y que funcione correctamente"
+            },
+            {
+              "content": "=Para que tengas una referencia de un par de buenas timestamps aquí te envío dos: \n\n\n[SUSTITUIR CON TIMESTAMPS QUE HAYAS HECHO YA EN TUS VÍDEOS]\n\n\n🫡 Partes:\n0:00 - Introducción: Analizar imágenes con IA\n0:24 – Explicación workflow y OCR\n1:50 – Descargar archivos de Drive\n5:50 – Conectar Drive a n8n\n17:30 – Filtrar por tipo de archivo\n19:03 – Analizar imágenes con GPT\n26:45 – Extraer información con IA en n8n\n30:30 – Configuración del Sheets\n32:48 – Prueba del proceso completo\n33:34 – Potencial de este sistema\n\n\n🫡 Partes:\n0:00 - Introducción: Automatizar Reels Instagram\n0:36 - Resumen Proceso N8N\n3:27 - Prueba del Workflow\n5:22 - ¿Por qué te va a ayudar?\n5:53 - Explicación Paso a Paso\n26:03 - Análisis de los resultados\n26:52 - Cómo usar este Sistema de IA\n32:21 - Cómo importar el proceso a tu N8N\n32:52 - Sugerencias\n\nNo copies nada literal, es solo para que sepas más o menos la longitud de títulos que suele tener una timestamp y cómo ordenar las palabras y poner keywords, pero el vídeo para el que vas a hacer la nueva timestamp puede ser completamente diferente\n\nSobre todo ten en cuanta la duración de las mismas. Nunca más de 2 a 7 palabras. Nunca más de eso por timestamp"
+            },
+            {
+              "content": "=Aquí tienes el transcript: {{ $('Extraer texto').all().first().json.data }}"
+            }
+          ]
+        },
+        "simplify": false,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        1600,
+        240
+      ],
+      "id": "b34aa1c0-0f1f-460e-bb03-f68b39622dad",
+      "name": "Timestamp",
+      "credentials": {
+        "openAiApi": {
+          "id": "NKszU0XdYb3enewr",
+          "name": "Generica (20/05/25)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "Titulo"
+            },
+            {
+              "fieldToAggregate": "Descripción"
+            },
+            {
+              "fieldToAggregate": "Visitas"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1408,
+        240
+      ],
+      "id": "ebdb666e-83d3-419e-8d4d-ce58dea2d785",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=[ADAPTAR A TU CANAL]\n\n\nTengo que crear un título para un nuevo vídeo de mi canal de Automatización con IA en Youtube. El título tiene que estar relacionada con lo que trata el vídeo. Para guiarte tengo ejemplos de los títulos de todos mis anteriores vídeos y las visitas que han tenido cada uno. A más visitas mejor ha sido el resultado.\n\nCreas un título para mi vídeo basado en los títulos que mejor han funcionado, es decir, los que se relacionan con vídeos con más visitas han funcionado mejor. No cojas únicamente referencia de los que más visitas han tenido, pondera el peso de la estructura de cada título dándole más si ha tenido más visitas y menos si ha tenido menos.\n\nTe basas en los títulos de ejemplo a la hora de la estructura, duración, forma de ordenar las palabras, número de párrafos... pero ten en cuenta siempre que el título que hagas tiene que estar hecho a partir del contenido del nuevo vídeo, que sabrás gracias a que te voy a enviar el transcript.\n\nRecuerda devolver únicamente el título apto para copiar y pegar directamente en mi nuevo vídeo, nada más.\n\nNunca das un título de más de 100 caracteres"
+            },
+            {
+              "content": "=Aquí tienes los títulos de ejemplo asociados con su cantidad de visitas (van por orden, el primer título hace referencia al primer número indicando la cantidad de visitas, el segundo título hace referencia al segundo número de visitas, y así en adelante):\n\nTítulos: {{ $('Aggregate').item.json.Titulo }}\n\nVisitas: {{ $('Aggregate').item.json.Visitas }}\n\nAquí tienes el transcript del nuevo vídeo para el que tienes que crear el título: {{ $('Extraer texto').all().first().json.data }}\n\nNunca das un título de más caracteres que los títulos que te envío"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        2288,
+        240
+      ],
+      "id": "bae37883-b020-4546-b4f2-e03bdb62c64a",
+      "name": "Titulo",
+      "credentials": {
+        "openAiApi": {
+          "id": "NKszU0XdYb3enewr",
+          "name": "Generica (20/05/25)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=[ADAPTAR A TU CANAL]\n\n\nTengo que crear una descripción para un nuevo vídeo de mi canal de Automatización con IA en Youtube. La descripción tiene que estar relacionada con lo que trata el vídeo. Para guiarte tengo ejemplos de las descripciones de todos mis anteriores vídeos y las visitas que han tenido cada una. A más visitas mejor ha sido el resultado.\n\nCreas una descripción para mi vídeo basada en las descripciones que mejor han funcionado, es decir, las que se relacionan con vídeos con más visitas han funcionado mejor. No cojas únicamente referencia de las que más visitas han tenido, pondera el peso de la estructura de cada descripción dándole más si ha tenido más visitas y menos si ha tenido menos.\n\nTe basas en las descripciones de ejemplo a la hora de la estructura, duración, forma de ordenar las palabras, número de párrafos... pero ten en cuenta siempre que la descripción que hagas tiene que estar hecha a partir del contenido del nuevo vídeo, que sabrás gracias a que te voy a enviar el transcript.\n\nRecuerda devolver únicamente la descripción apta para copiar y pegar directamente en mi nuevo vídeo, nada más.\n\nAl principio de la descripción siempre incluyes la siguiente línea: \n\n\n[SUSTITUIR CON LA TUYA]\n\n\n🥷 Construye y Vende Sistemas de IA → https://skool.com/kaizenacademy\n\n👉 Accede a N8N: https://n8n.partnerlinks.io/k9bcfrec4t32\n\n-----\n\n🤖 Mis Sistemas de IA Gratuitos: https://mariokaizen.gumroad.com\n\n🚀 ¿Quieres una Solución de IA personalizada para tu empresa? ⤵️\nkaizensystems.typeform.com/mario\n\n-----\n\n\nY al final siempre incluyes lo siguiente: \n\n\n[SUSTITUIR CON LA TUYA]\n\n\n\"\nGracias a todos los que los usáis mis links 🙏:\n\n👉 Prueba Typeforms: https://typeform.cello.so/Ce9nfKK3tIp\n\n👉 Prueba Airtable: https://airtable.com/invite/r/jSV922t3\n\n👉 Prueba N8N: https://n8n.partnerlinks.io/k9bcfrec4t32\n\n👉 Prueba Apify: https://www.apify.com?fpr=0q69k\n\n👉 Prueba Make: https://www.make.com/en/register?pc=mariokaizen\n\n👉 Prueba Manychat: https://manychat.partnerlinks.io/h0pvye5z6b05\n\n👉 Prueba Upload Post: https://www.upload-post.com/?linkId=lp_144414&sourceId=mariokaizen&tenantId=upload-post-app\n\n👉 Prueba AnyMailFinder: https://anymailfinder.com/?via=mario\n\n👉 Prueba Rize: https://rize.io?via=mario\n\n👉 Prueba Firecrawl: https://firecrawl.link/mario-kaizen\n\"\n\nTen en cuenta los espacios y separaciones por guiones ayudan mucho a la estructura"
+            },
+            {
+              "content": "=Aquí tienes las descripciones de ejemplo asociadas con su cantidad de visitas (van por orden, la primera descripcion hace referencia al primer número indicando la cantidad de visitas, la segunda descripción hace referencia al segundo número de visitas, y así en adelante):\n\nDescripciones: {{ $('Aggregate').item.json['Descripción'] }}\n\nVisitas: {{ $('Aggregate').item.json.Visitas }}\n\nAquí tienes el transcript del nuevo vídeo para el que tienes que crear la descripción: {{ $('Extraer texto').all().first().json.data }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        1936,
+        240
+      ],
+      "id": "688920fe-48a6-4d99-a699-c46d281d4d30",
+      "name": "Descripcion",
+      "credentials": {
+        "openAiApi": {
+          "id": "NKszU0XdYb3enewr",
+          "name": "Generica (20/05/25)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "app6iGT8g3AyW058Q",
+          "mode": "list",
+          "cachedResultName": "Mario Kaizen",
+          "cachedResultUrl": "https://airtable.com/app6iGT8g3AyW058Q"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbl0jlcmuZMvIxhfi",
+          "mode": "list",
+          "cachedResultName": "Horizontales",
+          "cachedResultUrl": "https://airtable.com/app6iGT8g3AyW058Q/tbl0jlcmuZMvIxhfi"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1216,
+        240
+      ],
+      "id": "10e0636c-45f1-404f-8e17-9ed0a972ba1c",
+      "name": "Recupera tabla Analisis",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "kEsoVqBmSZls69vz",
+          "name": "Airtable (12/05/2025)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Coge el último vídeo y su transcript",
+        "height": 360,
+        "width": 1260,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -128,
+        128
+      ],
+      "id": "510a8657-ef38-42ae-96a2-973818722ee5",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Crea la nueva info basada en el transcript y en lo que ya funcionó",
+        "height": 360,
+        "width": 1060,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1536,
+        128
+      ],
+      "id": "f7f561af-c83b-42e4-95e2-525858461a1e",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 23,
+              "triggerAtMinute": 57
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -304,
+        240
+      ],
+      "id": "c0137bd1-4310-4e38-bbc1-3da4a86d1898",
+      "name": "2 / dia"
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "base": {
+          "__rl": true,
+          "value": "app6iGT8g3AyW058Q",
+          "mode": "list",
+          "cachedResultName": "Mario Kaizen",
+          "cachedResultUrl": "https://airtable.com/app6iGT8g3AyW058Q"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbl0jlcmuZMvIxhfi",
+          "mode": "list",
+          "cachedResultName": "Horizontales",
+          "cachedResultUrl": "https://airtable.com/app6iGT8g3AyW058Q/tbl0jlcmuZMvIxhfi"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Titulo": "={{ $json.video_title }}",
+            "Enlace Video": "={{ $json.video_url }}",
+            "Estado": "Subido",
+            "Likes": "={{ $json.video_likes }}",
+            "Visitas": "={{ $json.video_views }}",
+            "Comentarios": "={{ $json.video_comments ?? 0 }}",
+            "Video_ID": "={{ $json.video_id }}",
+            "Duracion": "={{ $json.video_duration }}",
+            "Fecha de Subida": "={{ $json.video_date }}",
+            "Descripción": "={{ $json.video_text }}"
+          },
+          "matchingColumns": [
+            "Titulo"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true
+            },
+            {
+              "id": "Titulo",
+              "displayName": "Titulo",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Enlace Video",
+              "displayName": "Enlace Video",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Estado",
+              "displayName": "Estado",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Para Grabar",
+                  "value": "Para Grabar"
+                },
+                {
+                  "name": "Para Editar",
+                  "value": "Para Editar"
+                },
+                {
+                  "name": "Para Subir",
+                  "value": "Para Subir"
+                },
+                {
+                  "name": "Subido",
+                  "value": "Subido"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "RAW INTRO",
+              "displayName": "RAW INTRO",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "RAW ORDENADOR",
+              "displayName": "RAW ORDENADOR",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "RAW CAMARA",
+              "displayName": "RAW CAMARA",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Miniatura",
+              "displayName": "Miniatura",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Descripción",
+              "displayName": "Descripción",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Likes",
+              "displayName": "Likes",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Visitas",
+              "displayName": "Visitas",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Comentarios",
+              "displayName": "Comentarios",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Video_ID",
+              "displayName": "Video_ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Duracion",
+              "displayName": "Duracion",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Fecha de Subida",
+              "displayName": "Fecha de Subida",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "typecast": true
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        128,
+        720
+      ],
+      "id": "c043d0e8-ba03-4811-ac30-d17a3fe40872",
+      "name": "Actualiza tabla Horizontales > Analisis",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "kEsoVqBmSZls69vz",
+          "name": "Airtable (12/05/2025)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "app6iGT8g3AyW058Q",
+          "mode": "list",
+          "cachedResultName": "Mario Kaizen",
+          "cachedResultUrl": "https://airtable.com/app6iGT8g3AyW058Q"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbl0jlcmuZMvIxhfi",
+          "mode": "list",
+          "cachedResultName": "Horizontales",
+          "cachedResultUrl": "https://airtable.com/app6iGT8g3AyW058Q/tbl0jlcmuZMvIxhfi"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Likes": 0,
+            "Visitas": 0,
+            "Comentarios": 0,
+            "Titulo": "={{ $('Titulo').item.json.message.content }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Titulo",
+              "displayName": "Titulo",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Enlace Video",
+              "displayName": "Enlace Video",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Estado",
+              "displayName": "Estado",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Para Grabar",
+                  "value": "Para Grabar"
+                },
+                {
+                  "name": "Para Editar",
+                  "value": "Para Editar"
+                },
+                {
+                  "name": "Subido",
+                  "value": "Subido"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "RAW INTRO",
+              "displayName": "RAW INTRO",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "RAW ORDENADOR",
+              "displayName": "RAW ORDENADOR",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "RAW CAMARA",
+              "displayName": "RAW CAMARA",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Miniatura",
+              "displayName": "Miniatura",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Descripción",
+              "displayName": "Descripción",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Likes",
+              "displayName": "Likes",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Visitas",
+              "displayName": "Visitas",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Comentarios",
+              "displayName": "Comentarios",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Video_ID",
+              "displayName": "Video_ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Duracion",
+              "displayName": "Duracion",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Fecha de Subida",
+              "displayName": "Fecha de Subida",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Video Final",
+              "displayName": "Video Final",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Verticales",
+              "displayName": "Verticales",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        2880,
+        240
+      ],
+      "id": "8c737371-6d04-4c8b-9a6a-bfba66bc285d",
+      "name": "Crear record nuevo video",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "kEsoVqBmSZls69vz",
+          "name": "Airtable (12/05/2025)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Recuperar datos anteriores videos\n1 Coger los vídeos publicados la última semana\n2 Extraer sobre todo descripciones y engagement/visitas\n3 Pasar las estadísticas a un Sheet\n",
+        "height": 340,
+        "width": 784,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -400,
+        560
+      ],
+      "id": "e5018eff-36e3-4ca4-b880-9a822f4ff71f",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## SI OS DA ERROR\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ncambiad el apartado del título por cualquier palabra por ejemplo, y testear si os funciona nuevamente (porque puede llegar a buguearse por el número de caracteres del título que genera openai)\n\nluego corregid el prompt del anterior nodo (Titulo) para que se adapte y no de error.",
+        "height": 584,
+        "width": 214,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2608,
+        128
+      ],
+      "id": "28e5c819-16ee-40b6-9302-a9122b48b7ac",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2880,
+        48
+      ],
+      "id": "1d9cbaa1-ff3b-46da-8ddf-10f461e0495a",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "tvDlaP6l5sw4dtU8",
+          "name": "marioprz02"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "content": "## SI NO USAIS AIRTABLE\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ncopiad la configuración en el nodo de arriba de sheets, es lo mismo para este caso",
+        "height": 664,
+        "width": 214,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2832,
+        -80
+      ],
+      "id": "cc5dd263-0760-441e-a33e-433cf00266cd",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "## SI NO USAIS AIRTABLE\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ncopiad la configuración en el nodo de arriba de sheets, es lo mismo para este caso",
+        "height": 664,
+        "width": 214,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1168,
+        -96
+      ],
+      "id": "b7de2c31-5a2f-42c7-ad1b-f78ea4add9f0",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1yR97IbNl5cr89m9UynVgFF4BxS_8xYre_-kfWGxDQTI",
+          "mode": "list",
+          "cachedResultName": "MENSUAL",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yR97IbNl5cr89m9UynVgFF4BxS_8xYre_-kfWGxDQTI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 339590398,
+          "mode": "list",
+          "cachedResultName": "Septiembre_2025",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yR97IbNl5cr89m9UynVgFF4BxS_8xYre_-kfWGxDQTI/edit#gid=339590398"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1216,
+        48
+      ],
+      "id": "6cdce0e1-cfe2-4f43-bf1a-9157410d5f76",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "tvDlaP6l5sw4dtU8",
+          "name": "marioprz02"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "content": "![Mario Kaizen](https://i.imgur.com/NxJ1ZvB.jpg)\n\n## Conecta conmigo\n\n## [➡️ YouTube](https://www.youtube.com/@mario.kaizen)\n\n## [➡️ Comunidad Kaizen Academy](https://skool.com/kaizenacademy)",
+        "height": 1000,
+        "width": 580,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        544,
+        -1296
+      ],
+      "id": "838c5fb2-cf1c-47a3-bfbd-edd5566e7ed1",
+      "name": "Links Mario"
+    },
+    {
+      "parameters": {
+        "content": "![Logo Mario Kaizen](https://i.imgur.com/8fsiM5V.png)\n\n## ¿Quieres una solución personalizada?\n\n## ➡️ [Haz clic aquí para contactar con nuestro equipo](https://kaizensystems.typeform.com/mario-n8n)",
+        "height": 794,
+        "width": 618,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1152,
+        -1296
+      ],
+      "id": "dc2eb666-1d71-4620-b9ef-8627cdc8c8b1",
+      "name": "Soluciones personalizadas"
+    },
+    {
+      "parameters": {
+        "content": "# ![Portada Kaizen Academy](https://assets.skool.com/f/6d0680502d574b7fb977f8894b6385f7/61ebd496e2264d6793b8efecb4aaf202488f494026f94acd9c7507e553ad5548-md.jpg)\n\n## Las plantillas están muy bien, pero, si quieres aprender de verdad a vender soluciones con IA debes ir un paso más allá.\n\n\n\n## Accede a:\n\n## - ✅ Formaciones\n\n## - ✅ Oportunidades pagadas\n\n## - ✅ Círculo de personas que te potencian día a día:\n\n\n\n\n# [Haz clic aquí para unirte al equipo 🚀🥷](https://skool.com/kaizenacademy)\n\n\n\n## ⚠️ Vamos a subir el precio Hoy, pero si entras desde este Link, \n## aseguras tu precio de Entrada de por Vida.\n",
+        "height": 1104,
+        "width": 916,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -400,
+        -1296
+      ],
+      "id": "b45604b9-da0f-47e7-acc7-1517601f5127",
+      "name": "Comunidad Kaizen1"
+    },
+    {
+      "parameters": {
+        "content": "## SI NO USAIS AIRTABLE\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ncopiad la configuración en el nodo de arriba de sheets, es lo mismo para este caso",
+        "height": 504,
+        "width": 198,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        80,
+        560
+      ],
+      "id": "a3e5a43b-7d9d-480f-be53-015450d07880",
+      "name": "Sticky Note7"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Recupera Data Ult 30 videos": {
+      "main": [
+        [
+          {
+            "node": "Actualiza tabla Horizontales > Analisis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "1 / semana": {
+      "main": [
+        [
+          {
+            "node": "Recupera Data Ult 30 videos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Identifica la playlist Upload": {
+      "main": [
+        [
+          {
+            "node": "Identifica el ultimo video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Identifica el ultimo video": {
+      "main": [
+        [
+          {
+            "node": "Si Privado + Ult 12h",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Si Privado + Ult 12h": {
+      "main": [
+        [
+          {
+            "node": "Identifica los captions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Identifica los captions": {
+      "main": [
+        [
+          {
+            "node": "Descarga los captions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Descarga los captions": {
+      "main": [
+        [
+          {
+            "node": "Extraer texto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extraer texto": {
+      "main": [
+        [
+          {
+            "node": "Recupera tabla Analisis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Timestamp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Timestamp": {
+      "main": [
+        [
+          {
+            "node": "Descripcion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Descripcion": {
+      "main": [
+        [
+          {
+            "node": "Titulo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recupera tabla Analisis": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Titulo": {
+      "main": [
+        [
+          {
+            "node": "Actualiza descripcion y titulo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "2 / dia": {
+      "main": [
+        [
+          {
+            "node": "Identifica la playlist Upload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Actualiza descripcion y titulo": {
+      "main": [
+        [
+          {
+            "node": "Crear record nuevo video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6b01b42c-3fce-4a37-9895-96c9cf7c6c4e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "161ef4ae33ce65770cbacc969b7a8a7dea7b6f882504adaad3ed796f23a9dcb7"
+  },
+  "id": "Y4kAtNAnyOgJc6pP",
+  "tags": []
+}
