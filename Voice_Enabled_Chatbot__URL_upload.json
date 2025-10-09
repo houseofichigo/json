@@ -1,0 +1,571 @@
+{
+  "name": "Voice-Enabled Chatbot (URL upload)",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "upload",
+        "bucketName": "audio",
+        "fileName": "={{ $json.file_name }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.s3",
+      "typeVersion": 1,
+      "position": [
+        1400,
+        160
+      ],
+      "id": "f4ea4f20-c8d6-4d0a-b5cb-7048f8d3ce99",
+      "name": "Upload Audio to R2",
+      "credentials": {
+        "s3": {
+          "id": "zj1Bz4qlhW355Qub",
+          "name": "S3 account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"output\": \"{{ $('AI Agent').item.json.output }}\",\n  \"attachments\": [{ \"type\": \"url\", \"data\": \"{{ $json.audio_url }}\", \"mimeType\": \"{{ $('Set Audio Filename').item.json.file_mime_type }}\", \"autoPlayAudio\": true}]\n}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1820,
+        160
+      ],
+      "id": "d40c52a8-63ae-4279-bead-d7e1f307fbb4",
+      "name": "Respond to Webhook1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.elevenlabs.io/v1/text-to-speech/JBFqnCBsd6RMkjVDRZzb",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "output_format",
+              "value": "mp3_44100_128"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "xi-api-key",
+              "value": "sk_a6110c79fbeb89ff1cb58386e75a31b1e443877c487"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "text",
+              "value": "={{ $json.output }}"
+            },
+            {
+              "name": "model_id",
+              "value": "eleven_multilingual_v2"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        980,
+        160
+      ],
+      "id": "760ce707-b449-4b1c-b546-917fe1d99b1f",
+      "name": "ElevenLabs(TTS)1"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"file_name\": \"{{ $('Webhook').item.json.body.sessionId }}/audio-{{Date.now()}}\",\n  \"file_mime_type\": \"{{ $input.all().at(0)?.binary?.data?.mimeType }}\"\n}\n",
+        "includeOtherFields": true,
+        "include": "selected",
+        "includeFields": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1200,
+        160
+      ],
+      "id": "0dbea3eb-d6a2-45e2-98fd-1110305d4457",
+      "name": "Set Audio Filename"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"audio_url\": \"https://pub-1222e3905b714cbd94743b6adfc68a0d.r2.dev/{{ $('Set Audio Filename').item.json.file_name }}\"\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1600,
+        160
+      ],
+      "id": "09ed64cd-c7ec-4f87-9bd9-9c7eb702176c",
+      "name": "Generate uploaded audio URL"
+    },
+    {
+      "parameters": {
+        "content": "## Approach - 2 (Upload)\n\nUpload generated audio file to cloud storage and send the file url in the response\n\nWatch this video to learn how to set it up: https://youtu.be/rcN7SfWCTwo\n\nWant to build chat widgets for your n8n chatbots? Visit n8nchatui.com to get started for FREE!",
+        "height": 240,
+        "width": 360
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1060,
+        -260
+      ],
+      "id": "a01c9e08-259b-4931-b523-808bdc90e079",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Webhook').item?.json?.body?.chatInput || $('HTTP Request1').item?.json?.text }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        640,
+        160
+      ],
+      "id": "0b6153bb-318f-44ef-b9fb-f2e04039fae0",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.1,
+      "position": [
+        520,
+        360
+      ],
+      "id": "33863016-6371-4f79-8f89-c55584bc62ab",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "rzktJ7VtXs7v2V7H",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -400,
+        60
+      ],
+      "id": "782ce89e-ed16-43b3-8417-d384dd16b3bc",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "files",
+        "options": {
+          "includeBinary": true
+        }
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -640,
+        60
+      ],
+      "id": "99b64278-7f1d-49c4-84ec-d314cdd6f7b4",
+      "name": "Split Out",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const files = $input.all().at(0)?.binary\nconst isfilesSent = typeof files === 'object' && Object.keys(files)?.length\n\nif(isfilesSent){\n  return { files }\n}\n\nreturn $input.all()"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -840,
+        60
+      ],
+      "id": "9d977faf-5875-4c12-bd38-50b8acb5c9c5",
+      "name": "Code2"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "75f9795e-cacd-4107-8a2b-104e69ea91c5",
+                    "leftValue": "={{ $json.mimeType }}",
+                    "rightValue": "audio/",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Audio"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "ignoreCase": true
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -140,
+        80
+      ],
+      "id": "5240384a-3273-436f-bf67-1fd5ba3c3e4c",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -200,
+        -160
+      ],
+      "id": "591564b3-ad75-4633-a608-804c7bc9b6b7",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.elevenlabs.io/v1/speech-to-text",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "xi-api-key",
+              "value": "sk_a6110c79fbad7daeb89f8386e75a31b1e443877c487"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model_id",
+              "value": "scribe_v1"
+            },
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "upload"
+            },
+            {
+              "name": "language_code",
+              "value": "en"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        240,
+        -140
+      ],
+      "id": "8fb574d4-f6ce-480d-bb1a-ee5d13d3ef17",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "mode": "chooseBranch"
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        40,
+        -140
+      ],
+      "id": "6c5c3fd4-397d-4761-8dde-c399f6a050cc",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "operation": "delete",
+        "bucketName": "audio",
+        "folderKey": "a45f5c20-8779-4150-85b6-d0c6c19d8532"
+      },
+      "type": "n8n-nodes-base.s3",
+      "typeVersion": 1,
+      "position": [
+        -560,
+        520
+      ],
+      "id": "385dc4fa-bc96-46ef-b4b8-96d59521db2f",
+      "name": "Delete Folder",
+      "credentials": {
+        "s3": {
+          "id": "zj1Bz4qlhW355Qub",
+          "name": "S3 account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Approach - 2 (Cleanup)\n\nDelete uploaded audio files associated with a session (need to automate this step)",
+        "height": 120,
+        "width": 360
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -980,
+        520
+      ],
+      "id": "8775f308-a9a3-4daa-9788-fbd6e4b9fdf3",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "voice-enabled-chat-url-upload",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -1040,
+        60
+      ],
+      "id": "6cdd4cc4-c40b-4b13-88db-f6ab66e2eab6",
+      "name": "Webhook",
+      "webhookId": "f62c1d65-70a5-45da-ae6e-037bc33f397c"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Upload Audio to R2": {
+      "main": [
+        [
+          {
+            "node": "Generate uploaded audio URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ElevenLabs(TTS)1": {
+      "main": [
+        [
+          {
+            "node": "Set Audio Filename",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Audio Filename": {
+      "main": [
+        [
+          {
+            "node": "Upload Audio to R2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate uploaded audio URL": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "ElevenLabs(TTS)1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code2": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "933cea83-30f3-4f0c-97db-c03c554905d4",
+  "meta": {
+    "instanceId": "89214beb80023fb6dd965ca995aa39ab8b01230f6dfebee590e804967a519975"
+  },
+  "id": "wkj8jgIjDFOKhng3",
+  "tags": []
+}
