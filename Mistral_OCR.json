@@ -1,0 +1,392 @@
+{
+  "name": "Mistral OCR",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Extraction d'information",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Téléchrger votre document",
+              "fieldType": "file"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -340,
+        -60
+      ],
+      "id": "bae2b81c-c1ed-4148-b1b2-1c52d4ec0033",
+      "name": "On form submission",
+      "webhookId": "e9bdf2a1-c167-42e2-8bf1-7445efdb1ec1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.mistral.ai/v1/files",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "purpose",
+              "value": "ocr"
+            },
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "T_l_chrger_votre_document"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -120,
+        -60
+      ],
+      "id": "91935a9b-8b40-49c7-831a-569657e8aac5",
+      "name": "Télécharger à Mistral",
+      "credentials": {
+        "mistralCloudApi": {
+          "id": "0YkL9mL0y4pW7oxX",
+          "name": "Mistral Cloud account"
+        },
+        "httpHeaderAuth": {
+          "id": "7My6GTwQifLtpLAF",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://api.mistral.ai/v1/files/{{ $json.id }}/url",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "expiry",
+              "value": "24"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        100,
+        -60
+      ],
+      "id": "b83e316e-e494-4499-a41b-f66f2565a007",
+      "name": "Get signed Url",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "7My6GTwQifLtpLAF",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.mistral.ai/v1/ocr",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"mistral-ocr-latest\",\n  \"document\": {\n    \"type\": \"document_url\",\n    \"document_url\": \"{{ $json.url }}\"\n  },\n  \"include_image_base64\": true\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        320,
+        -60
+      ],
+      "id": "aa7f0675-38e5-4443-a0e1-84b946fd2f21",
+      "name": "Get OCR result",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "7My6GTwQifLtpLAF",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.pages[0].markdown }}",
+        "attributes": {
+          "attributes": [
+            {
+              "name": "Le destinataire",
+              "description": "Celui à qui on envois la facture"
+            },
+            {
+              "name": "L'adresse du destinataire",
+              "description": "L'adresse du destinataire"
+            },
+            {
+              "name": "Le montant total ",
+              "description": "Le montant total "
+            },
+            {
+              "name": "Le nom du compte bancaire",
+              "description": "Le nom du compte bancaire"
+            },
+            {
+              "name": "RIB",
+              "description": "Le numéro du compte banquaire "
+            },
+            {
+              "name": "Date de reception",
+              "type": "date",
+              "description": "La date de reception"
+            },
+            {
+              "name": "Date de paiement ",
+              "description": "La date de paiement "
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1,
+      "position": [
+        540,
+        -60
+      ],
+      "id": "a0449b4b-20a4-405e-861e-94c3aa553d24",
+      "name": "Information Extractor"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        628,
+        160
+      ],
+      "id": "39ef1cab-a197-4060-b52e-a615953a498d",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "x0tQpNXNP6v5Ovtd",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1YLQnKaQDikusjXRtumX6T5EKjouliYv9kYhIziOlKdM",
+          "mode": "list",
+          "cachedResultName": "Facture Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1YLQnKaQDikusjXRtumX6T5EKjouliYv9kYhIziOlKdM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Feuille 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1YLQnKaQDikusjXRtumX6T5EKjouliYv9kYhIziOlKdM/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Destinataire": "={{ $json.output['Le destinataire'] }}",
+            "Adresse distinataire": "={{ $json.output['L\\'adresse du destinataire'] }}",
+            "Date de reception ": "={{ $json.output['Date de reception'] }}",
+            "Date de paiement ": "={{ $json.output['Date de paiement '] }}",
+            "Montant Total TTC": "={{ $json.output['Le montant total '] }}",
+            "RIB": "={{ $json.output.RIB }}",
+            "Nom sur le compte banquaire ": "={{ $json.output['Le nom du compte bancaire'] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Destinataire",
+              "displayName": "Destinataire",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Adresse distinataire",
+              "displayName": "Adresse distinataire",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Date de reception ",
+              "displayName": "Date de reception ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Date de paiement ",
+              "displayName": "Date de paiement ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Montant Total TTC",
+              "displayName": "Montant Total TTC",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "RIB",
+              "displayName": "RIB",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nom sur le compte banquaire ",
+              "displayName": "Nom sur le compte banquaire ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        900,
+        -60
+      ],
+      "id": "7547ecc6-a96d-408e-956b-53f01bee3a7b",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "l7kruIs2eiRNUZaK",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Télécharger à Mistral",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Télécharger à Mistral": {
+      "main": [
+        [
+          {
+            "node": "Get signed Url",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get signed Url": {
+      "main": [
+        [
+          {
+            "node": "Get OCR result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get OCR result": {
+      "main": [
+        [
+          {
+            "node": "Information Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Information Extractor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Information Extractor": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "f7d0a648-b464-4087-98ae-6971c9862c2f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2ee8293be0fa6380527ab247a1eb95264d17c994507730562aa1c31ddb264f82"
+  },
+  "id": "6CSgBvrcGyrq4jsb",
+  "tags": []
+}
