@@ -1,0 +1,506 @@
+{
+  "name": "Workflow Backups (Public)",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "768b96c2-1e01-47a1-baaa-2993cbd029b2",
+      "name": "On clicking 'execute'",
+      "type": "n8n-nodes-base.manualTrigger",
+      "position": [
+        560,
+        -336
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "filters": {},
+        "requestOptions": {}
+      },
+      "id": "d77cd49a-75ff-4f85-a5e9-33b0bb1d3b8a",
+      "name": "n8n",
+      "type": "n8n-nodes-base.n8n",
+      "position": [
+        960,
+        -192
+      ],
+      "retryOnFail": true,
+      "typeVersion": 1,
+      "alwaysOutputData": true,
+      "credentials": {
+        "n8nApi": {
+          "id": "u2ElhgDAty0hOvkc",
+          "name": "Public"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "85bc4292-9bc6-4041-95ab-fdaf41926574",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "position": [
+        560,
+        272
+      ],
+      "typeVersion": 3,
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "=Workflow Backups {{ $now.format('cccc t dd-MM-yyyy') }}",
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1ajiYM-3-hCwucyJoDvEg3AJFwwA9r0A7",
+          "mode": "list",
+          "cachedResultName": "Workflows Backups",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1ajiYM-3-hCwucyJoDvEg3AJFwwA9r0A7"
+        },
+        "options": {}
+      },
+      "id": "2e3f856b-b8b2-45ff-bcc9-a039cfc7de06",
+      "name": "create new folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "position": [
+        784,
+        -192
+      ],
+      "typeVersion": 3,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "zedjsYC56OiNkNm8",
+          "name": "Public"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "toJson",
+        "options": {
+          "format": true,
+          "fileName": "={{ $json.name + \".json\" }} "
+        }
+      },
+      "id": "6162ffb0-e399-4d96-b095-208829cbc59e",
+      "name": "Convert to File",
+      "type": "n8n-nodes-base.convertToFile",
+      "position": [
+        784,
+        368
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks"
+            }
+          ]
+        }
+      },
+      "id": "b2e3921c-927a-44e1-89a6-70481e77f952",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [
+        560,
+        -176
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": false,
+            "typeValidation": "loose"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "538fc29d-2693-4c62-9848-bdcaf8566909",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              },
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "={{ $('create new folder').item.json.id }}"
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {
+          "ignoreCase": true
+        }
+      },
+      "id": "aa120973-801b-4dae-a32e-bde3e3c5f120",
+      "name": "Filter",
+      "type": "n8n-nodes-base.filter",
+      "position": [
+        944,
+        48
+      ],
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "operation": "deleteFolder",
+        "folderNoRootId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $json.id }}"
+        },
+        "options": {
+          "deletePermanently": true
+        }
+      },
+      "id": "1a6871cf-0b45-4342-9936-d29bd6f062cb",
+      "name": "delete folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "position": [
+        1072,
+        48
+      ],
+      "typeVersion": 3,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "zedjsYC56OiNkNm8",
+          "name": "Public"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "1ajiYM-3-hCwucyJoDvEg3AJFwwA9r0A7",
+            "mode": "list",
+            "cachedResultName": "Workflows Backups",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1ajiYM-3-hCwucyJoDvEg3AJFwwA9r0A7"
+          }
+        },
+        "options": {}
+      },
+      "id": "54a6769c-4b6d-45f7-a1aa-1c83f1e6853d",
+      "name": "Get folders",
+      "type": "n8n-nodes-base.googleDrive",
+      "position": [
+        816,
+        48
+      ],
+      "typeVersion": 3,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "zedjsYC56OiNkNm8",
+          "name": "Public"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "={{ $('Loop Over Items').item.json.name + \".json\" }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('create new folder').item.json.id }}"
+        },
+        "options": {}
+      },
+      "id": "5495b367-0920-4bcd-8783-ec7a1456253e",
+      "name": "Upload file",
+      "type": "n8n-nodes-base.googleDrive",
+      "position": [
+        960,
+        368
+      ],
+      "typeVersion": 3,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "zedjsYC56OiNkNm8",
+          "name": "Public"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0931JHB3HD",
+          "mode": "list",
+          "cachedResultName": "all-oxyan"
+        },
+        "text": "=Tes workflows n8n ont été back-up le {{ $now.format('cccc t dd-MM-yyyy') }} juste ici : \nhttps://drive.google.com/drive/folders/{{ $('create new folder').item.json.id }}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        928,
+        208
+      ],
+      "id": "c33fa0cf-c88a-489b-9587-ed604de0fdf5",
+      "name": "Send a message",
+      "webhookId": "c24f5de5-a73c-4d5a-9f07-1f8e6e542d74",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "qG32UKaPK9cNvFlg",
+          "name": "Public"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        688,
+        128
+      ],
+      "id": "0948ec8d-5937-4304-ad7d-19e1332d2606",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        1536,
+        -224
+      ],
+      "id": "8f03ea64-3a11-4d70-8771-e1cfbf7dedcc",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0931JHB3HD",
+          "mode": "list",
+          "cachedResultName": "all-oxyan"
+        },
+        "text": "=Il y a eu un problème dans le back-up de tes workflows n8n le {{ $now.format('cccc t dd-MM-yyyy') }}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        1712,
+        -224
+      ],
+      "id": "f0d1f157-ed07-44e2-8286-d4410839deb3",
+      "name": "Send a message1",
+      "webhookId": "02f23e58-dfb5-4e00-bc66-b255dbb4d1f1",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "qG32UKaPK9cNvFlg",
+          "name": "Public"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Error Workflow\n\nà créer dans un nouveau workflow et à rattacher à celui là dans la partie \"settings\" -> \"error workflow\"",
+        "height": 320,
+        "width": 512,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1440,
+        -368
+      ],
+      "typeVersion": 1,
+      "id": "222cc19f-23c2-4c9b-9e2b-cfe626afb194",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "n8n": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "delete folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get folders": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Upload file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "create new folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "create new folder": {
+      "main": [
+        [
+          {
+            "node": "n8n",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On clicking 'execute'": {
+      "main": [
+        [
+          {
+            "node": "create new folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload file": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "delete folder": {
+      "main": [
+        []
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Get folders",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "Q9J7h7CXDWht4NXr"
+  },
+  "versionId": "8af6e77d-6664-4368-ac41-0c6fca014503",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2c4533c7a1e56e822a6fde3f376121580e6f7d83dda36974d922278fe743aa10"
+  },
+  "id": "1Ziq4NwNeIriXzIu",
+  "tags": [
+    {
+      "createdAt": "2025-02-23T11:55:04.048Z",
+      "updatedAt": "2025-02-23T11:55:04.048Z",
+      "id": "7q0o5MyG5khP8wRb",
+      "name": "AI Agency"
+    }
+  ]
+}
