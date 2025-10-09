@@ -1,0 +1,418 @@
+{
+  "name": "Template Supabase Postgres",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -380,
+        160
+      ],
+      "id": "78a989d1-bdc6-47ea-a4e1-20c7fc25fe3e",
+      "name": "When chat message received",
+      "webhookId": "500a2766-6c8a-4d51-ba0b-4a369c361801"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.chatInput }}",
+        "options": {
+          "systemMessage": "You are a sales assistant in my bag store, helping visitors make their choice."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        -128,
+        -40
+      ],
+      "id": "ac1cbb54-de1d-4a21-9d77-ed7b7f92d9a3",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -220,
+        260
+      ],
+      "id": "37f443e0-b94d-47d2-b1ea-5446dfabd882",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "x0tQpNXNP6v5Ovtd",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        160
+      ],
+      "id": "001ad6fc-f562-4572-a9d1-e506d7877eb5",
+      "name": "Postgres Chat Memory",
+      "credentials": {
+        "postgres": {
+          "id": "Y0xXPPOStwFXIAYK",
+          "name": "Postgres account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolName": "sacamain",
+        "toolDescription": "Utilise cet outils pour récupérer les information sur notre gammes de produit est boutique ",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1,
+      "position": [
+        260,
+        240
+      ],
+      "id": "3cba51f2-904b-4675-893c-5c31b1c711fb",
+      "name": "Supabase Vector Store",
+      "credentials": {
+        "supabaseApi": {
+          "id": "lRRYTtaAhwq7msdD",
+          "name": "Supabase account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        340,
+        460
+      ],
+      "id": "0cb3f630-1e3e-404d-bbdf-d86eb144cb4e",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "x0tQpNXNP6v5Ovtd",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "125awSuepCMjpv3MPtsGbq3_skUoILAStv4x7tDP-tnQ",
+          "mode": "list",
+          "cachedResultName": "Tout ce qui concerne notre gamme sac à main",
+          "cachedResultUrl": "https://docs.google.com/document/d/125awSuepCMjpv3MPtsGbq3_skUoILAStv4x7tDP-tnQ/edit?usp=drivesdk"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -160,
+        820
+      ],
+      "id": "fc2118f7-242c-4aa8-af74-c032e447b7d2",
+      "name": "Google Drive",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "OX2B3UUec25TqeSR",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1,
+      "position": [
+        76,
+        820
+      ],
+      "id": "7b44e347-c120-44d4-ad94-bddfcee658b9",
+      "name": "Supabase Vector Store1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "lRRYTtaAhwq7msdD",
+          "name": "Supabase account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        60,
+        1040
+      ],
+      "id": "8287e789-d4a4-41aa-9435-d41735030589",
+      "name": "Embeddings OpenAI1",
+      "credentials": {
+        "openAiApi": {
+          "id": "x0tQpNXNP6v5Ovtd",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1,
+      "position": [
+        180,
+        1042.5
+      ],
+      "id": "ff7dcfb6-3f67-43c0-8ec0-6f4c5f213192",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        268,
+        1240
+      ],
+      "id": "c94b0a37-b1af-44b7-bc47-2e947e0fbe21",
+      "name": "Recursive Character Text Splitter"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -380,
+        820
+      ],
+      "id": "4eb5ae0e-79f9-4bd7-895e-5e0432f60fdc",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "content": "## Google Drive Document \n Choose your Google Drive document from the downloaded drive file.",
+        "height": 300,
+        "width": 260
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -240,
+        680
+      ],
+      "typeVersion": 1,
+      "id": "c3e8dc9a-b69e-408a-afd9-9c173859a69f",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Supabase Vector Store\n Click on this vector and store it to the \"Add document\" section in the Supabase document table.\n\n\n\n\n\n",
+        "height": 300,
+        "width": 300
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        40,
+        680
+      ],
+      "typeVersion": 1,
+      "id": "51b4a43d-b57b-4d3f-a2fe-bcb8cd6bce1b",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Supabase Vector Store\nThis section allows you to retrieve a document and push it to the AI agent to process it after adding it to the Supabase vector store.\n\n\n\n\n",
+        "height": 300,
+        "width": 300
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        240,
+        40
+      ],
+      "typeVersion": 1,
+      "id": "657711e7-4766-4fcf-839d-3525fbb127a6",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "\n\n\n\n\n\n\n\n\n\n\n## Postgres Chat Memory\nIts the memory of the chat stocked in subapage\n",
+        "height": 340,
+        "width": 260
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -80,
+        140
+      ],
+      "typeVersion": 1,
+      "id": "5c65024c-e9a9-4102-8fe6-5c5736b849d9",
+      "name": "Sticky Note3"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Supabase Vector Store1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Supabase Vector Store1",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6a9728c3-e456-4035-a2ad-b0b6e77b8d7b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2ee8293be0fa6380527ab247a1eb95264d17c994507730562aa1c31ddb264f82"
+  },
+  "id": "9eLotyL9iB2U5GjX",
+  "tags": []
+}
