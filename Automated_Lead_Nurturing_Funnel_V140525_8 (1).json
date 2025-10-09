@@ -1,0 +1,390 @@
+{
+  "name": "Automated Lead Nurturing Funnel V140525.8",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "REDACTED",
+        "options": {}
+      },
+      "id": "78c7185b-d0c7-49f1-85b2-58ec8cff335a",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "position": [
+        -1180,
+        340
+      ],
+      "webhookId": "REDACTED",
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "98f6155d-a074-495d-9baf-35f53b4ad79a",
+              "name": "firstName",
+              "type": "string",
+              "value": "={{$json[\"body\"][\"first_name\"]}}\n"
+            },
+            {
+              "id": "81f314cc-85b1-4d93-8f69-c1e72daf701f",
+              "name": "lastName",
+              "type": "string",
+              "value": "={{$json[\"body\"][\"last_name\"]}}\n"
+            },
+            {
+              "id": "4225de49-1baa-4d56-892c-f16db05407cb",
+              "name": "email",
+              "type": "string",
+              "value": "={{$json[\"body\"][\"email\"]}}\n"
+            },
+            {
+              "id": "e3378766-b04b-4d22-9b6f-a6220ef2a275",
+              "name": "phone",
+              "type": "string",
+              "value": "={{$json[\"body\"][\"phone\"]}}\n"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "9781c940-ab96-4768-8ccf-50c501f7dba7",
+      "name": "Extract Lead Info",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        -960,
+        340
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "sendTo": "={{$json[\"email\"]}}",
+        "subject": "Welcome to StrongFuel – Your Custom Plan is On the Way 🚀",
+        "emailType": "text",
+        "message": "=Hey {{$json[\"firstName\"]}},\n\nThanks for signing up – your personalized fitness & nutrition plan is already in progress.\n\nWe’ll keep you updated by email and SMS. You're one step closer to hitting your goals 💪\n\n- The StrongFuel Team",
+        "options": {}
+      },
+      "id": "3795818d-35f6-489c-802d-18b14b3af745",
+      "name": "Gmail",
+      "type": "n8n-nodes-base.gmail",
+      "position": [
+        -740,
+        140
+      ],
+      "webhookId": "ee976396-0c06-4fde-9d19-cb2def4c5c87",
+      "typeVersion": 2.1
+    },
+    {
+      "parameters": {
+        "to": "={{$json[\"phone\"]}}",
+        "message": "=Hey {{$json[\"firstName\"]}}, welcome to StrongFuel! 💪  Your custom plan is in progress – we’ll send updates via email & SMS.  Let’s crush those goals together 🔥",
+        "options": {}
+      },
+      "id": "b5150aa7-12a2-4b54-a03e-17d4d9309369",
+      "name": "Twilio",
+      "type": "n8n-nodes-base.twilio",
+      "position": [
+        -740,
+        540
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "id": "d713eeb9-0516-498f-bbb3-3469172454c8",
+      "name": "Wait 24h",
+      "type": "n8n-nodes-base.wait",
+      "position": [
+        -740,
+        340
+      ],
+      "webhookId": "b3330ddb-b297-481a-a9cb-1f7ab4c9c399",
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "sendTo": "={{ $json[\"email\"] }}",
+        "subject": "🔥 Ready To Transform? Here’s Your Exclusive Offer!",
+        "emailType": "text",
+        "message": "=Hey {{ $json[\"firstName\"] }},  We haven’t forgotten about you 👀  Your personalized fitness & nutrition plan is still waiting – and we’ve got something special lined up: 👉 20% off if you start within the next 24 hours.  Ready to crush your goals? Let’s do this 💥  – Team StrongFuel",
+        "options": {}
+      },
+      "id": "4746b234-6004-43f3-8e6b-59b0b5eddfb9",
+      "name": "Day 1 Follow-up",
+      "type": "n8n-nodes-base.gmail",
+      "position": [
+        -520,
+        240
+      ],
+      "webhookId": "e8083166-574c-4e64-998a-b3aeb79e6e4e",
+      "typeVersion": 2.1
+    },
+    {
+      "parameters": {
+        "to": "={{ $json[\"phone\"] }}",
+        "message": "=Hey {{ $json[\"firstName\"] }}, we just sent you something special 🎁   Check your inbox – it might change your game 🧠💪   – Team StrongFuel",
+        "options": {}
+      },
+      "id": "8dbffbe1-f8af-47d3-b40d-1c90a66b9964",
+      "name": "Day 1 - Check Your Inbox",
+      "type": "n8n-nodes-base.twilio",
+      "position": [
+        -520,
+        440
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "amount": 2,
+        "unit": "days"
+      },
+      "id": "0d2e803f-e621-4fbb-924b-105427c9e541",
+      "name": "Wait 48h",
+      "type": "n8n-nodes-base.wait",
+      "position": [
+        -300,
+        340
+      ],
+      "webhookId": "59ef7bc9-ed0c-4308-9e8c-ffd20bd2f6a5",
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "d0140765-2cf4-495c-9339-aae62567b542",
+              "operator": {
+                "name": "filter.operator.equals",
+                "type": "string",
+                "operation": "equals"
+              },
+              "leftValue": "={{ $json[\"clicked\"] }}",
+              "rightValue": "true"
+            },
+            {
+              "id": "12fe2c6e-1738-4d35-8d34-e0cbcbedc2be",
+              "operator": {
+                "name": "filter.operator.equals",
+                "type": "string",
+                "operation": "equals"
+              },
+              "leftValue": "",
+              "rightValue": ""
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b3363238-4426-49fe-b886-080212a49bd4",
+      "name": "Track Email Click",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        -80,
+        340
+      ],
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6ee63720-817b-4d55-8610-98b1bd819525",
+              "name": "Status = interested",
+              "type": "string",
+              "value": "=clicked-email"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "de4ea804-8e23-46a5-946a-03492017a762",
+      "name": "Mark as Interested",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        140,
+        240
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "amount": 2,
+        "unit": "days"
+      },
+      "id": "b8448199-83f0-4df6-a672-0b8881e75fdf",
+      "name": "Wait Before Re-Engagement",
+      "type": "n8n-nodes-base.wait",
+      "position": [
+        140,
+        440
+      ],
+      "webhookId": "b9b11626-f749-4498-bb8a-f48247bd9dd6",
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json[\"body\"][\"email\"] }}",
+        "subject": "da",
+        "message": "ds",
+        "options": {}
+      },
+      "id": "4195f6b4-59d0-42e5-a677-28b91adf8b64",
+      "name": "Follow-up Email",
+      "type": "n8n-nodes-base.gmail",
+      "position": [
+        360,
+        440
+      ],
+      "webhookId": "377b9461-df09-44ce-8bd9-d6a52fe2448c",
+      "typeVersion": 2.1
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Extract Lead Info",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 24h": {
+      "main": [
+        [
+          {
+            "node": "Day 1 Follow-up",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Day 1 - Check Your Inbox",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 48h": {
+      "main": [
+        [
+          {
+            "node": "Track Email Click",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Day 1 Follow-up": {
+      "main": [
+        [
+          {
+            "node": "Wait 48h",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Lead Info": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Wait 24h",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Twilio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Track Email Click": {
+      "main": [
+        [
+          {
+            "node": "Mark as Interested",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait Before Re-Engagement",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Day 1 - Check Your Inbox": {
+      "main": [
+        [
+          {
+            "node": "Wait 48h",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait Before Re-Engagement": {
+      "main": [
+        [
+          {
+            "node": "Follow-up Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "35e64c0e-5d1c-42fb-80fd-5497cf7487b1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "0c91cd2a3133931f13781d4dcd6db321515413596b36e6bddb494176726841a7"
+  },
+  "id": "j5mmnDs4wqwOaP64",
+  "tags": [
+    {
+      "createdAt": "2025-05-14T18:52:56.055Z",
+      "updatedAt": "2025-05-14T18:52:56.055Z",
+      "id": "a6b41kNUtX65uzIo",
+      "name": "tuguidragos.com"
+    }
+  ]
+}
