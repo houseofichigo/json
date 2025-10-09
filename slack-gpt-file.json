@@ -1,0 +1,47 @@
+{
+    "display_information": {
+        "name": "BartGPT",
+        "description": "Ask Me Anything!",
+        "background_color": "#004492"
+    },
+    "features": {
+        "bot_user": {
+            "display_name": "SlackGPT-02",
+            "always_online": true
+        }
+    },
+    "oauth_config": {
+        "redirect_urls": [
+            "https://hook.us1.make.com/cxoeljsfwm88svlopomwrlol5c994hng"
+        ],
+        "scopes": {
+            "user": [
+                "users:read"
+            ],
+            "bot": [
+                "channels:history",
+                "groups:history",
+                "im:history",
+                "channels:read",
+                "chat:write",
+                "groups:read",
+                "groups:write",
+                "im:read",
+                "im:write"
+            ]
+        }
+    },
+    "settings": {
+        "event_subscriptions": {
+            "request_url": "https://hook.us1.make.com/cxoeljsfwm88svlopomwrlol5c994hng",
+            "bot_events": [
+                "message.channels",
+                "message.groups",
+                "message.im"
+            ]
+        },
+        "org_deploy_enabled": false,
+        "socket_mode_enabled": false,
+        "token_rotation_enabled": false
+    }
+}
