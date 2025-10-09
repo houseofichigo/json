@@ -1,0 +1,1088 @@
+{
+  "name": "RH & recrutement",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {},
+        "options": {
+          "downloadAttachments": true
+        }
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -780,
+        20
+      ],
+      "id": "8dfd3744-3b0f-4f36-a195-10e139eb9e60",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "b1FEBwMxzaRK5UMV",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputDataFieldName": "attachment_0",
+        "name": "=",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1udrt3r7L_CCky68O-uYWIUHCvX5Kq9PR",
+          "mode": "list",
+          "cachedResultName": "cv",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1udrt3r7L_CCky68O-uYWIUHCvX5Kq9PR"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -500,
+        20
+      ],
+      "id": "5ae65a76-87bc-4942-b69b-741936a237c2",
+      "name": "Upload file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Zr08RF1gbLhthlBf",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://www.googleapis.com/drive/v2/files/{{ $json.id }}/copy?convert=true",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleDriveOAuth2Api",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -660,
+        300
+      ],
+      "id": "f16f3d76-4495-4ff4-b8b7-efd901cfd726",
+      "name": "HTTP Request",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Zr08RF1gbLhthlBf",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {
+          "googleFileConversion": {
+            "conversion": {
+              "docsToFormat": "application/pdf"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "6724b469-a1fb-4175-ae74-57a00854fced",
+      "name": "Download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Zr08RF1gbLhthlBf",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fc1b64aa-006b-464d-9394-7d2ff9307e8f",
+              "name": "text",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        560,
+        160
+      ],
+      "id": "d589401c-b3fb-4018-a801-b13753487006",
+      "name": "Standardiser"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "14VYt6tcHueCev8Tone6TIKGrygUmrBL8jwbeTABtuec",
+          "mode": "list",
+          "cachedResultName": "BUSINESS MANAGER F/H - Engineering - Strasbourg",
+          "cachedResultUrl": "https://docs.google.com/document/d/14VYt6tcHueCev8Tone6TIKGrygUmrBL8jwbeTABtuec/edit?usp=drivesdk"
+        },
+        "options": {
+          "googleFileConversion": {
+            "conversion": {
+              "docsToFormat": "application/pdf"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        800,
+        320
+      ],
+      "id": "5a7ff471-190f-4f9d-9050-ad86b0ace0c7",
+      "name": "Download file1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Zr08RF1gbLhthlBf",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        1400,
+        320
+      ],
+      "id": "4799e9ea-e0d9-4628-b694-653129a6730b",
+      "name": "Extract from File1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Candidate Resume:\n\n{{ $('Standardiser').item.json.text }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=# Overview\nYou are an expert technical recruiter specializing in AI, automation, and software roles. You have been given a job description and a candidate resume. Your task is to analyze the resume in relation to the job description and provide a detailed screening report. \n\nFocus specifically on how well the candidate matches the core requirements and ideal profile outlined in the job description. Evaluate both technical skill alignment and business-context understanding. Use reasoning grounded in the actual content of the resume and job post — avoid making assumptions.\n\n## Output\nYour output should follow this exact format:\n\nCandidate Strengths:  \nList the top strengths or relevant qualifications the candidate brings to the table. Be specific.\n\nCandidate Weaknesses:\nList areas where the candidate is lacking or mismatched based on the job description.\n\nRisk Factor:\n- Assign a risk score (Low / Medium / High)  \n- Explain the worst-case scenario if this candidate is hired.\n\nReward Factor: \n- Assign a reward score (Low / Medium / High)  \n- Describe the best-case scenario — what value could this candidate unlock?  \n- Does the candidate appear to be a short-term or long-term fit?\n\nOverall Fit Rating (0–10):  \nAssign a number between 0 (terrible match) and 10 (perfect match). Do not give decimals.\n\nJustification for Rating:\nExplain clearly why this candidate received that score. Reference specific resume content and how it aligns or doesn't with the job description.\n\n## Instructions\nReturn all the output in French language\n\n## Job Description\n{{ $json.text }}\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -720,
+        560
+      ],
+      "id": "6f8e3d0e-0e1d-4b07-89cf-c14d5691ecdd",
+      "name": "Recruiter Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -280,
+        920
+      ],
+      "id": "48db74da-ba05-4701-a1be-e05a7b30e902",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "4y8oL4uC0A5b5PZ0",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"name\": \"resume_screening_evaluation\",\n  \"description\": \"Analyzes a candidate's resume against a job description and outputs strengths, weaknesses, risk/reward assessment, and an overall fit score.\",\n  \"type\": \"object\",\n  \"properties\": {\n    \"candidate_strengths\": {\n      \"type\": \"array\",\n      \"description\": \"A list of specific strengths or qualifications that match the job description.\",\n      \"items\": {\n        \"type\": \"string\"\n      }\n    },\n    \"candidate_weaknesses\": {\n      \"type\": \"array\",\n      \"description\": \"A list of areas where the candidate falls short or lacks alignment with the job requirements.\",\n      \"items\": {\n        \"type\": \"string\"\n      }\n    },\n    \"risk_factor\": {\n      \"type\": \"object\",\n      \"description\": \"An evaluation of the potential risks of hiring this candidate.\",\n      \"properties\": {\n        \"score\": {\n          \"type\": \"string\",\n          \"enum\": [\"Low\", \"Medium\", \"High\"],\n          \"description\": \"The risk level of hiring this candidate.\"\n        },\n        \"explanation\": {\n          \"type\": \"string\",\n          \"description\": \"A brief explanation of the worst-case scenario if the candidate is hired.\"\n        }\n      },\n      \"required\": [\"score\", \"explanation\"]\n    },\n    \"reward_factor\": {\n      \"type\": \"object\",\n      \"description\": \"An evaluation of the potential upside of hiring this candidate.\",\n      \"properties\": {\n        \"score\": {\n          \"type\": \"string\",\n          \"enum\": [\"Low\", \"Medium\", \"High\"],\n          \"description\": \"The reward level of hiring this candidate.\"\n        },\n        \"explanation\": {\n          \"type\": \"string\",\n          \"description\": \"A description of the best-case scenario and whether the candidate is a short-term or long-term fit.\"\n        }\n      },\n      \"required\": [\"score\", \"explanation\"]\n    },\n    \"overall_fit_rating\": {\n      \"type\": \"integer\",\n      \"description\": \"A rating from 0 to 10 indicating how well the candidate matches the job description.\",\n      \"minimum\": 0,\n      \"maximum\": 10\n    },\n    \"justification_for_rating\": {\n      \"type\": \"string\",\n      \"description\": \"A summary explaining why the candidate received the specific fit rating, referencing resume and job description alignment.\"\n    }\n  },\n  \"required\": [\n    \"candidate_strengths\",\n    \"candidate_weaknesses\",\n    \"risk_factor\",\n    \"reward_factor\",\n    \"overall_fit_rating\",\n    \"justification_for_rating\"\n  ]\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -540,
+        900
+      ],
+      "id": "bf180c76-dfd6-4bd6-8a98-7ce2a5a5a280",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "text": "={{ $('Standardiser').item.json.text }}",
+        "attributes": {
+          "attributes": [
+            {
+              "name": "First Name",
+              "description": "first name of the candidate",
+              "required": true
+            },
+            {
+              "name": "Last Name",
+              "description": "last name of the candidate",
+              "required": true
+            },
+            {
+              "name": "Email Address",
+              "description": "candidate's email address",
+              "required": true
+            },
+            {
+              "name": "Phone number",
+              "description": "The phone number of the condidat ",
+              "required": true
+            },
+            {
+              "name": "Job title ",
+              "description": "Job title of the position ",
+              "required": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1.2,
+      "position": [
+        -340,
+        560
+      ],
+      "id": "fcf05653-3af5-4a40-bd59-b88767a9d27d",
+      "name": "Information Extractor"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "dbb700a9-4c6a-4e60-8615-0a48d0556eba",
+                    "leftValue": "={{ $json.mimeType }}",
+                    "rightValue": "application/pdf",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "PDF"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.mimeType }}",
+                    "rightValue": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "169a0bf3-73b7-4e07-9080-92fd7fc4e1e0"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Word Doc"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -260,
+        20
+      ],
+      "id": "3148e341-31c1-47ac-b001-a6aca3ecec28",
+      "name": "File Type"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {
+          "googleFileConversion": {
+            "conversion": {
+              "docsToFormat": "application/pdf"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -360,
+        300
+      ],
+      "id": "d02cd739-bdfd-4832-8312-40772e79e73d",
+      "name": "Download file2",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Zr08RF1gbLhthlBf",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        100,
+        300
+      ],
+      "id": "a05b2ee1-a08d-4b28-9d9c-bd1147559b6a",
+      "name": "Extract from File2"
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        260,
+        0
+      ],
+      "id": "2866b253-7410-44c1-8401-acd00638fde2",
+      "name": "Extract cv from pdf"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "38754e83-3ab8-48e0-9112-1690503c764c",
+              "leftValue": "={{ $json['Overall Fit'] }}",
+              "rightValue": 6,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -660,
+        1100
+      ],
+      "id": "5fce80c9-cfa6-40c8-a77c-a36d7bcc88cf",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "19kR43mGwskkYwhjXSlXnoGH0cBi-zUf0X62jVR4I9V8",
+          "mode": "list",
+          "cachedResultName": "Cvs analysés ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/19kR43mGwskkYwhjXSlXnoGH0cBi-zUf0X62jVR4I9V8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Feuille 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/19kR43mGwskkYwhjXSlXnoGH0cBi-zUf0X62jVR4I9V8/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Date": "={{ $now.format('yyyy-MM-dd hh:m a') }}",
+            "Resume": "={{ $('Standardiser').item.json.text }}",
+            "First Name": "={{ $json.output['First Name'] }}",
+            "Last Name": "={{ $json.output['Last Name'] }}",
+            "Email": "={{ $json.output['Email Address'] }}",
+            "Strengths": "={{ $('Recruiter Agent').item.json.output.candidate_strengths.join(\"\\n\\n\") }}",
+            "Weaknesses": "={{ $('Recruiter Agent').item.json.output.candidate_weaknesses.join(\"\\n\\n\") }}",
+            "Risk Factor": "={{ $('Recruiter Agent').item.json.output.risk_factor.score }}\n\n{{ $('Recruiter Agent').item.json.output.risk_factor.explanation }}",
+            "Reward Factor": "={{ $('Recruiter Agent').item.json.output.reward_factor.score }}\n\n{{ $('Recruiter Agent').item.json.output.reward_factor.explanation }}",
+            "Justification": "={{ $('Recruiter Agent').item.json.output.justification_for_rating }}",
+            "Overall Fit": "={{ $('Recruiter Agent').item.json.output.overall_fit_rating }}",
+            "Phone number ": "={{ $json.output['Phone number'] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Resume",
+              "displayName": "Resume",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "First Name",
+              "displayName": "First Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Last Name",
+              "displayName": "Last Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone number ",
+              "displayName": "Phone number ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Strengths",
+              "displayName": "Strengths",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Weaknesses",
+              "displayName": "Weaknesses",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Risk Factor",
+              "displayName": "Risk Factor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Reward Factor",
+              "displayName": "Reward Factor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Overall Fit",
+              "displayName": "Overall Fit",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Justification",
+              "displayName": "Justification",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        100,
+        560
+      ],
+      "id": "aa3195c0-ec6b-440e-8d7a-4c85d901ae34",
+      "name": "All candidats",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "O4wKJYscZfoMEiA7",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "19kR43mGwskkYwhjXSlXnoGH0cBi-zUf0X62jVR4I9V8",
+          "mode": "list",
+          "cachedResultName": "Cvs analysés ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/19kR43mGwskkYwhjXSlXnoGH0cBi-zUf0X62jVR4I9V8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1633202410,
+          "mode": "list",
+          "cachedResultName": "Admis",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/19kR43mGwskkYwhjXSlXnoGH0cBi-zUf0X62jVR4I9V8/edit#gid=1633202410"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Date": "={{ $now.format('yyyy-MM-dd hh:m a') }}",
+            "Resume": "={{ $('Standardiser').item.json.text }}",
+            "First Name": "={{ $('Information Extractor').item.json.output['First Name'] }}",
+            "Last Name": "={{ $('Information Extractor').item.json.output['Last Name'] }}",
+            "Email": "={{ $('Information Extractor').item.json.output['Email Address'] }}",
+            "Phone number": "={{ $('Information Extractor').item.json.output['Phone number'] }}",
+            "Strengths": "={{ $('Recruiter Agent').item.json.output.candidate_strengths.join(\"\\n\\n\") }}",
+            "Weaknesses": "={{ $('Recruiter Agent').item.json.output.candidate_weaknesses.join(\"\\n\\n\") }}",
+            "Risk Factor": "={{ $('Recruiter Agent').item.json.output.risk_factor.score }}  {{ $('Recruiter Agent').item.json.output.risk_factor.explanation }}",
+            "Reward Factor": "={{ $('Recruiter Agent').item.json.output.reward_factor.score }}  {{ $('Recruiter Agent').item.json.output.reward_factor.explanation }}",
+            "Overall Fit": "={{ $('Recruiter Agent').item.json.output.overall_fit_rating }}",
+            "Justification": "={{ $('Recruiter Agent').item.json.output.justification_for_rating }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Resume",
+              "displayName": "Resume",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "First Name",
+              "displayName": "First Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Last Name",
+              "displayName": "Last Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone number",
+              "displayName": "Phone number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Strengths",
+              "displayName": "Strengths",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Weaknesses",
+              "displayName": "Weaknesses",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Risk Factor",
+              "displayName": "Risk Factor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Reward Factor",
+              "displayName": "Reward Factor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Overall Fit",
+              "displayName": "Overall Fit",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Justification",
+              "displayName": "Justification",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -240,
+        1080
+      ],
+      "id": "45faa2e4-3ab5-4f7f-b79d-961d181fe65d",
+      "name": "Les admis",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "O4wKJYscZfoMEiA7",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=# Overview\nTu es un agent RH automatisé, spécialisé dans la gestion des entretiens d'embauche pour une entreprise technologique. Ta mission est de détecter automatiquement les candidatures reçues, d'attendre un délai de 48 heures, puis d'envoyer un email personnalisé d'invitation à un entretien au candidat.\n\nTon objectif est de rendre le processus fluide, professionnel et humain, tout en respectant les délais et les bonnes pratiques RH. Tu dois inclure dans ton message les détails de l'entretien, l’adresse de l’entreprise, les instructions pratiques, ainsi qu’un lien pour que le candidat confirme sa présence.\n\nL’email doit rester chaleureux, professionnel, et refléter la culture de l’entreprise.\n\n## Output\nTon message email doit suivre exactement cette structure :\n\n## Objet de l’email :\nInvitation à un entretien pour le poste de {{ $('Information Extractor').item.json.output['Job title '] }}\n\nCorps de l’email :\n\nBonjour {{ $('Information Extractor').item.json.output['First Name'] }},\n\nNous vous remercions pour votre candidature au poste de {{ $('Information Extractor').item.json.output['Job title '] }}.\n\nAprès étude de votre profil, nous serions ravis de vous rencontrer pour un entretien dans nos locaux. Ce sera l’occasion d’échanger sur votre parcours, vos motivations, et de vous en dire plus sur notre entreprise et le poste proposé.\n\nNom de la société : Nocodeinnovate\nAdresse de la société : Paris, France, \nÉquipe RH\n\n\n## Instructions\nEnvoie cet email exactement 48 heures après la réception d’une candidature.\n\nRemplace tous les éléments entre crochets [ ... ] par les données spécifiques du candidat et du poste.\n\nLe message doit être rédigé en français, avec un ton professionnel, clair et bienveillant.\n\nN’ajoute aucune donnée fictive ou spéculative si une information est manquante.\n\nAssure-toi que l’adresse de l’entreprise soit bien précisée.\n\nLe lien de confirmation doit permettre au candidat de valider sa présence ou de proposer un autre créneau.\n\nLa date de la reception du mail est : {{ $now }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        80,
+        1080
+      ],
+      "id": "299bd468-5376-4336-9be5-30959b10ec3b",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"objet\": \"Demande de rendez-vous\",\n  \"texte\": \"Bonjour,\\nJe souhaiterais convenir d’un rendez-vous pour discuter de notre prochaine collaboration. Seriez-vous disponible mardi ou jeudi prochain ?\\nCordialement,\\nJean Dupont\"\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        380,
+        1260
+      ],
+      "id": "20318e56-c254-4f29-8b4d-24c9e4cec9aa",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "sendTo": "=almo9awil.2021@gmail.com",
+        "subject": "={{ $json.output.objet }}",
+        "emailType": "text",
+        "message": "={{ $json.output.texte }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        540,
+        1080
+      ],
+      "id": "479ac302-6f42-47af-9d01-50a2baca89bb",
+      "name": "Send a message",
+      "webhookId": "ee060f04-fd80-4be4-9ec7-27ac416055a9",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "b1FEBwMxzaRK5UMV",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Upload file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload file": {
+      "main": [
+        [
+          {
+            "node": "File Type",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Download file2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "Extract cv from pdf",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Standardiser": {
+      "main": [
+        [
+          {
+            "node": "Download file1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file1": {
+      "main": [
+        [
+          {
+            "node": "Extract from File1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File1": {
+      "main": [
+        [
+          {
+            "node": "Recruiter Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Recruiter Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Information Extractor",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Recruiter Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recruiter Agent": {
+      "main": [
+        [
+          {
+            "node": "Information Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Information Extractor": {
+      "main": [
+        [
+          {
+            "node": "All candidats",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "File Type": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file2": {
+      "main": [
+        [
+          {
+            "node": "Extract from File2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File2": {
+      "main": [
+        [
+          {
+            "node": "Standardiser",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract cv from pdf": {
+      "main": [
+        [
+          {
+            "node": "Standardiser",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Les admis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "All candidats": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Les admis": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1b71666e-6ded-4840-8968-8fc704170b9f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "efe1f7566db925e382983c51c3d44184ad0ec0ee460ac9370fcfb8e608d9d9d7"
+  },
+  "id": "9q85u0LwsUhDtXN9",
+  "tags": []
+}
