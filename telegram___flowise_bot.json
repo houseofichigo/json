@@ -1,0 +1,485 @@
+{
+  "name": "telegram + flowise bot",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        40,
+        0
+      ],
+      "id": "82714ead-e574-4a4f-882c-9398d39dae07",
+      "name": "Telegram Trigger",
+      "webhookId": "06605ba4-f760-44c9-a578-55f233edd1c5",
+      "credentials": {
+        "telegramApi": {
+          "id": "kW1gkkCZLixO3Ot0",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Telegram Trigger').item.json.message.photo }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "array",
+                      "operation": "exists",
+                      "singleValue": true
+                    },
+                    "id": "390c220b-1351-4883-8a58-a09c27ad8a68"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Image"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "a51c8a47-bfa8-4fac-bcfa-a515d35d906f",
+                    "leftValue": "={{ $('Telegram Trigger').item.json.message.document }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "object",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Document"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "9f17a8fc-8ea0-4163-825c-db3a9d2d41b6",
+                    "leftValue": "={{ $('Telegram Trigger').item.json.message.text }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Text"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        460,
+        0
+      ],
+      "id": "9b349dd6-2d5a-46bd-bb92-4791eab5bce8",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "operation": "binaryToPropery",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        1060,
+        -260
+      ],
+      "id": "6a900f5f-5245-4f71-a688-fc2248510169",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $('Telegram Trigger').item.json.message.document.file_id }}"
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        860,
+        -60
+      ],
+      "id": "9cb9aa0c-2a95-4862-b1a9-903cb8703c18",
+      "name": "Get document Binary",
+      "webhookId": "58770849-8780-497e-8e49-bd0b2ad0e1f2",
+      "credentials": {
+        "telegramApi": {
+          "id": "kW1gkkCZLixO3Ot0",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.message.photo[1].file_id }}"
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        860,
+        -260
+      ],
+      "id": "baf0ce16-8dc0-468d-95a4-16fe346bc226",
+      "name": "Get Image Binary",
+      "webhookId": "58770849-8780-497e-8e49-bd0b2ad0e1f2",
+      "credentials": {
+        "telegramApi": {
+          "id": "kW1gkkCZLixO3Ot0",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://flowise-falcon27.up.railway.app/api/v1/attachments/{{ $('Set variables').item.json.chatflow_id }}/{{ $('Set variables').item.json.chatflow_id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "multipart/form-data"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "files",
+              "inputDataFieldName": "data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1060,
+        -60
+      ],
+      "id": "cfdbe878-0e59-4215-8cb7-f269516ef1e5",
+      "name": "File content extraction"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"chatflow_id\": \"4bbcc7f7-5e72-4510-928d-512a6992e6a9\"\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        260,
+        0
+      ],
+      "id": "db3b6a93-e4fb-4aaf-8058-89081c2bf964",
+      "name": "Set variables"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n    \"question\": \"{{ $('Telegram Trigger').item.json?.text ?? $('Telegram Trigger').item.json.message?.caption ?? 'Tell me more about this' }}\",\n    \"uploads\": [\n        {\n            \"data\": \"data:image/png;base64,{{ $json.data }}\",\n            \"type\": \"file\",\n            \"name\": \"Flowise.png\",\n            \"mime\": \"image/png\"\n        }\n    ],\n    \"overrideConfig\": {\n      \"sessionId\": \"{{ $('Telegram Trigger').item.json.message.chat.id }}\"\n    }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1260,
+        -260
+      ],
+      "id": "fe2a4cbf-85ca-41ca-a627-ce6744c81392",
+      "name": "Construct payload with Image data"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n    \"question\": \"{{ $('Telegram Trigger').item.json?.text ?? $('Telegram Trigger').item.json.message?.caption ?? 'Tell me more about this' }}\",\n    \"uploads\": [\n        {\n            \"data\": {{ JSON.stringify($json.content) }},\n            \"type\": \"file:full\",\n            \"name\": \"{{ $('Telegram Trigger').item.json.message.document.file_name }}\",\n            \"mime\": \"{{ $json.mimeType }}\"\n        }\n    ],\n    \"overrideConfig\": {\n      \"sessionId\": \"{{ $('Telegram Trigger').item.json.message.chat.id }}\"\n    }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1260,
+        -60
+      ],
+      "id": "81cbb99b-fc3e-46f6-bf9c-20891b857f3b",
+      "name": "Construct payload with document data"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n    \"question\": {{ JSON.stringify($('Telegram Trigger').item.json.message.text) }},\n    \"overrideConfig\": {\n      \"sessionId\": \"{{ $('Telegram Trigger').item.json.message.chat.id }}\"\n    }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1060,
+        160
+      ],
+      "id": "bff2e7b6-456b-4dae-93d7-59a5bab19b55",
+      "name": "Construct payload"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://flowise-falcon27.up.railway.app/api/v1/prediction/4bbcc7f7-5e72-4510-928d-512a6992e6a9",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer wx6gwy4047XFlnH4qmhtvFvH7dKUu8JNZkCFtU5tG90"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1720,
+        0
+      ],
+      "id": "b22dbec7-0bfb-4288-94b9-006ea55cd3dd",
+      "name": "HTTP Request to FlowiseAI"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.text.trim() }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1920,
+        0
+      ],
+      "id": "541ea870-1118-45df-b5b9-d19beeb8d522",
+      "name": "Telegram send message",
+      "webhookId": "fe0a844a-5c67-403c-81eb-974a8b988756",
+      "credentials": {
+        "telegramApi": {
+          "id": "kW1gkkCZLixO3Ot0",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# Important \nSet your Chatflow ID here",
+        "width": 200
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        220,
+        160
+      ],
+      "id": "02e1993c-8dee-42ed-9c30-2541d5b7b6bb",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Set variables",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Get Image Binary",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get document Binary",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Construct payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Construct payload with Image data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Image Binary": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get document Binary": {
+      "main": [
+        [
+          {
+            "node": "File content extraction",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "File content extraction": {
+      "main": [
+        [
+          {
+            "node": "Construct payload with document data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set variables": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Construct payload with Image data": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request to FlowiseAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Construct payload with document data": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request to FlowiseAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Construct payload": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request to FlowiseAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request to FlowiseAI": {
+      "main": [
+        [
+          {
+            "node": "Telegram send message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "b154b1a1-f6d2-465b-b7b9-5219017b12a9",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "771451b85237bca244df34519582761796e7e27768a378d511562d69c56e9ec3"
+  },
+  "id": "eBJYuoBrRIzmMLzy",
+  "tags": []
+}
