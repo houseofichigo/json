@@ -1,0 +1,203 @@
+{
+  "name": "Agente IA",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Cuerpo del mensaje: {{ $json.snippet }}\n\nSender del email: {{ $json.From }}",
+        "options": {
+          "systemMessage": "=Eres un agente de IA que se encarga de usar dos herramientas.\n\nEsta es la hora y fecha de hoy: {{ $now }}\n\nRecibes el contenido de un email y si quiere organizar una cita, la organizas y la marcas en el calendario y le envías un correo a la persona para confirmar que la cita ha sido agendada correctamente.\n\nEn caso de recibir una request de presupuesto o de otro tipo lo que haces es responder al email brevemente pidiendo el contacto de la persona para una llamada de descubrimiento\n\n\nHERRAMIENTAS QUE USAS:\n\nCREAR UN EVENTO: Cuando la persona solicita una reunión, en el summary del evento pones reunión con X persona y en las fechas del evento de inicio y finalización pones las que haya indicado la persona\n\nENVIAR UN EMAIL: Después de crear el evento envías un email con la confirmación a la persona\n\nSi la persona no quiere poner una cita, simplemente respondes solicitando su número de contacto."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "2d916f13-9ebf-44b1-bdc7-4270a5db53e1",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        64,
+        240
+      ],
+      "id": "c213aa4e-d103-42ca-8f4c-ba3aa48e1ab4",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "vvtru2Y4MP2W6ZOr",
+          "name": "03/09/2025"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        192,
+        240
+      ],
+      "id": "c0e612b1-86cc-4593-9dc0-6644bb9827bf",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "1d7c54a2-9d43-4693-b899-51a27077afc6",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "oql6tF5GSGsFctSz",
+          "name": "Gmail account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "kaizensystems.ia@gmail.com",
+          "mode": "list",
+          "cachedResultName": "kaizensystems.ia@gmail.com"
+        },
+        "start": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Start', ``, 'string') }}",
+        "end": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('End', ``, 'string') }}",
+        "additionalFields": {
+          "attendees": [
+            "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('attendees0_Attendees', ``, 'string') }}"
+          ],
+          "summary": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Summary', ``, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        608,
+        192
+      ],
+      "id": "27f936a6-d53e-40af-97ab-f693c57af6b6",
+      "name": "Crear Evento - Calendar",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "3yRJ2KcDbStbxij9",
+          "name": "Google Calendar account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To', ``, 'string') }}",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        480,
+        192
+      ],
+      "id": "2fbf9bc5-6c8b-4f39-b41a-00e002b476a0",
+      "name": "Enviar Email - Gmail",
+      "webhookId": "fa2691c0-bf65-4137-9b61-5ceb5cbefb29",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "JkzulKJFg3HZ0Tm9",
+          "name": "kaizensystems (02/09/2025)"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        []
+      ]
+    },
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crear Evento - Calendar": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar Email - Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "40be2473-dd7f-4000-9bac-d4d21b2a5f6a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "161ef4ae33ce65770cbacc969b7a8a7dea7b6f882504adaad3ed796f23a9dcb7"
+  },
+  "id": "2be4Y8ItTljQpLcr",
+  "tags": []
+}
