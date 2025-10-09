@@ -1,0 +1,320 @@
+{
+  "name": "Resevation Resto",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.chatInput }}",
+        "options": {
+          "systemMessage": "=Tu es un assistant au restaurant Kool, tu prends les commandes du client. \n\nDemande seulement ces informations avant de confirmer la commande \nNom complet \nNuméro de téléphone\nAllergie : Demande au client s'il a une allergie bien précise. \n\nPrésente au client le menu du jour !  \n\n\nTu as accès à Google Sheets Enregistrement CMD pour enregistrer la commande avec l'information fourni par le client plus le prix. \n\nAprès le choix de l'article, vérifie le prix exact sur Google Doc avant de confirmer les informations du client. Par exemple, si le client commande un seul article donne seulement le prix de l'article commandé.  \n\nDonnes au client un numéro de commande Aléatoire qui commence par CMDXXXX\nX est un chiffre aléatoire. \n\nSi le client demande l'état de ça commande demande le numéro de commande et vérifier sur Google Sheets État CMD.\n\nTu as accès au Google Doc pour donner le Menu du jour. \n\nCommunication avec le client doit être accueillante. "
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        72,
+        -140
+      ],
+      "id": "6e98f7d9-d48b-4565-a370-276d93429353",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -140,
+        80
+      ],
+      "id": "7fadee37-6061-40c0-89d9-f1551308f77e",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "x0tQpNXNP6v5Ovtd",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "https://docs.google.com/document/d/1oaXdOc7dsovES2IUvl22tsOSuyXkOUiMq5s3gFyLvvI/edit?usp=sharing"
+      },
+      "type": "n8n-nodes-base.googleDocsTool",
+      "typeVersion": 2,
+      "position": [
+        160,
+        80
+      ],
+      "id": "12982fd1-d46a-4809-af11-5b47c37fb3e8",
+      "name": "Google Docs",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "DWhaDQxaKJ2CEot3",
+          "name": "Google Docs account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1OtO4wft-LMq1Yb_GlnuNZiqJCl4kBiRcwfnOxdNVL7c",
+          "mode": "list",
+          "cachedResultName": "Commander Restaurant",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1OtO4wft-LMq1Yb_GlnuNZiqJCl4kBiRcwfnOxdNVL7c/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Feuille 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1OtO4wft-LMq1Yb_GlnuNZiqJCl4kBiRcwfnOxdNVL7c/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Nom complet ": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Nom_complet_', ``, 'string') }}",
+            "Numéro de tel ": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Num_ro_de_tel_', ``, 'string') }}",
+            "Alérgie ": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Al_rgie_', ``, 'string') }}",
+            "N° Commande": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('N__Commande', ``, 'string') }}",
+            "Tarif ": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Tarif_', `Ajoute le prix de la commande ici `, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Nom complet ",
+              "displayName": "Nom complet ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Numéro de tel ",
+              "displayName": "Numéro de tel ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "N° Commande",
+              "displayName": "N° Commande",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Alérgie ",
+              "displayName": "Alérgie ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tarif ",
+              "displayName": "Tarif ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Statut commande ",
+              "displayName": "Statut commande ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        280,
+        80
+      ],
+      "id": "749f8840-c461-4a55-a06a-2321176c68cf",
+      "name": "Enregistrement CMD",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "l7kruIs2eiRNUZaK",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Utilise cet outil pour donner l'état de la commande Reçu, en préparation ou livrée. ",
+        "documentId": {
+          "__rl": true,
+          "value": "1OtO4wft-LMq1Yb_GlnuNZiqJCl4kBiRcwfnOxdNVL7c",
+          "mode": "list",
+          "cachedResultName": "Commander Restaurant",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1OtO4wft-LMq1Yb_GlnuNZiqJCl4kBiRcwfnOxdNVL7c/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Feuille 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1OtO4wft-LMq1Yb_GlnuNZiqJCl4kBiRcwfnOxdNVL7c/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        400,
+        80
+      ],
+      "id": "c3a3ff19-eff3-4d2c-b788-9a5cc3f7365b",
+      "name": "Etat de la commande",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "l7kruIs2eiRNUZaK",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -300,
+        -140
+      ],
+      "id": "c790bab8-99fc-4a20-90fd-2419d9352ae8",
+      "name": "When chat message received",
+      "webhookId": "1be5f7ab-1a3f-406a-899e-f76b7aca0b0d"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.sessionId }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        20,
+        80
+      ],
+      "id": "19b1e582-c029-4d76-a54a-b0e598dd1c46",
+      "name": "Simple Memory"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "AI Agent": {
+      "main": [
+        []
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Docs": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enregistrement CMD": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Etat de la commande": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "f6e3777a-36ca-4675-8957-e2407c6f4c50",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2ee8293be0fa6380527ab247a1eb95264d17c994507730562aa1c31ddb264f82"
+  },
+  "id": "HviM5QjbaMfjnpjw",
+  "tags": []
+}
