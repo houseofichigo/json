@@ -1,0 +1,4003 @@
+{
+  "name": "Brevo Email Marketing",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        1840,
+        -1540
+      ],
+      "id": "d8a4cd44-bcc4-40fb-8a46-888bd2d4bc92",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE",
+          "mode": "list",
+          "cachedResultName": "Email Marketing - Brevo",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "New Contacts",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Brevo",
+              "lookupValue": "Not Added"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -60,
+        -2520
+      ],
+      "id": "fb30a1ee-9c83-4bba-b636-92846c8532ec",
+      "name": "Google Sheets",
+      "notesInFlow": false,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "DL3FPXna5x5uGkop",
+          "name": "R&D Google Sheet"
+        }
+      },
+      "notes": "Check sheet for new contacts"
+    },
+    {
+      "parameters": {
+        "resource": "contact",
+        "operation": "upsert",
+        "email": "={{ $json.Emails }}",
+        "upsertAttributes": {
+          "upsertAttributesValues": [
+            {
+              "fieldName": "FIRSTNAME",
+              "fieldValue": "={{ $json.Name }}"
+            },
+            {
+              "fieldName": "JOB_TITLE",
+              "fieldValue": "={{ $json.Type }}"
+            }
+          ]
+        },
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.sendInBlue",
+      "typeVersion": 1,
+      "position": [
+        720,
+        -2460
+      ],
+      "id": "96eb999c-8095-4d3a-860c-26f8ed6311e3",
+      "name": "Brevo",
+      "notesInFlow": false,
+      "credentials": {
+        "sendInBlueApi": {
+          "id": "J5oCWPh9ZJoZsRGV",
+          "name": "Brevo"
+        }
+      },
+      "notes": "Add new contacts to Brevo"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE",
+          "mode": "list",
+          "cachedResultName": "Email Marketing - Brevo",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1753711409,
+          "mode": "list",
+          "cachedResultName": "Emailed Contacts",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE/edit#gid=1753711409"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ID": "={{ $('Google Sheets').item.json.ID }}",
+            "Name": "={{ $('Google Sheets').item.json.Name }}",
+            "Emails": "={{ $('Google Sheets').item.json.Emails }}",
+            "Type": "={{ $('Google Sheets').item.json.Type }}",
+            "Rating": "={{ $('Google Sheets').item.json.Rating }}",
+            "Verified": "={{ $('Google Sheets').item.json.Verified }}",
+            "Reviews": "={{ $('Google Sheets').item.json.Reviews }}",
+            "Website": "={{ $('Google Sheets').item.json.Website }}",
+            "Status": "=Email Sent at {{ $now.toFormat('dd/MM/yyyy') }}",
+            "Brevo": "Added",
+            "Clicked": "No"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Emails",
+              "displayName": "Emails",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Type",
+              "displayName": "Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Verified",
+              "displayName": "Verified",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Rating",
+              "displayName": "Rating",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Reviews",
+              "displayName": "Reviews",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Website",
+              "displayName": "Website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Clicked",
+              "displayName": "Clicked",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Brevo",
+              "displayName": "Brevo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1640,
+        -2740
+      ],
+      "id": "d1856843-84e4-4651-a466-18ed931ac0da",
+      "name": "Google Sheets1",
+      "notesInFlow": false,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "DL3FPXna5x5uGkop",
+          "name": "R&D Google Sheet"
+        }
+      },
+      "notes": "Update Sheets Brevo status to 'ADDED'"
+    },
+    {
+      "parameters": {
+        "operation": "sendTemplate",
+        "templateId": 13,
+        "receipients": "={{ $('Google Sheets').item.json.Emails }}",
+        "additionalFields": {},
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.sendInBlue",
+      "typeVersion": 1,
+      "position": [
+        1460,
+        -2740
+      ],
+      "id": "097e1680-5872-495f-b186-a406523d5492",
+      "name": "Brevo1",
+      "credentials": {
+        "sendInBlueApi": {
+          "id": "J5oCWPh9ZJoZsRGV",
+          "name": "Brevo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# Initial Email Reachout",
+        "height": 740,
+        "width": 2900,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -820,
+        -2800
+      ],
+      "typeVersion": 1,
+      "id": "1488e196-92cd-44ee-b537-98fbaee10efb",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "cf9f97e0-d18a-4e0c-adf8-c486ce960153",
+              "leftValue": "={{ $json.count }}",
+              "rightValue": 10,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -240,
+        -2360
+      ],
+      "id": "f9032ebe-a569-47dd-a6ce-5d7783f9be99",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "spaceId": "spaces/AAQA_GojT4s",
+        "messageUi": {
+          "text": "=Testing Notification :\n\n⚠️You can not add more contacts to Brevo⚠️\n\nContact Added: {{ $('Brevo - Contacts').item.json.count }}\nRemaining: {{ $('Edit Fields').item.json.count }}"
+        },
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.googleChat",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        -2240
+      ],
+      "id": "ce8e9a99-bd50-49d7-955b-0ca1a57b57cd",
+      "name": "Google Chat",
+      "webhookId": "2569a14f-b424-4693-bdb6-115f5d8d049e",
+      "credentials": {
+        "googleApi": {
+          "id": "DVkUGo0BWEUPUW6i",
+          "name": "R&D Service Account - AI Chat"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "3b410fdd-1926-4631-bda6-02819a101f4c",
+              "leftValue": "={{ $json.plan[0].credits }}",
+              "rightValue": 100,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1240,
+        -2640
+      ],
+      "id": "8b02d44b-b010-4761-88a7-9806746fddde",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "url": "https://api.brevo.com/v3/account",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "sendInBlueApi",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1060,
+        -2640
+      ],
+      "id": "bfc43825-5275-4cc6-addb-0f9b8b02a4cf",
+      "name": "Brevo - Emails",
+      "credentials": {
+        "sendInBlueApi": {
+          "id": "J5oCWPh9ZJoZsRGV",
+          "name": "Brevo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://api.brevo.com/v3/contacts",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "sendInBlueApi",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -580,
+        -2360
+      ],
+      "id": "84240d68-4f82-4765-acec-656c7e59a3bd",
+      "name": "Brevo - Contacts",
+      "credentials": {
+        "sendInBlueApi": {
+          "id": "J5oCWPh9ZJoZsRGV",
+          "name": "Brevo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE",
+          "mode": "list",
+          "cachedResultName": "Email Marketing - Brevo",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "New Contacts",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Brevo": "Added",
+            "ID": "={{ $('Google Sheets').item.json.ID }}"
+          },
+          "matchingColumns": [
+            "ID"
+          ],
+          "schema": [
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Emails",
+              "displayName": "Emails",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Type",
+              "displayName": "Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Verified",
+              "displayName": "Verified",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Rating",
+              "displayName": "Rating",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Reviews",
+              "displayName": "Reviews",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Website",
+              "displayName": "Website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Brevo",
+              "displayName": "Brevo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        720,
+        -2640
+      ],
+      "id": "7f6c34e6-395a-4a64-a9ce-10a264486611",
+      "name": "Google Sheets6",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "DL3FPXna5x5uGkop",
+          "name": "R&D Google Sheet"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "spaceId": "spaces/AAQA_GojT4s",
+        "messageUi": {
+          "text": "=Testing Notification :\n\n🔴You can not send more emails from Brevo🔴"
+        },
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.googleChat",
+      "typeVersion": 1,
+      "position": [
+        1460,
+        -2540
+      ],
+      "id": "1fc570a9-841b-423e-ad13-387de5a6447c",
+      "name": "Google Chat1",
+      "webhookId": "2569a14f-b424-4693-bdb6-115f5d8d049e",
+      "credentials": {
+        "googleApi": {
+          "id": "DVkUGo0BWEUPUW6i",
+          "name": "R&D Service Account - AI Chat"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://api.brevo.com/v3/account",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "sendInBlueApi",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1380,
+        -1540
+      ],
+      "id": "1a69efbf-6e5d-4308-aa95-ba9be7f1be58",
+      "name": "Brevo - Emails1",
+      "credentials": {
+        "sendInBlueApi": {
+          "id": "J5oCWPh9ZJoZsRGV",
+          "name": "Brevo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "spaceId": "spaces/AAQA_GojT4s",
+        "messageUi": {
+          "text": "=Testing Notification :\n\n⚠️You've almost reached your email sending credit limit on Brevo⚠️\n\nCredit Left: {{ $json.plan[0].credits }}"
+        },
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.googleChat",
+      "typeVersion": 1,
+      "position": [
+        -1060,
+        -1540
+      ],
+      "id": "bd14d961-08d5-4918-a4bc-76b7497c3e71",
+      "name": "Google Chat2",
+      "webhookId": "2569a14f-b424-4693-bdb6-115f5d8d049e",
+      "credentials": {
+        "googleApi": {
+          "id": "DVkUGo0BWEUPUW6i",
+          "name": "R&D Service Account - AI Chat"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "38674dc9-2d6c-4fe5-bd39-24e752023931",
+              "leftValue": "={{ $json.plan[0].credits }}",
+              "rightValue": 500,
+              "operator": {
+                "type": "number",
+                "operation": "lte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -1220,
+        -1540
+      ],
+      "id": "70539cda-6c30-40fc-8a54-313c1c60f1ec",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "content": "# Email Limit Notification ",
+        "height": 340,
+        "width": 740,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1600,
+        -1660
+      ],
+      "typeVersion": 1,
+      "id": "d82a3f54-5875-44e5-9a95-814bf5870478",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 10
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1540,
+        -1540
+      ],
+      "id": "5fdcb160-6051-4b6d-96c4-99ad974bf0f3",
+      "name": "Daily Schedule",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE",
+          "mode": "list",
+          "cachedResultName": "Email Marketing - Brevo",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "New Contacts",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ID": "={{ $('Google Sheets').item.json.ID }}",
+            "Status": "Email Sent"
+          },
+          "matchingColumns": [
+            "ID"
+          ],
+          "schema": [
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Emails",
+              "displayName": "Emails",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Type",
+              "displayName": "Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Verified",
+              "displayName": "Verified",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Rating",
+              "displayName": "Rating",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Reviews",
+              "displayName": "Reviews",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Website",
+              "displayName": "Website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Brevo",
+              "displayName": "Brevo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1820,
+        -2480
+      ],
+      "id": "1488f684-6152-43b0-b484-4914fab9325b",
+      "name": "Google Sheets7",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "DL3FPXna5x5uGkop",
+          "name": "R&D Google Sheet"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4d1a07a0-a870-4ade-81dc-1182a090e6ba",
+              "name": "count",
+              "value": "={{ 500 - $json.count }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -400,
+        -2360
+      ],
+      "id": "7a65fbee-8ba3-4ad0-b103-da28ed3a11e4",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a3e088e7-c9ef-48f9-bdb6-c1832494564f",
+              "leftValue": "={{ $json.row_number }}",
+              "rightValue": "={{ $('Edit Fields').item.json.count - 50}}",
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        300,
+        -2520
+      ],
+      "id": "a21620fd-6c37-4f7e-994d-55825bc29280",
+      "name": "If6"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE",
+          "mode": "list",
+          "cachedResultName": "Email Marketing - Brevo",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1753711409,
+          "mode": "list",
+          "cachedResultName": "Emailed Contacts",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE/edit#gid=1753711409"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Emails": "={{ $json.Emails }}",
+            "Clicked": "Yes"
+          },
+          "matchingColumns": [
+            "Emails"
+          ],
+          "schema": [
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Emails",
+              "displayName": "Emails",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Type",
+              "displayName": "Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Verified",
+              "displayName": "Verified",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Rating",
+              "displayName": "Rating",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Reviews",
+              "displayName": "Reviews",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Website",
+              "displayName": "Website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Clicked",
+              "displayName": "Clicked",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Brevo",
+              "displayName": "Brevo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -1120,
+        -2120
+      ],
+      "id": "d18114d6-31ba-4c3d-8b3c-67db46f3cbb0",
+      "name": "Google Sheets16",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "DL3FPXna5x5uGkop",
+          "name": "R&D Google Sheet"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# Sheet Contact Deletion\n",
+        "height": 380,
+        "width": 880,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2120,
+        -2440
+      ],
+      "typeVersion": 1,
+      "id": "f38848ce-9bee-4b73-a1d7-b08e59c8fc65",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE",
+          "mode": "list",
+          "cachedResultName": "Email Marketing - Brevo",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "New Contacts",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Brevo",
+              "lookupValue": "Added"
+            },
+            {
+              "lookupColumn": "Status",
+              "lookupValue": "Email Sent"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2400,
+        -2320
+      ],
+      "id": "aa51abc3-dfad-4a8c-9400-9d982b6f893b",
+      "name": "Google Sheets17",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "DL3FPXna5x5uGkop",
+          "name": "R&D Google Sheet"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "documentId": {
+          "__rl": true,
+          "value": "1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE",
+          "mode": "list",
+          "cachedResultName": "Email Marketing - Brevo",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "New Contacts",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE/edit#gid=0"
+        },
+        "startIndex": "={{ $json.row_number }}"
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2760,
+        -2320
+      ],
+      "id": "ae14f615-3071-4893-b703-0cf54bee9c27",
+      "name": "Google Sheets18",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "DL3FPXna5x5uGkop",
+          "name": "R&D Google Sheet"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "sortFieldsUi": {
+          "sortField": [
+            {
+              "fieldName": "row_number",
+              "order": "descending"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.sort",
+      "typeVersion": 1,
+      "position": [
+        2580,
+        -2320
+      ],
+      "id": "c915e612-a554-4dfa-8911-fd94285de7b1",
+      "name": "Sort1"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE",
+          "mode": "list",
+          "cachedResultName": "Email Marketing - Brevo",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1753711409,
+          "mode": "list",
+          "cachedResultName": "Emailed Contacts",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE/edit#gid=1753711409"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Clicked",
+              "lookupValue": "Yes"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2400,
+        -1920
+      ],
+      "id": "59a7df66-47d3-4b2f-b1fd-ee017d29923e",
+      "name": "Google Sheets19",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "DL3FPXna5x5uGkop",
+          "name": "R&D Google Sheet"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE",
+          "mode": "list",
+          "cachedResultName": "Email Marketing - Brevo",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1509363171,
+          "mode": "list",
+          "cachedResultName": "Triggered Contacts",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE/edit#gid=1509363171"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ID": "={{ $json.ID }}",
+            "Name": "={{ $json.Name }}",
+            "Emails": "={{ $json.Emails }}",
+            "Type": "={{ $json.Type }}",
+            "Verified": "={{ $json.Verified }}",
+            "Rating": "={{ $json.Rating }}",
+            "Reviews": "={{ $json.Reviews }}",
+            "Website": "={{ $json.Website }}",
+            "Brevo": "=Not Added",
+            "Old Status": "={{ $json.Status }}",
+            "Clicked": "No"
+          },
+          "matchingColumns": [
+            "ID"
+          ],
+          "schema": [
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Emails",
+              "displayName": "Emails",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Type",
+              "displayName": "Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Verified",
+              "displayName": "Verified",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Rating",
+              "displayName": "Rating",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Reviews",
+              "displayName": "Reviews",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Website",
+              "displayName": "Website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Old Status",
+              "displayName": "Old Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "New Status",
+              "displayName": "New Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Clicked",
+              "displayName": "Clicked",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Brevo",
+              "displayName": "Brevo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2580,
+        -1920
+      ],
+      "id": "29ca3443-4f6d-4938-9738-ca4c658d2154",
+      "name": "Google Sheets20",
+      "notesInFlow": false,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "DL3FPXna5x5uGkop",
+          "name": "R&D Google Sheet"
+        }
+      },
+      "notes": "Update Sheets Brevo status to 'ADDED'"
+    },
+    {
+      "parameters": {
+        "content": "# Add Triggered Contacts",
+        "height": 320,
+        "width": 880,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2120,
+        -2020
+      ],
+      "typeVersion": 1,
+      "id": "66c36a60-45c7-4644-a810-ddf663f91cdf",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        540,
+        -2540
+      ],
+      "id": "80090853-1c97-4cff-bae3-a961ab8f9d26",
+      "name": "Loop Over Items3"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE",
+          "mode": "list",
+          "cachedResultName": "Email Marketing - Brevo",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1753711409,
+          "mode": "list",
+          "cachedResultName": "Emailed Contacts",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE/edit#gid=1753711409"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Emails": "={{ $json.Emails }}",
+            "Clicked": "Yes (Moved)"
+          },
+          "matchingColumns": [
+            "Emails"
+          ],
+          "schema": [
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Emails",
+              "displayName": "Emails",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Type",
+              "displayName": "Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Verified",
+              "displayName": "Verified",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Rating",
+              "displayName": "Rating",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Reviews",
+              "displayName": "Reviews",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Website",
+              "displayName": "Website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Clicked",
+              "displayName": "Clicked",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Brevo",
+              "displayName": "Brevo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2760,
+        -1920
+      ],
+      "id": "88cb61a0-709a-4d58-9b00-c073ee3f50a6",
+      "name": "Google Sheets21",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "DL3FPXna5x5uGkop",
+          "name": "R&D Google Sheet"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE",
+          "mode": "list",
+          "cachedResultName": "Email Marketing - Brevo",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1509363171,
+          "mode": "list",
+          "cachedResultName": "Triggered Contacts",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE/edit#gid=1509363171"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Emails": "={{ $json.Emails }}",
+            "Clicked": "Yes"
+          },
+          "matchingColumns": [
+            "Emails"
+          ],
+          "schema": [
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Emails",
+              "displayName": "Emails",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Type",
+              "displayName": "Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Verified",
+              "displayName": "Verified",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Rating",
+              "displayName": "Rating",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Reviews",
+              "displayName": "Reviews",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Website",
+              "displayName": "Website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Clicked",
+              "displayName": "Clicked",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Brevo",
+              "displayName": "Brevo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -1120,
+        -1900
+      ],
+      "id": "0d883ae9-628e-41de-82eb-878b3164b06a",
+      "name": "Google Sheets23",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "DL3FPXna5x5uGkop",
+          "name": "R&D Google Sheet"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# Brevo Trigger",
+        "height": 500,
+        "width": 740,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1600,
+        -2200
+      ],
+      "typeVersion": 1,
+      "id": "5e3f45fd-6081-4acf-955c-0ed70f630450",
+      "name": "Sticky Note10"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE",
+          "mode": "list",
+          "cachedResultName": "Email Marketing - Brevo",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1509363171,
+          "mode": "list",
+          "cachedResultName": "Triggered Contacts",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE/edit#gid=1509363171"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Clicked",
+              "lookupValue": "Yes"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2400,
+        -1540
+      ],
+      "id": "27b8c396-f0f2-43a4-a61b-cb86867daaeb",
+      "name": "Google Sheets24",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "DL3FPXna5x5uGkop",
+          "name": "R&D Google Sheet"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE",
+          "mode": "list",
+          "cachedResultName": "Email Marketing - Brevo",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 247824309,
+          "mode": "list",
+          "cachedResultName": "Cold Call Contacts",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE/edit#gid=247824309"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ID": "={{ $json.ID }}",
+            "Name": "={{ $json.Name }}",
+            "Emails": "={{ $json.Emails }}",
+            "Type": "={{ $json.Type }}",
+            "Verified": "={{ $json.Verified }}",
+            "Rating": "={{ $json.Rating }}",
+            "Reviews": "={{ $json.Reviews }}",
+            "Website": "={{ $json.Website }}",
+            "Old Status": "={{ $json['Old Status'] }}",
+            "New Status": "={{ $json['New Status'] }}",
+            "CRM": "No"
+          },
+          "matchingColumns": [
+            "ID"
+          ],
+          "schema": [
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Emails",
+              "displayName": "Emails",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Type",
+              "displayName": "Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Verified",
+              "displayName": "Verified",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Rating",
+              "displayName": "Rating",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Reviews",
+              "displayName": "Reviews",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Website",
+              "displayName": "Website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Old Status",
+              "displayName": "Old Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "New Status",
+              "displayName": "New Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "CRM",
+              "displayName": "CRM",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2580,
+        -1540
+      ],
+      "id": "1b7e3c6b-eaf0-4625-aeb4-5914682be5ae",
+      "name": "Google Sheets25",
+      "notesInFlow": false,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "DL3FPXna5x5uGkop",
+          "name": "R&D Google Sheet"
+        }
+      },
+      "notes": "Update Sheets Brevo status to 'ADDED'"
+    },
+    {
+      "parameters": {
+        "content": "# Add Cold Calls Contacts",
+        "height": 340,
+        "width": 880,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2120,
+        -1660
+      ],
+      "typeVersion": 1,
+      "id": "8fa1e225-cc93-4e0f-a2fb-00340f01c44d",
+      "name": "Sticky Note11"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE",
+          "mode": "list",
+          "cachedResultName": "Email Marketing - Brevo",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1509363171,
+          "mode": "list",
+          "cachedResultName": "Triggered Contacts",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE/edit#gid=1509363171"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ID": "={{ $json.ID }}",
+            "Clicked": "Yes (Moved)"
+          },
+          "matchingColumns": [
+            "ID"
+          ],
+          "schema": [
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Emails",
+              "displayName": "Emails",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Type",
+              "displayName": "Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Verified",
+              "displayName": "Verified",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Rating",
+              "displayName": "Rating",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Reviews",
+              "displayName": "Reviews",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Website",
+              "displayName": "Website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Old Status",
+              "displayName": "Old Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "New Status",
+              "displayName": "New Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Clicked",
+              "displayName": "Clicked",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Brevo",
+              "displayName": "Brevo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2760,
+        -1540
+      ],
+      "id": "7e613557-1c3e-4c3a-8874-4a836c2ff554",
+      "name": "Google Sheets26",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "DL3FPXna5x5uGkop",
+          "name": "R&D Google Sheet"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE",
+          "mode": "list",
+          "cachedResultName": "Email Marketing - Brevo",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1509363171,
+          "mode": "list",
+          "cachedResultName": "Triggered Contacts",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE/edit#gid=1509363171"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Brevo",
+              "lookupValue": "Not Added"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -40,
+        -1780
+      ],
+      "id": "bd122f24-b156-416e-80a7-78aa203958a1",
+      "name": "Google Sheets27",
+      "notesInFlow": false,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "DL3FPXna5x5uGkop",
+          "name": "R&D Google Sheet"
+        }
+      },
+      "notes": "Check sheet for new contacts"
+    },
+    {
+      "parameters": {
+        "resource": "contact",
+        "operation": "upsert",
+        "email": "={{ $json.Emails }}",
+        "upsertAttributes": {
+          "upsertAttributesValues": [
+            {
+              "fieldName": "FIRSTNAME",
+              "fieldValue": "={{ $json.Name }}"
+            },
+            {
+              "fieldName": "JOB_TITLE",
+              "fieldValue": "={{ $json.Type }}"
+            }
+          ]
+        },
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.sendInBlue",
+      "typeVersion": 1,
+      "position": [
+        740,
+        -1700
+      ],
+      "id": "641a2320-9c78-4860-886a-d662590102d1",
+      "name": "Brevo8",
+      "notesInFlow": false,
+      "credentials": {
+        "sendInBlueApi": {
+          "id": "J5oCWPh9ZJoZsRGV",
+          "name": "Brevo"
+        }
+      },
+      "notes": "Add new contacts to Brevo"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE",
+          "mode": "list",
+          "cachedResultName": "Email Marketing - Brevo",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1509363171,
+          "mode": "list",
+          "cachedResultName": "Triggered Contacts",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE/edit#gid=1509363171"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ID": "={{ $('Google Sheets27').item.json.ID }}",
+            "Name": "={{ $('Google Sheets27').item.json.Name }}",
+            "Emails": "={{ $('Google Sheets27').item.json.Emails }}",
+            "Type": "={{ $('Google Sheets27').item.json.Type }}",
+            "Rating": "={{ $('Google Sheets27').item.json.Rating }}",
+            "Verified": "={{ $('Google Sheets27').item.json.Verified }}",
+            "Reviews": "={{ $('Google Sheets27').item.json.Reviews }}",
+            "Website": "={{ $('Google Sheets27').item.json.Website }}",
+            "Brevo": "Added",
+            "Clicked": "No",
+            "Old Status": "={{ $('Google Sheets27').item.json['Old Status'] }}",
+            "New Status": "=Email Sent at {{ $now.toFormat('dd/MM/yyyy') }}"
+          },
+          "matchingColumns": [
+            "ID"
+          ],
+          "schema": [
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Emails",
+              "displayName": "Emails",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Type",
+              "displayName": "Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Verified",
+              "displayName": "Verified",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Rating",
+              "displayName": "Rating",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Reviews",
+              "displayName": "Reviews",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Website",
+              "displayName": "Website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Old Status",
+              "displayName": "Old Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "New Status",
+              "displayName": "New Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Clicked",
+              "displayName": "Clicked",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Brevo",
+              "displayName": "Brevo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1680,
+        -1980
+      ],
+      "id": "4a9a90da-2181-4ecd-8409-0987a06abd79",
+      "name": "Google Sheets28",
+      "notesInFlow": false,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "DL3FPXna5x5uGkop",
+          "name": "R&D Google Sheet"
+        }
+      },
+      "notes": "Update Sheets Brevo status to 'ADDED'"
+    },
+    {
+      "parameters": {
+        "operation": "sendTemplate",
+        "templateId": 14,
+        "receipients": "={{ $('Google Sheets27').item.json.Emails }}",
+        "additionalFields": {},
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.sendInBlue",
+      "typeVersion": 1,
+      "position": [
+        1500,
+        -1980
+      ],
+      "id": "30a982db-0c38-4c40-9f85-31f7f2686056",
+      "name": "Brevo9",
+      "credentials": {
+        "sendInBlueApi": {
+          "id": "J5oCWPh9ZJoZsRGV",
+          "name": "Brevo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# Follow-up Emails",
+        "height": 700,
+        "width": 2900,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -820,
+        -2020
+      ],
+      "typeVersion": 1,
+      "id": "2dde2547-41a1-49c4-9545-256c5278246e",
+      "name": "Sticky Note12"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "cf9f97e0-d18a-4e0c-adf8-c486ce960153",
+              "leftValue": "={{ $json.count }}",
+              "rightValue": 10,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -220,
+        -1660
+      ],
+      "id": "0c1de813-b6b1-443a-b712-20aac2af140a",
+      "name": "If7"
+    },
+    {
+      "parameters": {
+        "spaceId": "spaces/AAQA_GojT4s",
+        "messageUi": {
+          "text": "=Testing Notification :\n\n⚠️You can not add more contacts to Brevo⚠️\n\nContact Added: {{ $('Brevo - Contacts2').item.json.count }}\nRemaining: {{ $('Edit Fields1').item.json.count }}"
+        },
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.googleChat",
+      "typeVersion": 1,
+      "position": [
+        -40,
+        -1520
+      ],
+      "id": "f03dd3b0-b346-4e03-9220-f303eb15d5f4",
+      "name": "Google Chat6",
+      "webhookId": "2569a14f-b424-4693-bdb6-115f5d8d049e",
+      "credentials": {
+        "googleApi": {
+          "id": "DVkUGo0BWEUPUW6i",
+          "name": "R&D Service Account - AI Chat"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "3b410fdd-1926-4631-bda6-02819a101f4c",
+              "leftValue": "={{ $json.plan[0].credits }}",
+              "rightValue": 100,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1320,
+        -1900
+      ],
+      "id": "6d226ff3-1cda-4b1d-b233-8814681b8d91",
+      "name": "If8"
+    },
+    {
+      "parameters": {
+        "url": "https://api.brevo.com/v3/account",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "sendInBlueApi",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1140,
+        -1900
+      ],
+      "id": "48221538-51d2-4041-82c8-2c0ae5a88d63",
+      "name": "Brevo - Emails4",
+      "credentials": {
+        "sendInBlueApi": {
+          "id": "J5oCWPh9ZJoZsRGV",
+          "name": "Brevo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://api.brevo.com/v3/contacts",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "sendInBlueApi",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -580,
+        -1660
+      ],
+      "id": "c147a51b-11bf-4580-a1d4-1bf2f5f41b81",
+      "name": "Brevo - Contacts2",
+      "credentials": {
+        "sendInBlueApi": {
+          "id": "J5oCWPh9ZJoZsRGV",
+          "name": "Brevo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE",
+          "mode": "list",
+          "cachedResultName": "Email Marketing - Brevo",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1509363171,
+          "mode": "list",
+          "cachedResultName": "Triggered Contacts",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE/edit#gid=1509363171"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Brevo": "Added",
+            "ID": "={{ $('Google Sheets27').item.json.ID }}"
+          },
+          "matchingColumns": [
+            "ID"
+          ],
+          "schema": [
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Emails",
+              "displayName": "Emails",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Type",
+              "displayName": "Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Verified",
+              "displayName": "Verified",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Rating",
+              "displayName": "Rating",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Reviews",
+              "displayName": "Reviews",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Website",
+              "displayName": "Website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Old Status",
+              "displayName": "Old Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "New Status",
+              "displayName": "New Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Clicked",
+              "displayName": "Clicked",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Brevo",
+              "displayName": "Brevo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        740,
+        -1900
+      ],
+      "id": "b33c17eb-2d6e-4152-adbc-d1a33f725730",
+      "name": "Google Sheets29",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "DL3FPXna5x5uGkop",
+          "name": "R&D Google Sheet"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "spaceId": "spaces/AAQA_GojT4s",
+        "messageUi": {
+          "text": "=Testing Notification :\n\n🔴You can not send more emails from Brevo🔴"
+        },
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.googleChat",
+      "typeVersion": 1,
+      "position": [
+        1500,
+        -1800
+      ],
+      "id": "31145988-3f3b-4f60-be7d-9baa12e303e3",
+      "name": "Google Chat7",
+      "webhookId": "2569a14f-b424-4693-bdb6-115f5d8d049e",
+      "credentials": {
+        "googleApi": {
+          "id": "DVkUGo0BWEUPUW6i",
+          "name": "R&D Service Account - AI Chat"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4d1a07a0-a870-4ade-81dc-1182a090e6ba",
+              "name": "count",
+              "value": "={{ 500 - $json.count }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -400,
+        -1660
+      ],
+      "id": "4646c407-285c-458d-9298-d541946bc630",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a3e088e7-c9ef-48f9-bdb6-c1832494564f",
+              "leftValue": "={{ $json.row_number }}",
+              "rightValue": "={{ $('Edit Fields1').item.json.count - 10}}",
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        320,
+        -1780
+      ],
+      "id": "90a52a64-e6c3-4ade-8653-e5bbe19b1cfd",
+      "name": "If9"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        560,
+        -1800
+      ],
+      "id": "88711a29-194d-4966-b1b2-a92ab4754f12",
+      "name": "Loop Over Items4"
+    },
+    {
+      "parameters": {
+        "amount": 1,
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        120,
+        -2520
+      ],
+      "id": "580ce347-81e8-4a4b-b1c9-541c5c315ccf",
+      "name": "Wait1",
+      "webhookId": "3288a4f8-6701-41b1-8178-fe19a23f97de"
+    },
+    {
+      "parameters": {
+        "events": [
+          "uniqueOpened"
+        ]
+      },
+      "type": "n8n-nodes-base.sendInBlueTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1540,
+        -2000
+      ],
+      "id": "743f396f-6c50-4435-bd1e-b78612545f94",
+      "name": "Brevo Trigger",
+      "webhookId": "d0b24084-08e9-49b5-9325-b304eca831fa",
+      "credentials": {
+        "sendInBlueApi": {
+          "id": "J5oCWPh9ZJoZsRGV",
+          "name": "Brevo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                1,
+                2,
+                3,
+                4,
+                5
+              ],
+              "triggerAtHour": 10
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -760,
+        -1660
+      ],
+      "id": "b349c9e9-833d-4cb1-8100-da7c06316a49",
+      "name": "Week Day 10am",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        2280,
+        -2680
+      ],
+      "id": "e4ea1946-6d05-4595-92e9-8afb94248255",
+      "name": "Daily 9am",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9,
+              "triggerAtMinute": 30
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        2200,
+        -2320
+      ],
+      "id": "8c603b4f-1bb0-4d10-bdb2-143b9decbf62",
+      "name": "Daily 9.30am",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "content": "# Brevo Contact Deletion",
+        "height": 320,
+        "width": 880,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2120,
+        -2800
+      ],
+      "typeVersion": 1,
+      "id": "8301d853-eff5-4c2c-867e-39128c7e201b",
+      "name": "Sticky Note13"
+    },
+    {
+      "parameters": {
+        "amount": 1,
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        140,
+        -1780
+      ],
+      "id": "8a703a5d-6c48-434f-8cc1-b79bef064e9a",
+      "name": "Wait2",
+      "webhookId": "70c24f6b-e792-4a94-9e22-8f895b0efd9d"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE",
+          "mode": "list",
+          "cachedResultName": "Email Marketing - Brevo",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1753711409,
+          "mode": "list",
+          "cachedResultName": "Emailed Contacts",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE/edit#gid=1753711409"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Emails",
+              "lookupValue": "={{ $json.email }}"
+            },
+            {
+              "lookupColumn": "Clicked",
+              "lookupValue": "No"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -1320,
+        -2120
+      ],
+      "id": "ad448225-b7dc-4e24-bdca-7ad32381e455",
+      "name": "1st Mail",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "DL3FPXna5x5uGkop",
+          "name": "R&D Google Sheet"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE",
+          "mode": "list",
+          "cachedResultName": "Email Marketing - Brevo",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1509363171,
+          "mode": "list",
+          "cachedResultName": "Triggered Contacts",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vi9D40sGJl2TykZVDVVsdomTV3ju56JbB76KF_sVUPE/edit#gid=1509363171"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Emails",
+              "lookupValue": "={{ $json.email }}"
+            },
+            {
+              "lookupColumn": "Clicked",
+              "lookupValue": "No"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -1320,
+        -1900
+      ],
+      "id": "bed398d5-8772-446b-944c-2c93ef0fb8be",
+      "name": "2nd Mail",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "DL3FPXna5x5uGkop",
+          "name": "R&D Google Sheet"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "DELETE",
+        "url": "=https://api.brevo.com/v3/contacts/{{ $json.id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "sendInBlueApi",
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 30,
+              "batchInterval": 30000
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2680,
+        -2680
+      ],
+      "id": "ff3d08ff-608f-419c-9580-5994aee08d5b",
+      "name": "Delete Contact Brevo",
+      "credentials": {
+        "sendInBlueApi": {
+          "id": "J5oCWPh9ZJoZsRGV",
+          "name": "Brevo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "contact",
+        "operation": "getAll",
+        "returnAll": true,
+        "options": {},
+        "filters": {},
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.sendInBlue",
+      "typeVersion": 1,
+      "position": [
+        2480,
+        -2680
+      ],
+      "id": "6323bd3c-8524-400c-9ce5-8d65e2213c58",
+      "name": "Get Contacts Brevo",
+      "credentials": {
+        "sendInBlueApi": {
+          "id": "J5oCWPh9ZJoZsRGV",
+          "name": "Brevo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 2,
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        900,
+        -2640
+      ],
+      "id": "68124281-3ca3-4047-85a1-cf380b5911cb",
+      "name": "Wait",
+      "webhookId": "68f39ea4-cb1d-4d09-a14d-b604e74b5c19"
+    },
+    {
+      "parameters": {
+        "amount": 2,
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        940,
+        -1900
+      ],
+      "id": "ac51e5f4-eda4-4127-9ee6-97c91e100e26",
+      "name": "Wait3",
+      "webhookId": "6845c16d-8c4f-4428-99e3-5a4615044ec9"
+    },
+    {
+      "parameters": {
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1820,
+        -2740
+      ],
+      "id": "fd9cd351-3ce6-425a-a11d-7dd62439886c",
+      "name": "Wait4",
+      "webhookId": "33b50ff1-d99b-422d-bd08-31177bc873a4"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                1,
+                2,
+                3,
+                4,
+                5
+              ],
+              "triggerAtHour": 13
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -760,
+        -2360
+      ],
+      "id": "55f7a01f-a61c-4e0f-9127-d8282ad17f39",
+      "name": "Weed Day 1pm",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 23
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        2200,
+        -1540
+      ],
+      "id": "56514e4c-2ada-4027-83c7-7e8b200dc2ba",
+      "name": "Daily 11pm",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 20
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        2200,
+        -1920
+      ],
+      "id": "d8096630-0ab8-44e2-8fa1-68a50eb7bed5",
+      "name": "Daily 8pm",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "content": "## Brevo Email Marketing Automation\n\nStep 1: Get new contacts marked \"Not Added\" from the \"New Contacts\" tab in the \"Email Marketing - Brevo\" Google Sheet.\n\nStep 2: Add or upsert these contacts (email, name, job title) into Brevo's contact list via the Brevo API.\n\nStep 3: Send an initial email using a predefined template to each new contact from Brevo.\n\nStep 4: Update the Google Sheet status for each contact to \"Added\" and record the date when the email was sent in the \"Emailed Contacts\" tab.\n\nStep 5: Monitor email engagement (opens, clicks) through Brevo webhook triggers.\n\nStep 6: Update engagement status (e.g., \"Clicked\") in Google Sheets accordingly.\n\nStep 7: Check email sending credits on the Brevo account and send notifications via Google Chat if limits are near or exceeded.\n\nStep 8: Handle batch processing and delays to conform with Brevo API rate limits.\n\nStep 9: Delete contacts from Brevo after completing the campaign and update Google Sheet to keep records consistent.\n\nStep 10: Synchronize and manage contacts across multiple tabs (\"New Contacts,\" \"Emailed Contacts,\" \"Triggered Contacts,\" \"Cold Call Contacts\") within the Google Sheet for organized tracking and next actions.\n\n             ",
+        "height": 560,
+        "width": 740,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1600,
+        -2800
+      ],
+      "typeVersion": 1,
+      "id": "44f9a3d9-ce89-47a2-982b-7fcb264f871e",
+      "name": "Sticky Note3"
+    }
+  ],
+  "pinData": {
+    "Weed Day 1pm": [
+      {
+        "json": {
+          "timestamp": "2025-08-04T11:00:04.009-04:00",
+          "Readable date": "August 4th 2025, 11:00:04 am",
+          "Readable time": "11:00:04 am",
+          "Day of week": "Monday",
+          "Year": "2025",
+          "Month": "August",
+          "Day of month": "04",
+          "Hour": "11",
+          "Minute": "00",
+          "Second": "04",
+          "Timezone": "America/New_York (UTC-04:00)"
+        }
+      }
+    ],
+    "Daily 11pm": [
+      {
+        "json": {
+          "timestamp": "2025-08-05T09:00:06.007-04:00",
+          "Readable date": "August 5th 2025, 9:00:06 am",
+          "Readable time": "9:00:06 am",
+          "Day of week": "Tuesday",
+          "Year": "2025",
+          "Month": "August",
+          "Day of month": "05",
+          "Hour": "09",
+          "Minute": "00",
+          "Second": "06",
+          "Timezone": "America/New_York (UTC-04:00)"
+        }
+      }
+    ],
+    "Week Day 10am": [
+      {
+        "json": {
+          "timestamp": "2025-08-06T10:00:05.012-04:00",
+          "Readable date": "August 6th 2025, 10:00:05 am",
+          "Readable time": "10:00:05 am",
+          "Day of week": "Wednesday",
+          "Year": "2025",
+          "Month": "August",
+          "Day of month": "06",
+          "Hour": "10",
+          "Minute": "00",
+          "Second": "05",
+          "Timezone": "America/New_York (UTC-04:00)"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        []
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Brevo": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets1": {
+      "main": [
+        [
+          {
+            "node": "Wait4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Brevo1": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Google Chat",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Brevo - Emails": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Brevo - Contacts": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Brevo1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Google Chat1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets6": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Brevo - Emails1": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Google Chat2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Daily Schedule": {
+      "main": [
+        [
+          {
+            "node": "Brevo - Emails1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Chat": {
+      "main": [
+        []
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If6": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Google Sheets16": {
+      "main": [
+        []
+      ]
+    },
+    "Google Sheets17": {
+      "main": [
+        [
+          {
+            "node": "Sort1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets18": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Google Sheets17",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sort1": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets18",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets19": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets20",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items3": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets6",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Brevo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets20": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets21",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets24": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets25",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets25": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets26",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets27": {
+      "main": [
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Brevo8": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets28": {
+      "main": [
+        []
+      ]
+    },
+    "Brevo9": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets28",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If7": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets27",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Google Chat6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If8": {
+      "main": [
+        [
+          {
+            "node": "Brevo9",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Google Chat7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Brevo - Emails4": {
+      "main": [
+        [
+          {
+            "node": "If8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Brevo - Contacts2": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets29": {
+      "main": [
+        [
+          {
+            "node": "Wait3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "If7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If9": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items4": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets29",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Brevo8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "If6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Brevo Trigger": {
+      "main": [
+        [
+          {
+            "node": "2nd Mail",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "1st Mail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Week Day 10am": {
+      "main": [
+        [
+          {
+            "node": "Brevo - Contacts2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Daily 9am": {
+      "main": [
+        [
+          {
+            "node": "Get Contacts Brevo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Daily 9.30am": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets17",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait2": {
+      "main": [
+        [
+          {
+            "node": "If9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "1st Mail": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets16",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "2nd Mail": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets23",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Delete Contact Brevo": {
+      "main": [
+        []
+      ]
+    },
+    "Get Contacts Brevo": {
+      "main": [
+        [
+          {
+            "node": "Delete Contact Brevo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Brevo - Emails",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait3": {
+      "main": [
+        [
+          {
+            "node": "Brevo - Emails4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait4": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Weed Day 1pm": {
+      "main": [
+        [
+          {
+            "node": "Brevo - Contacts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Daily 11pm": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets24",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Daily 8pm": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets19",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "8a2b1a81-88d5-4143-bddc-b48b98948d1d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6bb5339e67011e36cf93cf54a8bca6b7e3857fbcd93e9f5eeac8f6e87022da02"
+  },
+  "id": "ytmCd4nrtrGuLEai",
+  "tags": []
+}
