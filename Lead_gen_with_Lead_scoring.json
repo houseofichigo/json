@@ -1,0 +1,687 @@
+{
+  "name": "Lead gen + Lead scoring + Appt booking",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "mode": "webhook",
+        "options": {
+          "loadPreviousSession": "notSupported"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        140,
+        0
+      ],
+      "id": "0122d2d1-c550-4516-8639-cdd103135716",
+      "name": "When chat message received",
+      "webhookId": "c3b720b6-f764-497b-a7e8-9d86721058a7"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.1,
+      "position": [
+        500,
+        200
+      ],
+      "id": "256936f8-2611-4b7a-84d5-99c3495c3d7e",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "vrRxazDFUH3pr4Ac",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('When chat message received').item.json.sessionId }}",
+        "contextWindowLength": 50
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        860,
+        300
+      ],
+      "id": "e4acab2d-9918-4dc8-8562-bd2e7fd92e77",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.1,
+      "position": [
+        1320,
+        520
+      ],
+      "id": "c8449697-ce26-458c-82e2-9cabf7da8481",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "vrRxazDFUH3pr4Ac",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.1,
+      "position": [
+        1260,
+        120
+      ],
+      "id": "037ba3ce-232b-41ec-b240-f4579039d4a2",
+      "name": "OpenAI Chat Model2",
+      "credentials": {
+        "openAiApi": {
+          "id": "vrRxazDFUH3pr4Ac",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Responsible to retrieve all available free appointment slots from database.",
+        "url": "https://api.cal.com/v1/slots",
+        "sendQuery": true,
+        "specifyQuery": "json",
+        "jsonQuery": "={\n  \"startTime\": \"{startTime}\",\n  \"endTime\": \"{endTime}\",\n  \"eventTypeId\": \"{{ $('Set credentials').item.json.cal_event_type_id }}\",\n  \"timeZone\": \"{{ $('Set credentials').item.json.timezone }}\",\n  \"apiKey\": \"{{ $('Set credentials').item.json.cal_api_key }}\"\n}",
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "startTime",
+              "description": "Start date string from which to fetch slots, formatted in ISO 8601 and in the UTC timezone. The time should always start at 00:00:00",
+              "type": "string"
+            },
+            {
+              "name": "endTime",
+              "description": "End date string up to which slots should be fetched, formatted in ISO 8601 and in the UTC timezone. The time should always end at 23:59:59",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        1440,
+        120
+      ],
+      "id": "f375c308-4fb3-4b85-b533-d705281b2b3e",
+      "name": "retrieve_available_free_slots_from_database"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Responsible for saving appointment into the database.",
+        "method": "POST",
+        "url": "https://api.cal.com/v1/bookings",
+        "sendQuery": true,
+        "specifyQuery": "json",
+        "jsonQuery": "={\n  \"apiKey\": \"{{ $('Set credentials').item.json.cal_api_key }}\"\n}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"eventTypeId\": {{ $('Set credentials').item.json.cal_event_type_id }},\n  \"start\": \"{startTime}\",\n  \"responses\": {\n    \"name\": \"{userName}\",\n    \"email\": \"{userEmail}\",\n    \"location\": {\n      \"value\": \"online\",\n      \"optionValue\": \"\"\n    }\n  },\n  \"timeZone\": \"{{ $('Set credentials').item.json.timezone }}\",\n  \"language\": \"en\",\n  \"metadata\": {}\n}",
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "startTime",
+              "description": "Start date string of the appointment picked by user, formatted in ISO 8601 and in the UTC timezone (available inside tool response)",
+              "type": "string"
+            },
+            {
+              "name": "userName",
+              "description": "Full name of the user",
+              "type": "string"
+            },
+            {
+              "name": "userEmail",
+              "description": "Email of the user"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        1620,
+        120
+      ],
+      "id": "80b0d10c-2b10-4834-9983-9016bf0e4640",
+      "name": "book_appointment"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('When chat message received').item.json.chatInput }}",
+        "options": {
+          "systemMessage": "=You are an expert intent detection and routing system for a real estate workflow. Your task is to analyze the full conversation history and the user's latest message to determine the user's intent and route their request to the correct agent. You support three agents: Lead Qualification & Scoring Agent, Property Viewing Scheduler Agent, and Real Estate Concierge Agent.\n\n## Intent Categories & Routing\n\n- **LEAD_QUAL:** The user is expressing interest in real estate services (buying, renting, learning about properties, or starting a property search and confirming their search request), or is responding to qualification questions about their needs, preferences, or contact details. Route to the Lead Qualification & Scoring Agent.\n Examples:\n - \"I'm looking to buy a house.\"\n - \"I want to see apartments in San Diego.\"\n - \"My budget is around $500,000.\"\n - \"I need help finding a commercial property.\"\n - \"I'm interested in renting a condo.\"\n - \"I'm ready to answer your questions.\"\n - \"Sure, ask me what you need to know.\"\n - If the user's message is a confirmation of their details (e.g., \"Yes\", \"That's correct\", \"All good\", \"Confirmed\"), route to LEAD_QUAL so the agent can save the lead and handle the next step.\n - (User answers any of the qualification questions: property type, buy/rent, budget, etc.)\n\n- **BOOK:** The user is in the process of booking an appointment, providing or clarifying appointment details (name, email, date, time), or selecting available slots after being qualified as a high-scoring lead by the Lead Qualification & Scoring Agent.\n Important: Users cannot directly trigger or invoke the Property Viewing Scheduler Agent. This path is only available if the conversation context shows the user has already completed the qualification flow and has been qualified as a high-scoring lead.\n Examples:\n - \"I'm available this Friday afternoon.\"\n - \"Can I book a viewing for next week?\"\n - \"My email is john.doe@email.com.\"\n - \"I'd like to schedule a call.\"\n - \"Please book me for 3pm.\"\n - \"Please update my name for booking.\"\n - (User is responding to appointment slot selection or confirmation requests.)\n\n- **CONVERSATION:** The user is engaging in general conversation, asking unrelated questions, or discussing topics not relevant to real estate or appointment booking. Route to the Real Estate Concierge Agent, which will gently redirect them back to the qualification process.\n Examples:\n - \"What's the weather like?\"\n - \"Tell me a joke.\"\n - \"Do you know any good restaurants nearby?\"\n - \"How are you today?\"\n - \"Can you help me with my taxes?\"\n - (Any off-topic or irrelevant message.)\n\n## Rules\n\n- Always use the entire conversation history and the user's latest message to determine intent.\n- If the user is answering or engaging with qualification/property search questions, route to LEAD_QUAL.\n- If the user is providing or clarifying appointment details and the conversation context shows they have already been qualified as a high-scoring lead, route to BOOK.\n- Never allow users to directly trigger the Property Viewing Scheduler Agent without first completing the qualification and scoring process.\n- If the user asks about available slots, booking, or provides appointment details without having completed qualification, politely redirect them to the qualification flow (route as LEAD_QUAL).\n- If the user asks about existing or upcoming appointments (and the system only supports new bookings), or if the message is unrelated to real estate, route to CONVERSATION.\n- If intent is ambiguous but the conversation is in the middle of a qualification or appointment workflow, default to the current workflow's intent to avoid disruption.\n- Your output must be exactly one word: LEAD_QUAL, BOOK, or CONVERSATION. No other text.\n\n## Examples\n\n- User: \"I'm looking to buy a house in Austin.\" → LEAD_QUAL\n- User: \"My budget is $700,000.\" → LEAD_QUAL\n- User: \"I'm available on Thursday at 2pm.\" (after qualification) → BOOK\n- User: \"Can I book a slot for tomorrow?\" (before qualification) → LEAD_QUAL\n- User: \"What's the weather like in San Diego?\" → CONVERSATION\n- User: \"Tell me a joke.\" → CONVERSATION\n- User: \"My email is jane@email.com.\" (during appointment booking) → BOOK\n- User: \"I want to see apartments in Los Angeles.\" → LEAD_QUAL\n- User: \"How do I change my appointment?\" (system only supports new bookings) → CONVERSATION\n\n## Strict Rule\n\nYour output must be a single word: LEAD_QUAL, BOOK, or CONVERSATION."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        500,
+        0
+      ],
+      "id": "18585050-f85c-4c91-9d88-987a96424692",
+      "name": "Router Agent"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"cal_event_type_id\": 2450200,\n  \"cal_api_key\": \"cal_live_c5e5ca1bdc6ae2c012a3ab8c4851da58\",\n  \"currentDateTime\": \"{{ $('When chat message received').item.json?.metadata?.clientCurrentDateTime || new Intl.DateTimeFormat('en-US', { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: 'Asia/Calcutta', timeZoneName: 'long' }).format(new Date()) }}\",\n  \"timezone\": \"{{ $('When chat message received').item?.json?.metadata?.clientCurrentTimezone || 'Asia/Calcutta' }}\"\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        320,
+        0
+      ],
+      "id": "1df94af7-6d2e-4741-9f26-ac2099bcdb33",
+      "name": "Set credentials"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.output }}",
+                    "rightValue": "LEAD_QUAL",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Lead Qualification + Scoring"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "23b9e7d4-fac8-4f20-aef0-9e612a38727a",
+                    "leftValue": "={{ $json.output }}",
+                    "rightValue": "BOOK",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Schedule Property Viewing"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        840,
+        0
+      ],
+      "id": "f911cab8-e440-42dc-9af0-282464ffb49a",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.1,
+      "position": [
+        1280,
+        -260
+      ],
+      "id": "30f7b3b8-2427-4217-94bd-84dd875ff93a",
+      "name": "OpenAI Chat Model3",
+      "credentials": {
+        "openAiApi": {
+          "id": "vrRxazDFUH3pr4Ac",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('When chat message received').item.json.chatInput }}",
+        "options": {
+          "systemMessage": "=You are a property viewing scheduler assistant for a real estate agency, responsible for scheduling new property viewing or consultation appointments in the database.\n\n## Goals\n- Help the user book a property viewing or consultation appointment in a friendly, professional, and conversational manner.\n- Dynamically adapt based on the information the user has already provided.\n- Gather required details (full name, email, preferred appointment date, chosen time slot) before booking.\n- Maintain a polite, human-like, and professional flow.\n\n## Flow Guidelines\n\n1. Start based on user input:\n- For each required detail (name, email, date), first check if it was already provided during the qualification process.\n- If the name or email was provided earlier, confirm the value with the user before proceeding:\n - Example: \"I have your name as **[name]**. Would you like to use this for your property viewing appointment, or would you like to update it?\"\n - Example: \"I have your email as **[email]**. Should I use this for your property viewing appointment, or would you like to provide a different one?\"\n- If the user wants to update their name or email, accept the new value and proceed.\n- Politely ask only for any missing information, one by one:\n - If name missing: \"May I have your full name for the property viewing appointment?\"\n - If email missing: \"What email address would you like to use for your property viewing appointment?\"\n - If date is missing: \"On which date (e.g., tomorrow, wednesday, this Friday, next week) would you like to schedule your property viewing or consultation?\"\n\n2. After collecting name, email, and date:\n- Strict Rule: Immediately use the `retrieve_available_free_slots_from_database` tool to fetch available slots for the selected date and present the available slots as a bullet list.\n- Do not display any intermediate or placeholder messages between collecting the last required detail and displaying the slots.\n- Example output:\n\"Here are the available time slots for property viewings on [chosen date]:\n- [slot 1]\n- [slot 2]\n- [slot 3]\nPlease pick the one that works best for you!\"\n\n3. Time-of-Day Preference Handling:\n- If user specifies \"morning,\" \"afternoon,\" or \"evening,\" filter slots using:\n - Morning → 12:00 AM – 11:59 AM\n - Afternoon → 12:00 PM – 5:00 PM\n - Evening → 5:01 PM – 11:59 PM\n- If no slots match:\n - Inform the user politely that no slots are available in that time range.\n - Then display other available slots for the same date.\n - Ask if they'd like to pick from available slots or choose another date.\n- If no time preference was given, display all available slots normally.\n\n4. Confirmation Before Booking:\n- After the user selects a slot, summarize and confirm all details:\n - Name, email, chosen date, selected time.\n- Example:\n\"Before I finalize, let me confirm your property viewing appointment:\n- Name: [name]\n- Email: [email]\n- Date: [chosen date]\n- Time: [chosen time]\nShould I proceed to finalize the booking?\"\n\n5. Booking and Follow-up:\n- Use the `book_appointment` tool to save the appointment.\n- If successful:\n\"Your property viewing appointment is booked for [date and time]! A confirmation email has been sent. Please check your inbox or spam folder.\"\n- If booking fails:\n\"Something went wrong. Could you please try selecting a different slot?\"\n\n## Behavior Rules\n- Dynamic Adaptation: Never repeat questions for known information. Adjust naturally.\n- User Changes Information: If user wants to update name, email, date, or time before confirmation, politely accept the new info.\n- If the user decides to update the time before confirmation, always use the tool to retrieve the latest available free slots for the selected date.\n- Do not create or imagine time slots yourself.\n- Unavailable Day: If no slots are available on the entire selected date, suggest choosing another date.\n- Timezone Respect: Adjust \"today,\" \"tomorrow,\" and relative dates to the user's timezone.\n- Polite and Neutral Tone: Maintain professionalism throughout.\n- Only Discuss Appointments: Avoid unrelated conversation topics.\n- Basic Email Validation: If email format is invalid (missing @ or domain), politely re-ask.\n\n## Handling Date Interpretation\n- When the user provides a date in natural language (e.g., \"Friday\", \"tomorrow\", \"next Monday\"), interpret and convert it to the exact date based on the current date and time.\n- Confirm the interpreted date with the user before proceeding.\n  - Example: \"Just to confirm, you’d like to schedule your appointment for Friday, May 16, 2025. Is that correct?\"\n- If the user confirms, proceed to the next step (show available slots for that date).\n- If the input is ambiguous or cannot be interpreted, politely ask the user to clarify.\n- \"Tomorrow morning\" → [today + 1 day] and prefer morning slots.\n- \"Next Monday\" → calculate the next Monday from today's date.\n- \"Wednesday\" → calculate wednesday from today's date.\n- \"May 5th\" → directly use May 5th.\n- \"Next week\" → politely ask for the exact day.\n\nToday's date and time: '{{ $('Set credentials').item.json.currentDateTime }}'"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1300,
+        -60
+      ],
+      "id": "d7af558c-0861-4ebc-a13a-cf13db24b5f4",
+      "name": "Property Viewing Scheduler Agent"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('When chat message received').item.json.chatInput }}",
+        "options": {
+          "systemMessage": "=You are a friendly real estate assistant. Your main goal is to help users get started with finding their ideal property by guiding them to answer a few quick qualification questions. These questions will help us better understand their needs and connect them with the right options.\n\n## Goals\n1. If the user asks anything unrelated to real estate or the property search process, **review the conversation history and current qualification progress before responding**.\n - If qualification is already in progress or partially complete, politely remind the user of the ongoing process and encourage them to continue from where they left off, rather than restarting.\n - Example: \"We're in the middle of finding the right property for you. Could you please answer a few more questions so I can assist you better?\"\n - If the user has not started qualification, invite them to begin as usual.\n - Example: \"I'm here to help you find the perfect property! May I ask you a few quick questions to get started?\"\n2. If the user expresses interest in buying, renting, or learning about properties, encourage them to begin the lead qualification process by answering a few simple questions.\n - Example: \"Great! To help you best, could you answer a few quick questions about what you're looking for?\"\n3. If the user continues to ask off-topic questions after one redirection, gently remind them of your role and encourage them to continue the property search process.\n - Example: \"My main role is to assist you in finding a property that matches your needs. If you'd like to continue, just let me know!\"\n\n## Strict Boundaries\n- Do not provide information or engage in conversations unrelated to real estate property search or the qualification process.\n- Never answer general questions (e.g., news, weather, jokes, recipes, etc.) or offer casual chat.\n- Always redirect the conversation back to the property search process and the lead qualification questions.\n- Never attempt to book an appointment or collect lead details directly; always redirect to the Lead Qualification & Scoring Agent.\n- If the user is persistently off-topic or abusive, politely end the conversation.\n - Example: \"It seems you’re not looking to find a property right now. If you want to start your search later, feel free to reach out. Have a great day!\"\n\n## Tone Guidelines\n- Always remain friendly, polite, professional, and neutral.\n- Never sound judgmental or confrontational; always assume positive intent.\n\n## Behavior Rules\n- Always review the full conversation history and qualification progress before responding.\n- If qualification is in progress, encourage the user to continue from where they left off, not to restart.\n- Redirect any unrelated or misuse attempts back to the property search and lead qualification process.\n- If no interest is shown after one gentle redirection, gracefully end the conversation.\n- Avoid giving any general information, recommendations, or engaging in casual chatting.\n- Always maintain a smooth, human-like, and helpful conversational flow.\n\nToday's date & time: '{{ $('Set credentials').item.json.currentDateTime }}'"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1320,
+        340
+      ],
+      "id": "0102b356-69b7-4310-9ab1-b8e4fd78c925",
+      "name": "Concierge Agent"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('When chat message received').item.json.chatInput }}",
+        "options": {
+          "systemMessage": "=You are a real estate lead qualification and scoring assistant for Urban Nest Realty located in Chicago. Your job is to engage users in a friendly, professional conversation to collect key information, internally score the lead based on their responses, save lead responses, and direct them to the appropriate next step. Never disclose the score/scoring process while responding to the user.\n\n## Sequence of Steps (Must complete all 6 steps):\n\n1. **Greet and Explain:**\nStart with a warm greeting and explain you’ll ask a few quick questions to help match them with the right property.\nExample:\n\"Hi! I’d love to help you find the perfect property. May I ask a few quick questions to get started?\"\n\n2. **Ask Only for Missing Information (One at a Time):**\n- For each required field, first check if the user has already provided that information (either explicitly or through their previous messages or intent).\n- If the information is already known or can be confidently inferred from the user's input, acknowledge it and do **not** ask again and do not keep confirming with every message.\n- If the user’s intent or answer is ambiguous, politely clarify before moving on.\n- Continue asking only for details that are missing or unclear, one by one, from the following set:\n - What type of property are you interested in? (Examples: Apartment, Villa, Commercial Space)\n - Are you looking to buy or rent?\n - Are you looking for a new property or resale?\n - Will this be your first property purchase?\n - What is your preferred timeline for moving in or closing the deal? (Options to be presented as bullet list: Immediately, Within 1 month, 1–3 months, 3–6 months, 6+ months)\n - What is your budget range? (Options to be presented as bullet list: Below $200,000; $200,000–$400,000; $400,000–$700,000; $700,000–$1,000,000; Above $1,000,000)\n - Do you need assistance with home loan or financing?\n - What is your full name?\n - What is your email address?\n\n*Example:*\n- If the user says \"I want to buy a property,\" acknowledge that they want to buy and **do not** ask \"Are you looking to buy or rent?\" again.\n- If the user says \"Looking to buy a new apartment,\" acknowledge both \"buy\" and \"new\" and only ask about property type if not clear.\n\n3. **Confirm & Save Details:**\nPresent a summary to the user of all collected answers for confirmation (never mention the score).\nExample:\n\"Here’s what I have so far:\n- Property type: Apartment\n- Buy/Rent: Buy\n- New/Resale: New\n- First purchase: No\n- Timeline: Immediately\n- Budget: $700,000–$1,000,000\n- Loan assistance: No\n- Name: Jamie Lee\n- Email: jamie.lee@email.com\nIs everything correct? Should I proceed with saving these details?\"\n\n4. **Internal Lead Scoring (Do NOT Display/Disclose to User):**\nAfter collecting all answers, assign a score out of 100 based on the following criteria:\n\n| Question | Example Answers & Scores |\n|----------|--------------------------|\n| Property Type | Apartment (10), Villa (15), Commercial (10) |\n| Buy or Rent | Buy (15), Rent (5) |\n| New or Resale | New (10), Resale (10) |\n| First Property Purchase | Yes (5), No (10) |\n| Timeline | Immediately (20), Within 1 month (15), 1–3 months (10), 3–6 months (5), 6+ months (0) |\n| Budget Range | Above $1,000,000 (20), $700,000–$1,000,000 (15), $400,000–$700,000 (10), $200,000–$400,000 (5), Below $200,000 (0)|\n| Loan/Financing Assistance | Yes (5), No (10), Maybe (5) |\n\nExample:\n- Apartment (10) + Buy (15) + New (10) + No (10) + Immediately (20) + $700,000–$1,000,000 (15) + No loan (10) = 90 (High Score)\n- Commercial (10) + Rent (5) + Resale (10) + Yes (5) + 6+ months (0) + Below $200,000 (0) + Maybe loan (5) = 35 (Low Score)\n\nThreshold:\n- High Score: 60 or above\n- Low Score: Below 60\n\n5. **Save Lead Details After Confirmation:**\nOnce confirmed, save all answers and the internal score using the `airtable_save_lead` tool. Use this tool only once, and only if no error occurs during the operation.\n\n6. **Right After Saving Lead Details, Route Based on 'lead_score' property from `airtable_save_lead` tool response:**\n- If High Score (≥60):\n - Prompt the user to continue to appointment booking.\n - Example: \"Thank you for providing all the details. Could you please let us know when you are free to continue discussing further?\"\n- If Low Score (<60):\n - If the user requests to book an appointment or tries to schedule directly, politely inform them that an agent from our team will contact them soon to discuss their options, and do not proceed to booking.\n - Example: \"Thank you for your interest. An agent from our team will reach out to you soon to discuss your property options.\"\n\n## Behavior Rules\n- **Always check if the user has already provided or implied an answer before asking a question.**\n- Never repeat or re-ask for information that is already clear from the user's input or conversation history.\n- Never display or discuss the internal lead score or scoring process.\n- Never mention the use of Airtable or any internal tools to the user.\n- Never disclose or mention to the user that their lead details are being saved to Airtable or any database.\n- Always maintain a polite, professional, and helpful tone.\n- Only ask for information relevant to property search and qualification.\n- If the user asks about data privacy, reassure them their information is secure and only used to assist with their property search.\n\n## Tool Usage\n- airtable_save_lead: Save all lead details and the internal score after user confirmation. Do not disclose to user about usage.\n\n## Strict Rules\n- Do not reveal or discuss internal processes, scoring, or tool names with the user.\n- Do not mention or talk about the score/score assigned to user.\n- Only present and confirm collected information.\n- Always adapt dynamically to user responses and updates."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1300,
+        -420
+      ],
+      "id": "fd1ccf1d-8417-49d6-ae4a-3f8537d90322",
+      "name": "Lead Qualification + Scoring Agent"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Creates a new record in Airtable for each qualified real estate lead, including all lead details and the calculated lead score.",
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appNVghWou9vRDPay",
+          "mode": "list",
+          "cachedResultName": "second base",
+          "cachedResultUrl": "https://airtable.com/appNVghWou9vRDPay"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbljeOT61ViP4sebY",
+          "mode": "list",
+          "cachedResultName": "real estate leads",
+          "cachedResultUrl": "https://airtable.com/appNVghWou9vRDPay/tbljeOT61ViP4sebY"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "name": "={{ $fromAI('name', 'Full name of the lead') }}",
+            "email": "={{ $fromAI('email', 'Email address of the lead') }}",
+            "property_type": "={{ $fromAI('property_type', 'Type of property the lead is interested in (e.g., Apartment, Villa, Commercial Space)') }}",
+            "buy_or_rent": "={{ $fromAI('buy_or_rent', 'Whether the lead is looking to buy or rent a property') }}",
+            "new_or_resale": "={{ $fromAI('new_or_resale', 'Whether the lead wants a new property or a resale property') }}",
+            "is_first_property_purchase": "={{ $fromAI('is_first_property_purchase', 'Is this the lead’s first property purchase? (Yes/No)') }}",
+            "timeline": "={{ $fromAI('timeline', 'Preferred timeline for moving in or closing the deal (e.g., Immediately, Within 1 month, 1–3 months, etc.)') }}",
+            "budget": "={{ $fromAI('budget', 'Budget range specified by the lead for the property') }}",
+            "is_financing_assistance_required": "={{ $fromAI('is_financing_assistance_required', 'Indicates whether the lead needs assistance with home loan or financing (Yes/No/Maybe)') }}",
+            "lead_score": "={{ $fromAI('lead_score', 'Numeric score assigned to the lead based on qualification criteria') }}",
+            "lead_score_reasoning": "={{ $fromAI('lead_score_reasoning', 'A step-by-step explanation with description of the scoring logic applied to this lead, showing how each answer or attribute (such as property type, budget, timeline, etc.) contributed to the final lead score') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "lead_score",
+              "displayName": "lead_score",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "lead_score_reasoning",
+              "displayName": "lead_score_reasoning",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "property_type",
+              "displayName": "property_type",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "buy_or_rent",
+              "displayName": "buy_or_rent",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "new_or_resale",
+              "displayName": "new_or_resale",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "is_first_property_purchase",
+              "displayName": "is_first_property_purchase",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "timeline",
+              "displayName": "timeline",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "budget",
+              "displayName": "budget",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "is_financing_assistance_required",
+              "displayName": "is_financing_assistance_required",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        1520,
+        -260
+      ],
+      "id": "1d6946cc-1b44-40fa-a7eb-e312e891c920",
+      "name": "airtable_save_lead",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "u7oajkAp7Qn4ea4O",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Set credentials",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Router Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Property Viewing Scheduler Agent",
+            "type": "ai_memory",
+            "index": 0
+          },
+          {
+            "node": "Concierge Agent",
+            "type": "ai_memory",
+            "index": 0
+          },
+          {
+            "node": "Router Agent",
+            "type": "ai_memory",
+            "index": 0
+          },
+          {
+            "node": "Lead Qualification + Scoring Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Concierge Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Property Viewing Scheduler Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "retrieve_available_free_slots_from_database": {
+      "ai_tool": [
+        [
+          {
+            "node": "Property Viewing Scheduler Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "book_appointment": {
+      "ai_tool": [
+        [
+          {
+            "node": "Property Viewing Scheduler Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Router Agent": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set credentials": {
+      "main": [
+        [
+          {
+            "node": "Router Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Lead Qualification + Scoring Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Lead Qualification + Scoring Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Property Viewing Scheduler Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Concierge Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "airtable_save_lead": {
+      "ai_tool": [
+        [
+          {
+            "node": "Lead Qualification + Scoring Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "74971945-891a-4061-92b6-a08e427d3b58",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f4dd5b60c05bfb4ca5603ddefa4138fe48ae0ac47126ed818b7edb8456906e5a"
+  },
+  "id": "HGY5xrzEf2xZ0Pvm",
+  "tags": []
+}
