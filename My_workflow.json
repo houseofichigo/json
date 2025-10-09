@@ -1,0 +1,1310 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        660,
+        560
+      ],
+      "id": "786828e8-296c-4535-a7df-bfb857de461c",
+      "name": "Respond to Webhook3"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.prompt }}",
+        "options": {
+          "systemMessage": "=You are a highly efficient AI assistant designed to manage calendar events and ensure seamless communication with attendees.\n\nToday’s date: {{ $now }}\nYour primary functions:\n1. Searching, creating, and updating events\n2. Create or update a row in the Google Sheet with the calendar title, description, ID, and length\nSearch First – Always search for an existing event before creating a new one.\nNo Duplicates – If an event already exists and needs modifications, update it instead of creating a new one.\nRelative Dates – Ensure new events are scheduled relative to today’s date.\nConfirmation Output – Always return a clear response with event details, including a direct link to the calendar event.\nAutomated Google Sheets Notification – When a new event is created or updated, automatically send a data to the google sheet.\nDo not create new calendar events or new email threads if the user wants to change or update an existing an existing calendar event\nIf there's no time provided for the calendar invite, please assume it's 1 hour in length\nOutput Format:\nIf searching: Display matching events or indicate none were found.\nIf creating: Confirm the event details, provide the calendar link, and trigger an email notification to the attendee.\nIf updating: Confirm the changes made, provide the updated calendar link, and send an update email by replying to the existing email thread.\nStay efficient, accurate, and proactive in communication while avoiding unnecessary event duplication."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        220,
+        560
+      ],
+      "id": "30977f09-2abe-4ae3-8db8-693f5d73bc7b",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "calendar": {
+          "__rl": true,
+          "value": "ferbrazao@gmail.com",
+          "mode": "list",
+          "cachedResultName": "ferbrazao@gmail.com"
+        },
+        "eventId": "={{ $fromAI(\"eventID\", \"ID of event\") }}",
+        "updateFields": {
+          "end": "={{ $fromAI(\"endTime\", \"end time of event\") }}",
+          "start": "={{ $fromAI(\"startTime\", \"start time of event\") }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        680,
+        780
+      ],
+      "id": "fdaae212-7e0b-47f6-a502-24c3ace458d0",
+      "name": "Google Calendar2",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "6j0ENZ6MwXKAaIHg",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "ferbrazao@gmail.com",
+          "mode": "list",
+          "cachedResultName": "ferbrazao@gmail.com"
+        },
+        "start": "={{ $fromAI(\"start\", \"this is the start time of the event\") }}",
+        "end": "={{ $fromAI(\"end\", \"This is the end time of the event\") }}",
+        "additionalFields": {
+          "attendees": [],
+          "summary": "={{ $fromAI(\"summary\", \"this is the summary of th eve t\") }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        500,
+        780
+      ],
+      "id": "2b09e4e7-7a73-4a32-a8a0-62b743607fa7",
+      "name": "Google Calendar1",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "6j0ENZ6MwXKAaIHg",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "ferbrazao@gmail.com",
+          "mode": "list",
+          "cachedResultName": "ferbrazao@gmail.com"
+        },
+        "timeMax": "={{ $now.plus({ day: 1 }) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        340,
+        780
+      ],
+      "id": "ae1c5fde-3dee-40d1-95d7-3145afce5fdc",
+      "name": "Google Calendar",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "6j0ENZ6MwXKAaIHg",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        40,
+        780
+      ],
+      "id": "f9921aec-d6ef-491f-b4bb-2887a910d096",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "i3h3yVb6UrrlvOnQ",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "Line items have been successfully parsed and added to the Google Sheet",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        520,
+        360
+      ],
+      "id": "6bfee1fb-e4ca-4eaa-aa5e-9636a7acd6d3",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "agent",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        560
+      ],
+      "id": "9ab21dbf-2d08-4d98-99d0-e0fcb1d79e83",
+      "name": "AI Agent",
+      "webhookId": "49f17f16-917f-44c8-9ae1-789832cecb17"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "receipt",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        360
+      ],
+      "id": "25c65de0-1948-420a-845f-d09fa302e1d1",
+      "name": "Parse Receipt",
+      "webhookId": "49f17f16-917f-44c8-9ae1-789832cecb17"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1LPuJjgl8fvKBPyhMUYmcLmmabNle2I59N3qPQmWsH3g",
+          "mode": "list",
+          "cachedResultName": "Receipts - ChatGPT",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LPuJjgl8fvKBPyhMUYmcLmmabNle2I59N3qPQmWsH3g/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Página1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LPuJjgl8fvKBPyhMUYmcLmmabNle2I59N3qPQmWsH3g/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "storeNumber": "={{ $('Parse Receipt').item.json.body.storeNumber }}",
+            "managerName": "={{ $('Parse Receipt').item.json.body.managerName }}",
+            "storeAddress": "={{ $('Parse Receipt').item.json.body.storeAddress }}",
+            "transactionId": "={{ $('Parse Receipt').item.json.body.transactionId }}",
+            "transactionDate": "={{ $('Parse Receipt').item.json.body.transactionDate }}",
+            "terminalId": "={{ $('Parse Receipt').item.json.body.terminalId }}",
+            "approvalCode": "={{ $('Parse Receipt').item.json.body.approvalCode }}",
+            "paymentType": "={{ $('Parse Receipt').item.json.body.paymentType }}",
+            "cardLast4": "={{ $('Parse Receipt').item.json.body.cardLast4 }}",
+            "totalItems": "={{ $('Parse Receipt').item.json.body.totalItems }}",
+            "subtotal": "={{ $('Parse Receipt').item.json.body.subtotal }}",
+            "taxRate": "={{ $('Parse Receipt').item.json.body.taxRate }}",
+            "taxAmount": "={{ $('Parse Receipt').item.json.body.taxAmount }}",
+            "total": "={{ $('Parse Receipt').item.json.body.total }}",
+            "changeDue": "={{ $('Parse Receipt').item.json.body.changeDue }}",
+            "items[0].description": "={{ $('Parse Receipt').item.json.body.items[0].description }}",
+            "items[0].sku": "={{ $('Parse Receipt').item.json.body.items[0].sku }}",
+            "items[0].quantity": "={{ $('Parse Receipt').item.json.body.items[0].quantity }}",
+            "items[0].price": "={{ $('Parse Receipt').item.json.body.items[0].price }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "storeNumber",
+              "displayName": "storeNumber",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "managerName",
+              "displayName": "managerName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "storeAddress",
+              "displayName": "storeAddress",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "transactionId",
+              "displayName": "transactionId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "transactionDate",
+              "displayName": "transactionDate",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "terminalId",
+              "displayName": "terminalId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "approvalCode",
+              "displayName": "approvalCode",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "paymentType",
+              "displayName": "paymentType",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "cardLast4",
+              "displayName": "cardLast4",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "totalItems",
+              "displayName": "totalItems",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "subtotal",
+              "displayName": "subtotal",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "taxRate",
+              "displayName": "taxRate",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "taxAmount",
+              "displayName": "taxAmount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "total",
+              "displayName": "total",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "changeDue",
+              "displayName": "changeDue",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "items[0].description",
+              "displayName": "items[0].description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "items[0].sku",
+              "displayName": "items[0].sku",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "items[0].quantity",
+              "displayName": "items[0].quantity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "items[0].price",
+              "displayName": "items[0].price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "items[1].description",
+              "displayName": "items[1].description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "items[1].sku",
+              "displayName": "items[1].sku",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "items[1].quantity",
+              "displayName": "items[1].quantity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "items[1].price",
+              "displayName": "items[1].price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "items[2].description",
+              "displayName": "items[2].description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "items[2].sku",
+              "displayName": "items[2].sku",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "items[2].quantity",
+              "displayName": "items[2].quantity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "items[2].price",
+              "displayName": "items[2].price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "items[3].description",
+              "displayName": "items[3].description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[3].sku",
+              "displayName": "items[3].sku",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[3].quantity",
+              "displayName": "items[3].quantity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[3].price",
+              "displayName": "items[3].price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[4].description",
+              "displayName": "items[4].description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[4].sku",
+              "displayName": "items[4].sku",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[4].quantity",
+              "displayName": "items[4].quantity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[4].price",
+              "displayName": "items[4].price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[5].description",
+              "displayName": "items[5].description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[5].sku",
+              "displayName": "items[5].sku",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[5].quantity",
+              "displayName": "items[5].quantity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[5].price",
+              "displayName": "items[5].price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[6].description",
+              "displayName": "items[6].description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[6].sku",
+              "displayName": "items[6].sku",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[6].quantity",
+              "displayName": "items[6].quantity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[6].price",
+              "displayName": "items[6].price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[7].description",
+              "displayName": "items[7].description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[7].sku",
+              "displayName": "items[7].sku",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[7].quantity",
+              "displayName": "items[7].quantity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[7].price",
+              "displayName": "items[7].price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[8].description",
+              "displayName": "items[8].description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[8].sku",
+              "displayName": "items[8].sku",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[8].quantity",
+              "displayName": "items[8].quantity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[8].price",
+              "displayName": "items[8].price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[9].description",
+              "displayName": "items[9].description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[9].sku",
+              "displayName": "items[9].sku",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[9].quantity",
+              "displayName": "items[9].quantity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[9].price",
+              "displayName": "items[9].price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[10].description",
+              "displayName": "items[10].description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[10].sku",
+              "displayName": "items[10].sku",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[10].quantity",
+              "displayName": "items[10].quantity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[10].price",
+              "displayName": "items[10].price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[11].description",
+              "displayName": "items[11].description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[11].sku",
+              "displayName": "items[11].sku",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[11].quantity",
+              "displayName": "items[11].quantity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[11].price",
+              "displayName": "items[11].price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[12].description",
+              "displayName": "items[12].description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[12].sku",
+              "displayName": "items[12].sku",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[12].quantity",
+              "displayName": "items[12].quantity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[12].price",
+              "displayName": "items[12].price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[13].description",
+              "displayName": "items[13].description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[13].sku",
+              "displayName": "items[13].sku",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[13].quantity",
+              "displayName": "items[13].quantity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[13].price",
+              "displayName": "items[13].price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[14].description",
+              "displayName": "items[14].description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[14].sku",
+              "displayName": "items[14].sku",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[14].quantity",
+              "displayName": "items[14].quantity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[14].price",
+              "displayName": "items[14].price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[15].description",
+              "displayName": "items[15].description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[15].sku",
+              "displayName": "items[15].sku",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[15].quantity",
+              "displayName": "items[15].quantity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[15].price",
+              "displayName": "items[15].price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[16].description",
+              "displayName": "items[16].description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[16].sku",
+              "displayName": "items[16].sku",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[16].quantity",
+              "displayName": "items[16].quantity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[16].price",
+              "displayName": "items[16].price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[17].description",
+              "displayName": "items[17].description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[17].sku",
+              "displayName": "items[17].sku",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[17].quantity",
+              "displayName": "items[17].quantity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[17].price",
+              "displayName": "items[17].price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[18].description",
+              "displayName": "items[18].description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[18].sku",
+              "displayName": "items[18].sku",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[18].quantity",
+              "displayName": "items[18].quantity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[18].price",
+              "displayName": "items[18].price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[19].description",
+              "displayName": "items[19].description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[19].sku",
+              "displayName": "items[19].sku",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[19].quantity",
+              "displayName": "items[19].quantity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "items[19].price",
+              "displayName": "items[19].price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        280,
+        360
+      ],
+      "id": "34d87200-7242-41dc-99de-2d723192361f",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "HLFIN23IWFkWYa0q",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.headers['openai-conversation-id'] }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        180,
+        780
+      ],
+      "id": "2255aead-8f8e-4071-a1dc-cd2a1459ddf7",
+      "name": "Window Buffer Memory"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Calendar2": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Calendar1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Calendar": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Receipt": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "bc7a8cc2-fc10-4c40-8052-eb3450d21231",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "89aaea7429efcdace812bdb269e6198e38f2a22933d6040529200f442c24d7af"
+  },
+  "id": "u10jJ7sDWoTVPBVJ",
+  "tags": []
+}
