@@ -1,0 +1,392 @@
+{
+  "name": "MCP Airbnb Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## MCP Airbnb Agent",
+        "height": 420,
+        "width": 660
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        60
+      ],
+      "id": "fa23293d-2d5e-4e18-814c-6241b66da6b0",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        260,
+        120
+      ],
+      "id": "61cf0789-c8fd-4813-b6a5-2f3248754c58",
+      "name": "Airbnb Agent"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-mcp.mcpClientTool",
+      "typeVersion": 1,
+      "position": [
+        400,
+        320
+      ],
+      "id": "4af9c03b-4551-48d7-bcfe-386dd610d185",
+      "name": "Airbnb Tools ",
+      "credentials": {
+        "mcpClientApi": {
+          "id": "ldlbc0koZOMm6RWi",
+          "name": "Airbnb"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeTool",
+        "toolName": "={{$fromAI(\"tool\",\"the specific tool for the task\")}}",
+        "toolParameters": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Tool_Parameters', ``, 'json') }}"
+      },
+      "type": "n8n-nodes-mcp.mcpClientTool",
+      "typeVersion": 1,
+      "position": [
+        540,
+        320
+      ],
+      "id": "383c4505-e6f3-4ae8-a421-8cb463c24c9c",
+      "name": "Execute Airbnb ",
+      "credentials": {
+        "mcpClientApi": {
+          "id": "ldlbc0koZOMm6RWi",
+          "name": "Airbnb"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        760,
+        80
+      ],
+      "id": "ada4d6b8-c34a-44b2-be61-e266d1faa259",
+      "name": "When chat message received",
+      "webhookId": "50eab772-d6cb-41a2-8ef2-42abee64ba4c"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        260,
+        320
+      ],
+      "id": "4dcf22e8-791b-45f3-bef0-f9176766b811",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "model": "anthropic/claude-3.7-sonnet",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        100,
+        320
+      ],
+      "id": "7be63087-b5ff-4e3a-9828-3b01b0d620cf",
+      "name": "claude 3.7 sonnet",
+      "credentials": {
+        "openRouterApi": {
+          "id": "y1vjMptfuqUZLu87",
+          "name": "Openrouter Key 1"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        80,
+        -240
+      ],
+      "id": "f0901e3e-8c61-42cc-b5b0-933aee590296",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-mcp.mcpClient",
+      "typeVersion": 1,
+      "position": [
+        280,
+        -240
+      ],
+      "id": "33a13f54-e0c5-485e-90f7-02b81b66b628",
+      "name": "Airbnb",
+      "credentials": {
+        "mcpClientApi": {
+          "id": "ldlbc0koZOMm6RWi",
+          "name": "Airbnb"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## MCP Airbnb Test",
+        "height": 340,
+        "width": 560
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -360
+      ],
+      "id": "5fde781f-2a4d-45ec-80ab-f9bc7e616f67",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## MCP Brave Search Agent",
+        "height": 480,
+        "width": 660
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        680,
+        0
+      ],
+      "id": "eb14fa83-6836-4deb-b126-25ab7ad74bb6",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        920,
+        320
+      ],
+      "id": "6c308405-03f2-4547-a300-8167766add61",
+      "name": "Simple Memory1"
+    },
+    {
+      "parameters": {
+        "model": "anthropic/claude-3.7-sonnet",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        760,
+        320
+      ],
+      "id": "30bdb978-fa78-4c33-931f-4d5976a0b482",
+      "name": "claude 3.7 sonnet1",
+      "credentials": {
+        "openRouterApi": {
+          "id": "y1vjMptfuqUZLu87",
+          "name": "Openrouter Key 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeTool",
+        "toolName": "={{$fromAI(\"tool\",\"the specific tool for the task\")}}",
+        "toolParameters": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Tool_Parameters', ``, 'json') }}"
+      },
+      "type": "n8n-nodes-mcp.mcpClientTool",
+      "typeVersion": 1,
+      "position": [
+        1220,
+        320
+      ],
+      "id": "4b2e26a7-8454-4c2e-83b5-db2f9e67c928",
+      "name": "Execute Brave Search",
+      "credentials": {
+        "mcpClientApi": {
+          "id": "uQ35ngvUt0TCWFU5",
+          "name": "Brave Search"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-mcp.mcpClientTool",
+      "typeVersion": 1,
+      "position": [
+        1080,
+        320
+      ],
+      "id": "98c3c8e7-fdcb-428b-966a-0bada630ec9b",
+      "name": "Brave Search Tools",
+      "credentials": {
+        "mcpClientApi": {
+          "id": "uQ35ngvUt0TCWFU5",
+          "name": "Brave Search"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        960,
+        80
+      ],
+      "id": "aebc9e21-3a2e-448c-b095-69d6f3e9d575",
+      "name": "Brave Search Agent"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Airbnb Tools ": {
+      "ai_tool": [
+        [
+          {
+            "node": "Airbnb Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Airbnb ": {
+      "ai_tool": [
+        [
+          {
+            "node": "Airbnb Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Brave Search Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Airbnb Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "claude 3.7 sonnet": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Airbnb Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Airbnb",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airbnb": {
+      "main": [
+        []
+      ]
+    },
+    "Simple Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "Brave Search Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "claude 3.7 sonnet1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Brave Search Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Brave Search": {
+      "ai_tool": [
+        [
+          {
+            "node": "Brave Search Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Brave Search Tools": {
+      "ai_tool": [
+        [
+          {
+            "node": "Brave Search Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "dd8b2605-2db6-4aae-b924-b0823fafd552",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d8c459f4ebcadd20c3258ade09582fe0f02de933363f6184259e0c9a36784090"
+  },
+  "id": "2Hxkwuexw2EpreBY",
+  "tags": [
+    {
+      "createdAt": "2025-03-18T09:05:39.155Z",
+      "updatedAt": "2025-03-18T09:05:39.155Z",
+      "id": "K1lE3f6xglpZm6Te",
+      "name": "W1: MCP"
+    }
+  ]
+}
