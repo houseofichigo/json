@@ -1,0 +1,1444 @@
+{
+  "name": "UGC Ads Generator",
+  "nodes": [
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5",
+          "mode": "list",
+          "cachedResultName": "gpt-5"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -688,
+        928
+      ],
+      "id": "988c493c-58ed-4ea2-908b-b57bd75c4886",
+      "name": "5",
+      "credentials": {
+        "openAiApi": {
+          "id": "hPPhcVMtTyQFIcPh",
+          "name": "Public"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "formTitle": "Ads Generator Bot",
+        "formDescription": "Génère un Ad pour ton produit hyper facilement ! ",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Ajoute ton Produit",
+              "fieldType": "file",
+              "multipleFiles": false,
+              "acceptFileTypes": ".jpg, .png",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Décris la publicité que tu veux créer",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Combien de secondes doit durer la vidéo ?",
+              "fieldType": "radio",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "8"
+                  },
+                  {
+                    "option": "16"
+                  },
+                  {
+                    "option": "24"
+                  },
+                  {
+                    "option": "32"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Quel Canal de diffusion ?",
+              "fieldType": "radio",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "LinkedIn"
+                  },
+                  {
+                    "option": "Instagram"
+                  },
+                  {
+                    "option": "Facebook"
+                  },
+                  {
+                    "option": "Youtube"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        -912,
+        432
+      ],
+      "id": "c84dc8fe-bcd6-439d-8aa3-7e90cf64c015",
+      "name": "On form submission",
+      "webhookId": "bdaef958-db1c-468a-a6bc-1e91010c0e70"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.cloudinary.com/v1_1/<DOMAIN_NAME>/image/upload",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "Form-Data (multipart/form-data)"
+            },
+            {
+              "name": "file",
+              "value": "={{ $json.fileData }}"
+            },
+            {
+              "name": "upload_preset",
+              "value": "ml_default"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -480,
+        432
+      ],
+      "id": "2f20a38d-cb1d-41f3-801f-97103ca0e4cc",
+      "name": "Upload Image"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Dans un nœud Code\nconst binaryBuffer = await this.helpers.getBinaryDataBuffer(0, 'Ajoute_ton_Produit');\nconst base64Data = binaryBuffer.toString('base64');\n\nreturn {\n  json: {\n    fileData: `data:image/jpeg;base64,${base64Data}`\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -688,
+        432
+      ],
+      "id": "f7380bd0-381d-4007-a970-f64343a4d42b",
+      "name": "Extract Binary Data"
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "chatgpt-4o-latest",
+          "mode": "list",
+          "cachedResultName": "CHATGPT-4O-LATEST"
+        },
+        "text": "=# Role\nTa mission est d'analyser une image et d'en ressortir les caractéristiques indiquées dans la partie instructions. N'indique que les informations demandées.\n\n# Instructions\n1. Détermine si l'image représente principalement un produit, un personnage ou les deux.\n\n2. Attribue le format JSON suivant : \n\n- Si l’image est celle d’un produit, renvoie l’analyse au format JSON avec les champs suivants :\n\n{\n  \"brand_name\": \"nom de la marque si indiqué\",\n  \"color_scheme\": [\n    {\n      \"hex\": \"Code hexadécimal de chaque couleur dominante utilisée\",\n      \"name\": \"Nom descriptif de la couleur\"\n    }\n  ],\n  \"font_style\": \"Décrire la famille ou le style de police utilisé : serif/sans-serif, gras/fin, etc.\",\n  \"visual_description\": \"Une ou deux phrases complètes résumant ce qui est visible dans l’image, en ignorant l’arrière-plan\"\n}\n\n- Si l’image est celle d’un personnage, renvoie l’analyse au format JSON avec les champs suivants :\n\n{\n  \"character_name\": \"Nom du personnage si visible ou déductible\",\n  \"color_scheme\": [\n    {\n      \"hex\": \"Code hexadécimal de chaque couleur dominante visible sur le personnage\",\n      \"name\": \"Nom descriptif de la couleur\"\n    }\n  ],\n  \"outfit_style\": \"Description du style vestimentaire, des accessoires ou des caractéristiques notables\",\n  \"visual_description\": \"Une ou deux phrases complètes résumant l’apparence du personnage, en ignorant l’arrière-plan\"\n}\n\nNe renvoie que le JSON. N’ajoute aucune explication ou commentaire supplémentaire.\n\n- Si l’image représente les deux, renvoie les deux descriptions au format JSON tel qu’indiqué ci-dessus.\n",
+        "imageUrls": "={{ $json.url }}",
+        "simplify": false,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -256,
+        432
+      ],
+      "id": "22518424-2ba5-49e2-b447-7c1645ac6ef5",
+      "name": "Analyze Image",
+      "credentials": {
+        "openAiApi": {
+          "id": "hPPhcVMtTyQFIcPh",
+          "name": "Public"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -304,
+        928
+      ],
+      "id": "263b9d81-cd04-497a-9e52-53b337d41e96",
+      "name": "4.1 mini",
+      "credentials": {
+        "openAiApi": {
+          "id": "hPPhcVMtTyQFIcPh",
+          "name": "Public"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"framework_utilisé\": \"AIDA\",\n  \"raison_du_choix\": \"AIDA est idéal pour capter rapidement l’attention et inciter à l’action dans un format court comme TikTok.\",\n    \"points_forts_produit\":\"1. Hydratation exceptionnelle avec des ingrédients naturels 2. Propriétés anti-âge et réparatrices validées 3. Excellente satisfaction client et texture non-grasse\"\n}",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -1088,
+        928
+      ],
+      "id": "6fab3eac-aa15-407b-8d35-d682cf84f431",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"scenes\": [\n    {\n      \"image_prompt\": {\n        \"action\": \"le personnage tient le produit naturellement\",\n        \"character\": \"à déduire de l'image de référence\",\n        \"product\": \"montrer le produit avec tout le texte visible clairement et fidèlement\",\n        \"setting\": \"à déduire de l'image ou des instructions de l'utilisateur\",\n        \"camera\": \"photo amateur iPhone, selfie décontracté, cadrage irrégulier, légèrement flou\",\n        \"style\": \"style UGC spontané, sans filtres, avec imperfections visibles\",\n        \"text_accuracy\": \"conserver tout le texte visible exactement comme dans l'image de référence\"\n      }\n    }\n  ],\n  \"aspect_ratio_image\": \"9:16\"\n}",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -560,
+        928
+      ],
+      "id": "160d2418-aca6-4148-8665-9f6b155728cf",
+      "name": "Structured Output Parser2"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"scenes\": [\n    {\n      \"image_prompt\": {\n        \"action\": \"le personnage tient le produit naturellement\",\n        \"character\": \"à déduire de l'image de référence\",\n        \"product\": \"montrer le produit avec tout le texte visible clairement et fidèlement\",\n        \"setting\": \"à déduire de l'image ou des instructions de l'utilisateur\",\n        \"camera\": \"photo amateur iPhone, selfie décontracté, cadrage irrégulier, légèrement flou\",\n        \"style\": \"style UGC spontané, sans filtres, avec imperfections visibles\",\n        \"text_accuracy\": \"conserver tout le texte visible exactement comme dans l'image de référence\"\n      }\n    },\n    {\n      \"video_prompt\": {\n        \"speech\": \"genre TikTok m'a fait acheter ça... franchement c'est la bière fruitée la plus bonne que j'ai goûtée à Sydney et ils reversent les bénéfices à une association...\",\n        \"action\": \"le personnage est assis sur le siège conducteur d'une voiture garée, tenant la canette de bière de manière décontractée tout en parlant\",\n        \"camera\": \"vidéo selfie amateur iPhone, cadrage irrégulier, lumière naturelle\",\n        \"emotion\": \"très joyeux, excitation décontractée\",\n        \"type\": \"veo3_fast\"\n      }\n    }\n  ],\n  \"aspect_ratio_image\": \"9:16\",\n  \"aspect_ratio_video\": \"9:16\",\n  \"model\": \"veo3_fast\"\n}",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -80,
+        928
+      ],
+      "id": "ca7a225a-7600-4777-b5ed-40e5f8b8916d",
+      "name": "Structured Output Parser3"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -1200,
+        1264
+      ],
+      "id": "22eebec6-11ac-439a-9687-afc92ef519d7",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://queue.fal.run/fal-ai/nano-banana/edit",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={ \n\"prompt\": \"action: {{ $json.image_prompt.action }}. character : {{ $json.image_prompt.character }}. product : {{ $json.image_prompt.product }}. setting : {{ $json.image_prompt.setting }}. camera : {{ $json.image_prompt.camera }}. style : {{ $json.image_prompt.style }}. texte_accuracy : {{ $json.image_prompt.text_accuracy }}\",\n\"image_urls\": [\n    \"{{ $('Upload Image').item.json.url }}\"\n  ],\n  \"num_images\": 1,\n  \"output_format\": \"jpeg\"\n}\n",
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1,
+              "batchInterval": 2000
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -992,
+        1264
+      ],
+      "id": "66548e2e-9842-44b3-ac07-3e18c5ce26b5",
+      "name": "Create Image",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "n6AcTP0yCiPZ9twh",
+          "name": "Public"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://queue.fal.run/fal-ai/nano-banana/requests/{{ $('Create Image').item.json.request_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -624,
+        1264
+      ],
+      "id": "1baba4a1-259d-430e-a714-180152bafe48",
+      "name": "Get Image",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "n6AcTP0yCiPZ9twh",
+          "name": "Public"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://queue.fal.run/fal-ai/veo3/image-to-video",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={\n     \"prompt\": \"speech :{{ $('Loop Over Items').item.json.video_prompt.speech }}. action :{{ $('Loop Over Items').item.json.video_prompt.action }}. camera : {{ $('Loop Over Items').item.json.video_prompt.camera }}. emotion : {{ $('Loop Over Items').item.json.video_prompt.emotion }}. type : {{ $('Loop Over Items').item.json.video_prompt.type }}\",\n  \"aspect_ratio\": \"{{ $('Dialogue Agent').item.json.output.aspect_ratio_video }}\",\n \"image_url\": \"{{ $json.images[0].url }}\",\n  \"aspect_ratio\": \"{{ $('Dialogue Agent').item.json.output.aspect_ratio_video }}\",\n  \"duration\": \"8s\",\n  \"generate_audio\": true,\n  \"resolution\": \"720p\"\n}\n\n\n",
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1,
+              "batchInterval": 2000
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -400,
+        1264
+      ],
+      "id": "cf3220a6-196b-4c85-8740-e96543c74c81",
+      "name": "Create Video",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "n6AcTP0yCiPZ9twh",
+          "name": "Public"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://queue.fal.run/fal-ai/veo3/requests/{{ $json.request_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -32,
+        1264
+      ],
+      "id": "0a0fe5c4-acce-46d2-b81b-8b5501247678",
+      "name": "Get Video",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "n6AcTP0yCiPZ9twh",
+          "name": "Public"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "include": "specifiedFields",
+        "fieldsToInclude": "url",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -1136,
+        1648
+      ],
+      "id": "91be469b-6600-4f86-98e1-3ca696bc94b4",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7f685ce1-65eb-411a-8be9-3e5d7ce588e9",
+              "name": "video_urls",
+              "value": "={{ $json.data.map(item => item.url) }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -976,
+        1648
+      ],
+      "id": "5d2b8e09-b7a7-4fb4-b27a-de652e77b2ae",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://queue.fal.run/fal-ai/ffmpeg-api/merge-videos",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={\n\"video_urls\":{{ $json.video_urls }}\n}",
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1,
+              "batchInterval": 2000
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -560,
+        1584
+      ],
+      "id": "b9200a3c-b910-44a2-9b22-b4f3c181979b",
+      "name": "Merge Videos",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "n6AcTP0yCiPZ9twh",
+          "name": "Public"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "return { json: { url: $json.video?.url } };\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        256,
+        1328
+      ],
+      "id": "9e5bbe1a-5764-467e-9ea7-022817dd88b6",
+      "name": "Extract Video URL"
+    },
+    {
+      "parameters": {
+        "amount": 20
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -800,
+        1264
+      ],
+      "id": "88883b97-71fc-4bf7-b37d-9d77f154822b",
+      "name": "20s",
+      "webhookId": "cf12a835-8b9b-41ef-bf02-9a830be6b97a"
+    },
+    {
+      "parameters": {
+        "amount": 1,
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -208,
+        1264
+      ],
+      "id": "8a5a8f18-7fc9-4541-bd50-e7b8b3e7c115",
+      "name": "1min",
+      "webhookId": "a17cb185-cf3f-44ff-9fec-b12b0283915a"
+    },
+    {
+      "parameters": {
+        "amount": 30
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -368,
+        1584
+      ],
+      "id": "07e682c2-f57f-4465-a4f7-4c83893e7e7f",
+      "name": "30s",
+      "webhookId": "061a7eba-8030-4570-81ff-58d5d495010c"
+    },
+    {
+      "parameters": {
+        "toolDescription": "utilise cet outil pour effectuer une recherche web",
+        "method": "POST",
+        "url": "https://api.openai.com/v1/responses",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "Content-Type",
+              "valueProvider": "fieldValue",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n    \"model\": \"gpt-5\",\n    \"tools\": [{ \"type\": \"web_search_preview\" }],\n    \"input\": \"{web_search_question}\"\n  }",
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "{web_search_question}",
+              "description": "The question to search"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        -1216,
+        928
+      ],
+      "id": "c4b271d4-a4aa-4728-b780-a227ad59fb2e",
+      "name": "web_search",
+      "credentials": {
+        "openAiApi": {
+          "id": "hPPhcVMtTyQFIcPh",
+          "name": "Public"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "utilise cet outil pour déterminer le bon framework à utiliser",
+        "operation": "get",
+        "documentURL": "<PUT_DOC_ID_HERE>"
+      },
+      "type": "n8n-nodes-base.googleDocsTool",
+      "typeVersion": 2,
+      "position": [
+        -1376,
+        928
+      ],
+      "id": "ee810f53-1939-45f1-8784-793f86de9ff3",
+      "name": "frameworks_document",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "wCgpzVI6tifj1tgv",
+          "name": "Public"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "claude-sonnet-4-20250514",
+          "cachedResultName": "Claude 4 Sonnet"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        -800,
+        928
+      ],
+      "id": "55537cd7-735b-4f12-9f1e-e63240bdd67d",
+      "name": "Sonnet 4",
+      "credentials": {
+        "anthropicApi": {
+          "id": "wOUL0QEowSdr3Q56",
+          "name": "Public"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Produit à analyser :  {{ $json.choices[0].message.content }}\n\nCanal de Diffusion : {{ $('On form submission').item.json['Quel Canal de diffusion ?'] }}",
+        "hasOutputParser": true,
+        "needsFallback": true,
+        "options": {
+          "systemMessage": "=# Role\nTu es un expert en copywriting publicitaire et en stratégie marketing.  \nTon rôle est de recevoir un produit et un canal de diffusion, puis de choisir le **framework de copywriting** le plus adapté (parmi : AIDA, AIDCA, AIDCAS, PAS, PASTOR, BAB, FAB, 4P, 4C, ACCA, QUEST, STAR, StoryBrand, Objections, PSP, Hook–Story–Offer, See-Think-Do-Care, 3R, PCPP, GRAB).  \n\n# Instructions:\n1. Analyse les informations fournies :\n   - Produit : caractéristiques, avantages, cible.\n   - Canal : les frameworks le splus optimisés en fonction de celui-ci\n   - Objectif : awareness, lead generation, conversion, fidélisation… (Si pas mentionné par l'utlisateur indiquer \"visibilité\" par défaut)\n\n2. Sélectionne le **framework le plus pertinent** pour ce contexte. Tu peux t'aider d'une recherche web ou bien utiliser l'outil \"Frameworks Document\" pour t'aider à choisir le framework adapté. Explique ton choix en une phrase.  \n\n3. Effectue une recherche web à l'aide du tool \"web_search\" afin de rechercher les qualités du produit. Ces qualités doivent être simples et claires pour le grand public. Elles doivent directement transcrire le bénéfice qu'à le consommateur final à utiliser ce produit. Listes-en au moins 2.\n\n4. Output le framework choisi ainsi que le choix au format JSON.\n\n# Outils\n- \"Think\": utilise cet outil pour vérifier que le process a bien été suivi dans son entièreté et que rien ne manque.\n- \"frameworks_document\" : utilise cet outil pour t'informer sur le framework le plus adapté pour mettre en avant le produit en fonction du canal de diffusion\n- \"web_search\" : utilise cet outil pour rechercher les différentes qualités du produit\n\n# Exemple d'output JSON :\n\n{\n  \"framework_utilisé\": \"AIDA\",\n  \"raison_du_choix\": \"AIDA est idéal pour capter rapidement l’attention et inciter à l’action dans un format court comme TikTok.\",\n  \"points_forts_produit\":\"1. Hydratation exceptionnelle avec des ingrédients naturels 2. Propriétés anti-âge et réparatrices validées 3. Excellente satisfaction client et texture non-grasse\"\n}\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -1104,
+        720
+      ],
+      "id": "d7c671ce-654d-424e-ae64-031182b65103",
+      "name": "Ad Framework Agent"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Produit Concerné :  {{ $('Analyze Image').item.json.choices[0].message.content }}\n\nRequête utilisateur : {{ $('On form submission').item.json['Décris la publicité que tu veux créer'] }}\n\nFramework Marketing sélectionné : {{ $json.output['framework_utilisé'] }}:{{ $json.output.raison_du_choix }}\n\nNombre de prompts de scènes à réaliser : {{ $('On form submission').item.json['Combien de secondes doit durer la vidéo ?']/8 }}",
+        "hasOutputParser": true,
+        "needsFallback": true,
+        "options": {
+          "systemMessage": "=# Role\nTu es un expert en publicité et marketing. Ton role est de générer des prompts d'images pour une publicité qui soit adapté au framework sélectionné. Chaque image représente une scène du shot publicitaire. Tu vas recevoir le produit, la requête utilisateur, le framework marketing qui a été choisi ainsi que le nombre de scènes de 8 secondes à créer.\n\n# Instructions\n1. Analyse le produit, la requête utilisateur et le framework choisi pour cette publicité. A partir de ces informations trouve un axe scénaristique maximisant la conversion\n2. Rédige ensuite un prompt d'image décrivant chacune des scènes. Sois précis dans les détails que ce soit concernant l'action dans la scène, le/les personnages, le décor, le produit, la caméra, le style et le texte présent sur le produit à conserver comme un slogan à mettre en avant dans la vidéo.\n\n\n- **Tâche :** prendre l’image de référence ou le produit de l’image de référence et l’intégrer dans des scènes réalistes et décontractées, comme si elles avaient été capturées par des créateurs de contenu ou des influenceurs du quotidien.  \n\n# Règles\n\n## Régles générales\nLes résultats doivent paraître **naturels, spontanés et non retouchés** — éviter l’aspect professionnel ou trop mis en scène :  \n- Réalisme quotidien dans des décors authentiques et identifiables  \n- Style photo amateur type iPhone  \n- Cadrage et éclairage légèrement imparfaits  \n- Poses spontanées et expressions naturelles  \n- Imperfections visibles (imperfections de peau, cheveux en désordre, texture)  \n- Environnements réels laissés tels quels (désordre, arrière-plans chargés)  \n- Toujours conserver **fidèlement** le texte du produit visible (logos, slogans, mentions). Ne jamais inventer de nouveaux éléments.  \n- Toujours conserver le/les mêmes personnages d'une pièce à l'autre, indiquer la même description pour chacun\nPar défaut :  \n- Aspect ratio **vertical (9:16)** si non spécifié.  \n- Toujours inclure :  \n  - `image_prompt` (Au format JSON)  \n  - `aspect_ratio_image` (\"16:9\" ou \"9:16\")  \n\n## Paramètres caméra\nToujours inclure des descripteurs de réalisme casual, tels que :  \n_unremarkable amateur iPhone photos, reddit image, snapchat photo, Casual iPhone selfie, slightly uneven framing, Authentic share, slightly blurry, Amateur quality phone photo_\n\n## Restrictions\n- Pas de génération de dialogues \n- Seulement des prompts d’images.  \n- Ne pas mentionner de personnages protégés par copyright.  \n- Éviter les sous-titres.  \n\n## Guide\n- Toujours suivre les principes UGC-style casual realism.  \n- Assurer diversité de genre, d’ethnie et de couleur de cheveux lorsque pertinent.  \n- Par défaut, personnages de **21 à 38 ans** sauf indication contraire.  \n- Par défaut, décors réels et décontractés sauf indication contraire.  \n- Éviter les guillemets doubles dans les prompts d’image.\n\n# Outils\n- \"Think\": utilise cet outil pour vérifier que le process a bien été suivi dans son entièreté et que rien ne manque.\n\n# Exemple d'output\n\n{\n  \"scenes\": [\n    {\n      \"image_prompt\": {\n        \"action\": \"le personnage tient le produit naturellement\",\n        \"character\": \"à déduire de l'image de référence\",\n        \"product\": \"montrer le produit avec tout le texte visible clairement et fidèlement\",\n        \"setting\": \"à déduire de l'image ou des instructions de l'utilisateur\",\n        \"camera\": \"photo amateur iPhone, selfie décontracté, cadrage irrégulier, légèrement flou\",\n        \"style\": \"style UGC spontané, sans filtres, avec imperfections visibles\",\n        \"text_accuracy\": \"conserver tout le texte visible exactement comme dans l'image de référence\"\n      }\n    }\n  ],\n  \"aspect_ratio_image\": \"9:16\"\n}\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -752,
+        720
+      ],
+      "id": "97cd6653-c2d6-4367-9ac2-25fb3c93ba4d",
+      "name": "Image Agent"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Produit Concerné :  {{ $('Analyze Image').item.json.choices[0].message.content }}\n\nQualités du produit : {{ $('Ad Framework Agent').item.json.output.points_forts_produit }}\n\nRequête utilisateur : {{ $('On form submission').item.json['Décris la publicité que tu veux créer'] }}\n\nFramework Marketing sélectionné : {{ $('Ad Framework Agent').item.json.output['framework_utilisé'] }}:{{ $('Ad Framework Agent').item.json.output.raison_du_choix }}\n\nNombre de prompts de scènes à réaliser : {{ $('On form submission').item.json['Combien de secondes doit durer la vidéo ?']/8 }}\n\nPrompt Scenes : {{ $json.scenes }}",
+        "hasOutputParser": true,
+        "needsFallback": true,
+        "options": {
+          "systemMessage": "=# Role\nTon rôle est de déterminer le speech publicitaire le plus optimisé en fonction du produit à mettre en avant, du framework marketing sélectionné et surtout des prompts déjà créées concernant les scènes de cette publicité.\n\n# Instructions\n1. Analyse le produit à mettre en avant, le framework marketing sélectionné, les qualités du produit à mettre en avant et les prompts des scènes afin d'en déduire un speech tenant en {{ $('On form submission').item.json['Combien de secondes doit durer la vidéo ?']/8 }} scènes de 8 secondes.\n2. Rédige le speech adapté pour chacune des scènes. Le speech doit mettre en avant les qualités du produit, n'en invente pas. Le speech doit être cohérent et avoir un sens.\n3. Utilise les prompts d'image de chaque scène fournis afin de rédiger pour chacune le prompt de l'action qui s'y produit, les paramètres caméra ainsi que l'émotion qu s'en dégage pour chacune.\n4. Output les résultats dans la partie \"video_prompt\" inclue dans chaque scène  au format JSON\n\n# Règles Vidéo\n- Intègre le produit dans des scènes **réalistes et décontractées à partir des prompts d'image fournis\n- Tous les rendus doivent paraître **naturels, spontanés et non retouchés** — éviter l’aspect professionnel ou trop mis en scène.  \n- Utiliser par défaut des **scènes UGC de style casual**, sauf indication contraire de l’utilisateur.  \n- Les sorties doivent toujours respecter le réalisme UGC.\n- Réalisme quotidien dans des environnements authentiques  \n- Style photo/vidéo amateur type iPhone  \n- Cadrage et éclairage légèrement imparfaits  \n- Poses naturelles et expressions sincères  \n- Imperfections visibles (imperfections de peau, cheveux en désordre, texture)  \n- Environnements réels laissés tels quels (désordre, arrière-plans chargés)  \n- Toujours conserver **fidèlement** le texte visible sur le produit (logos, slogans, mentions). Ne jamais inventer. \n\n# Régles Speech\n- Générer un texte court (< 150 caractères)**, spontané et conversationnelle.  \n- Le contenu doit être cohérent et logique (exemple: \"genre TikTok m'a fait acheter ça... franchement c'est la bière fruitée la plus bonne que j'ai goûtée à Sydney et ils reversent les bénéfices à une association...\" ou bien \"Cette crème Yepoda est incroyable ! Regardez comme ma peau l'absorbe bien... et la texture est hyper satisfaisante !\")\n- Ton naturel, comme si la personne parlait à un ami.  \n- Pas de langage formel ni de ton trop commercial.  \n- Utiliser `...` pour marquer des pauses.  \n- Éviter les caractères spéciaux comme tirets longs ou traits d’union.  \n\n# Règles Caméra\nLes prompts doivent inclure des descriptions de réalisme casual tels que :  \n_unremarkable amateur iPhone photos, reddit image, snapchat video, Casual iPhone selfie, slightly uneven framing, Authentic share, slightly blurry, Amateur quality phone photo_  \n\n# Conditions Utilisateur\n- Si l’utilisateur demande explicitement un autre style ou décor, suivre ses instructions.  \n  \n# Règles Générales\n- Générer **uniquement des instructions de génération vidéo** pour les modèles IA (pas de prompts d’images).  \n- Inférer le ratio d’aspect à partir du contexte (vertical/horizontal). Par défaut : **vertical**. \n- Toujours suivre les principes du réalisme casual UGC.  \n- Assurer diversité de genre, d’ethnie et de couleur de cheveux lorsque pertinent.  \n- Utiliser la liste de scènes fournie si disponible.  \n- Par défaut, acteurs âgés de **21 à 30 ans** sauf indication contraire.  \n- Éviter les guillemets doubles dans les prompts.  \n- Ne pas modifier ou inventer du texte sur l’emballage produit.\n  \n# Outils\n- \"Think\" : utilise cet outil pour v\"rifier que le sinstructions ont bien été respectées\n\n# Exemple Output JSON\n\n{\n  \"output\": {\n    \"scenes\": [\n      {\n        \"video_prompt\": {\n          \"speech\": \"genre TikTok m'a fait acheter ça... franchement c'est la bière fruitée la plus bonne que j'ai goûtée à Sydney et ils reversent les bénéfices à une association...\",\n          \"action\": \"le personnage est assis sur le siège conducteur d'une voiture garée, tenant la canette de bière de manière décontractée tout en parlant\",\n          \"camera\": \"vidéo selfie amateur iPhone, cadrage irrégulier, lumière naturelle\",\n          \"emotion\": \"très joyeux, excitation décontractée\"      }\n      }\n    ],\n    \"aspect_ratio_video\": \"9:16\",\n    \"model\": \"veo3_fast\"\n  }\n}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -224,
+        720
+      ],
+      "id": "e666e35c-61d2-4aa0-918a-7d6b360ac67f",
+      "name": "Dialogue Agent"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Nœud fonction n8n pour formater les scènes\nconst inputData = $input.all();\n\nlet formattedOutput = '';\n\n// Parcourir tous les éléments d'entrée\ninputData.forEach((item, index) => {\n  const scenes = item.json.output?.scenes || [];\n  const aspectRatio = item.json.output?.aspect_ratio_image || 'Non spécifié';\n  \n  // Ajouter les informations générales\n  if (index === 0) {\n    formattedOutput += `Format d'image : ${aspectRatio}\\n\\n`;\n  }\n  \n  // Parcourir chaque scène\n  scenes.forEach((scene, sceneIndex) => {\n    const sceneNumber = sceneIndex + 1;\n    formattedOutput += `Scène ${sceneNumber} :\\n`;\n    formattedOutput += `${'='.repeat(20)}\\n`;\n    \n    const prompt = scene.image_prompt;\n    \n    if (prompt.action) {\n      formattedOutput += `Action : ${prompt.action}\\n\\n`;\n    }\n    \n    if (prompt.character) {\n      formattedOutput += `Personnage : ${prompt.character}\\n\\n`;\n    }\n    \n    if (prompt.product) {\n      formattedOutput += `Produit : ${prompt.product}\\n\\n`;\n    }\n    \n    if (prompt.setting) {\n      formattedOutput += `Décor/Environnement : ${prompt.setting}\\n\\n`;\n    }\n    \n    if (prompt.camera) {\n      formattedOutput += `Caméra/Prise de vue : ${prompt.camera}\\n\\n`;\n    }\n    \n    if (prompt.style) {\n      formattedOutput += `Style : ${prompt.style}\\n\\n`;\n    }\n    \n    if (prompt.text_accuracy) {\n      formattedOutput += `Précisions texte : ${prompt.text_accuracy}\\n\\n`;\n    }\n    \n    formattedOutput += `${'-'.repeat(50)}\\n\\n`;\n  });\n});\n\n// Retourner le résultat formaté\nreturn [\n  {\n    json: {\n      scenes : formattedOutput.trim(),\n      original_data: $input.first().json\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -400,
+        720
+      ],
+      "id": "d7fd3cc3-867f-4996-8002-182cb47cf948",
+      "name": "Scènes Data"
+    },
+    {
+      "parameters": {
+        "description": "utilise cet outil pour vérifier que les instructions ont bien été respectées"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1.1,
+      "position": [
+        -192,
+        928
+      ],
+      "id": "6876e1ce-c0f0-429f-8ef1-dbe15e3f0b05",
+      "name": "Think"
+    },
+    {
+      "parameters": {
+        "url": "=https://queue.fal.run/fal-ai/ffmpeg-api/requests/{{ $('Merge Videos').item.json.request_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -192,
+        1584
+      ],
+      "id": "840337df-bf3f-4dcb-b1d5-7f105a0ab4ab",
+      "name": "Get Final Video",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "n6AcTP0yCiPZ9twh",
+          "name": "Public"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "output.scenes",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        240,
+        960
+      ],
+      "id": "d2343e48-2ed7-41fe-aa7b-705d6c5aa4ed",
+      "name": "Split Scenes"
+    },
+    {
+      "parameters": {
+        "content": "## 🧠 Marketing Brain",
+        "height": 448,
+        "width": 1904,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1456,
+        672
+      ],
+      "typeVersion": 1,
+      "id": "802a6ac9-4b43-4eca-877b-574ae43fc681",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## 🎇 Generate Image",
+        "height": 336,
+        "width": 992,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1456,
+        1152
+      ],
+      "typeVersion": 1,
+      "id": "145c686d-bdb8-483d-8f31-e4724de1c69b",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## ▶️ Generate Video",
+        "height": 336,
+        "width": 880,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -432,
+        1152
+      ],
+      "typeVersion": 1,
+      "id": "59b38666-35b4-4464-9aca-36f6c38450e9",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## 👌🏻 Create Final Video",
+        "height": 448,
+        "width": 1920,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1456,
+        1520
+      ],
+      "typeVersion": 1,
+      "id": "e81cc487-767f-4aec-941e-55fae221b695",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1EBe_TnYbQo7tlDq4xYgLM-Q-2LModHRe9d_uIHSmado",
+          "mode": "list",
+          "cachedResultName": "Ads Creation",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1EBe_TnYbQo7tlDq4xYgLM-Q-2LModHRe9d_uIHSmado/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Feuille 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1EBe_TnYbQo7tlDq4xYgLM-Q-2LModHRe9d_uIHSmado/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Date": "={{ $now.format('dd-MM-yyyy') }}",
+            "Demande Utilisateur": "={{ $('On form submission').item.json['Décris la publicité que tu veux créer'] }}",
+            "Final Video URL": "={{ $json.url }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Demande Utilisateur",
+              "displayName": "Demande Utilisateur",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Final Video URL",
+              "displayName": "Final Video URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        208,
+        1664
+      ],
+      "id": "74595404-8bbd-4ab4-b641-63ed9a986b66",
+      "name": "Run Summary",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "SDgHlMNwTHgV30lR",
+          "name": "Public"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## 🏁 Set-up User Request",
+        "height": 336,
+        "width": 992
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1024,
+        320
+      ],
+      "typeVersion": 1,
+      "id": "ce4d1804-bad2-4a43-9118-cc7a8eb1c2cd",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "# Ads Generator\n## By Julien Sanson 🦥\n\n### Youtube : https://www.youtube.com/@JulienSnsn\n### TikTok : https://www.tiktok.com/@julien.snsn?is_from_webapp=1&sender_device=pc\n### LinkedIn : https://www.linkedin.com/in/julien-sanson-🦥-0a03b3128/\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n",
+        "height": 1680,
+        "width": 384,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1952,
+        288
+      ],
+      "id": "575df937-a5d7-496d-9ea4-a955826e27e8",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "6c4ac516-2d06-498e-9dd5-bc26b9a10f29",
+              "leftValue": "={{ $('On form submission').item.json['Combien de secondes doit durer la vidéo ?'] }}",
+              "rightValue": "8",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -800,
+        1648
+      ],
+      "id": "b8a2afb4-4d8b-4665-8fb8-c20c27cc88a6",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4ff70b1d-8ccd-4e67-95d0-13323b51ba5a",
+              "name": "url",
+              "value": "={{ $json.video.url }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        0,
+        1584
+      ],
+      "id": "d0914a6a-0032-4fa7-92ba-f210e58dd219",
+      "name": "Set URL 1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4ff70b1d-8ccd-4e67-95d0-13323b51ba5a",
+              "name": "url",
+              "value": "={{ $('Get Video').last().json.video.url }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -192,
+        1808
+      ],
+      "id": "2c976b96-2bea-4579-ae51-ce4f819fee58",
+      "name": "Set URL 2"
+    },
+    {
+      "parameters": {
+        "content": "## Set-Up workflow\n\n### Set-up Cloudinary\n\n1. on a besoin de Cloudinary pour héberger nos images sur le net, et récupérer un URL exploitable pour la newsletter.\n\n2. Créer un compte sur [Cloudinary](https://cloudinary.com/) puis crééer un environnement (le nom de l’environnement sera réutilisé ensuite dans l’api)\n\n3. Ensuite aller dans “Settings” en bas à gauche puis dans “API keys” là vou spouvez récupérer votre clé API (et lui donner le nom que vous voulez)\n\n4. ensuite allez dans “Product Environments” pour récupérer le “name” de votre environnement\n\n5. Dans la partie “Upload” faites “Add upload preset”, appelez-le `ml_default` et en signing mode choisissez `Unsigned`\nSélectionnez ensuite : `Use the filename of the uploaded file as the Public ID & Append a unique suffix`\nDelivery Time doit être en `Upload`\nDans le menu “Upload” là où il y a le choix des presets,  vérifiez bien que manage Defaults  vérifiez bien que pour omage / vidéo / raw le preset juste créée soit bien sélectionné ! \n\n6. Ensuite Rendez-vous dans le node “Upload to Cloudinary”\nDans l’URL rentrez l’URL suivant : https://api.cloudinary.com/v1_1/<Environment_Name>/image/upload\nAvec “Environment_Name” le nom de votre environnement",
+        "height": 608,
+        "width": 656,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        544,
+        336
+      ],
+      "id": "063aed60-ee07-4613-9966-0ba091b087a9",
+      "name": "Sticky Note6"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "5": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Ad Framework Agent",
+            "type": "ai_languageModel",
+            "index": 1
+          },
+          {
+            "node": "Image Agent",
+            "type": "ai_languageModel",
+            "index": 1
+          },
+          {
+            "node": "Dialogue Agent",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Extract Binary Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Binary Data": {
+      "main": [
+        [
+          {
+            "node": "Upload Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Image": {
+      "main": [
+        [
+          {
+            "node": "Analyze Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "4.1 mini": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Structured Output Parser1",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Structured Output Parser2",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Structured Output Parser3",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Ad Framework Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze Image": {
+      "main": [
+        [
+          {
+            "node": "Ad Framework Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser2": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Image Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser3": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Dialogue Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Image": {
+      "main": [
+        [
+          {
+            "node": "20s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Image": {
+      "main": [
+        [
+          {
+            "node": "Create Video",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "20s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Video": {
+      "main": [
+        [
+          {
+            "node": "1min",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Video": {
+      "main": [
+        [
+          {
+            "node": "Extract Video URL",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "1min",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Videos": {
+      "main": [
+        [
+          {
+            "node": "30s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Video URL": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "20s": {
+      "main": [
+        [
+          {
+            "node": "Get Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "1min": {
+      "main": [
+        [
+          {
+            "node": "Get Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "30s": {
+      "main": [
+        [
+          {
+            "node": "Get Final Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "web_search": {
+      "ai_tool": [
+        [
+          {
+            "node": "Ad Framework Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "frameworks_document": {
+      "ai_tool": [
+        [
+          {
+            "node": "Ad Framework Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sonnet 4": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Ad Framework Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Image Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Dialogue Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ad Framework Agent": {
+      "main": [
+        [
+          {
+            "node": "Image Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Image Agent": {
+      "main": [
+        [
+          {
+            "node": "Scènes Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dialogue Agent": {
+      "main": [
+        [
+          {
+            "node": "Split Scenes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Scènes Data": {
+      "main": [
+        [
+          {
+            "node": "Dialogue Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "Ad Framework Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Image Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Dialogue Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Final Video": {
+      "main": [
+        [
+          {
+            "node": "Set URL 1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "30s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Scenes": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Merge Videos",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set URL 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set URL 1": {
+      "main": [
+        [
+          {
+            "node": "Run Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set URL 2": {
+      "main": [
+        [
+          {
+            "node": "Run Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "8323906d-7c6d-4db9-a08f-284f38eeefd1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2c4533c7a1e56e822a6fde3f376121580e6f7d83dda36974d922278fe743aa10"
+  },
+  "id": "GDf7dMauHDeluVLE",
+  "tags": [
+    {
+      "createdAt": "2025-06-06T12:15:13.667Z",
+      "updatedAt": "2025-06-09T10:04:00.117Z",
+      "id": "hZELXzdKBaDpxj3F",
+      "name": "Youtube"
+    }
+  ]
+}
