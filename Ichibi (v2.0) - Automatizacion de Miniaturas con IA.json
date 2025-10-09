@@ -1,0 +1,869 @@
+{
+  "name": "Miniaturas PLANTILLA",
+  "nodes": [
+    {
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "value": "app6iGT8g3AyW058Q",
+          "mode": "list",
+          "cachedResultName": "Mario Kaizen",
+          "cachedResultUrl": "https://airtable.com/app6iGT8g3AyW058Q"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblzqYxUX04w91qvx",
+          "mode": "list",
+          "cachedResultName": "Verticales",
+          "cachedResultUrl": "https://airtable.com/app6iGT8g3AyW058Q/tblzqYxUX04w91qvx"
+        },
+        "id": "={{ $json.body.id.Record_ID }}",
+        "options": {
+          "downloadFields": [
+            "Video"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -840,
+        -280
+      ],
+      "id": "26bbb94f-7f98-491e-b335-559a22434057",
+      "name": "Airtable",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "kEsoVqBmSZls69vz",
+          "name": "Airtable (12/05/2025)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "data[0].b64_json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        340,
+        -280
+      ],
+      "id": "57dc5fcd-342c-4397-8bb5-7b48bc39b1d6",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Dependiendo del transcript del vídeo tienes que crear un conjunto de 2-6 palabras o números que sean intrigantes para un título de una miniatura.\n\nAlgunos ejemplos para que lo entiendas serían: [EJEMPLOS DE TITULOS]\n\nSolo devuelves un título con 2 a 7 palabras y números. Español castellano. Nada más.\n\nEl título tiene que tener algo que llame la atención para entrar, debe ser breve"
+            },
+            {
+              "content": "=Transcript: {{ $('Transcript').item.json.text }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -460,
+        200
+      ],
+      "id": "d4e03891-f2f2-4f66-89b4-61e4183942b2",
+      "name": "Crea Título",
+      "credentials": {
+        "openAiApi": {
+          "id": "NKszU0XdYb3enewr",
+          "name": "Generica (20/05/25)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "2d72bdcc-5fd8-41a5-b75e-1f2a2441bbd2",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -1060,
+        -280
+      ],
+      "id": "44d4db5b-d609-4a26-ac32-301baeb5e349",
+      "name": "Webhook",
+      "webhookId": "2d72bdcc-5fd8-41a5-b75e-1f2a2441bbd2"
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "binaryPropertyName": "Video_0",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -640,
+        -280
+      ],
+      "id": "30377555-cce4-4d39-86df-2f66fdf20d23",
+      "name": "Transcript",
+      "credentials": {
+        "openAiApi": {
+          "id": "NKszU0XdYb3enewr",
+          "name": "Generica (20/05/25)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-nano",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-NANO"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Creas un pie de foto para un vídeo corto de Instagram sabiendo el transcript del mismo: [EJEMPLO DE TRANSCRIPT]\n\nNo devuelves nada más que el pie de foto para copiar y pegar"
+            },
+            {
+              "content": "[PIE DE FOTO PARA EL TRANSCRIPT DE EJEMPLO]",
+              "role": "assistant"
+            },
+            {
+              "content": "Bien, ahora para este transcript: [SEGUNDO TRANSCRTIPT DE EJEMPLO]"
+            },
+            {
+              "content": "[PIED DE FOTO SEGUNDO TRANSCRIPT]",
+              "role": "assistant"
+            },
+            {
+              "content": "=Bien, ahora hazlo para un vídeo con este transcript: {{ $('Transcript').item.json.text }}"
+            }
+          ]
+        },
+        "simplify": false,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -460,
+        -280
+      ],
+      "id": "eed72db9-4fbc-41ee-b5b8-166a611eb8ae",
+      "name": "Descripcion IG y TT",
+      "credentials": {
+        "openAiApi": {
+          "id": "NKszU0XdYb3enewr",
+          "name": "Generica (20/05/25)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-nano",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-NANO"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Creas un pie de foto para un vídeo corto de Youtube Shorts sabiendo el transcript del mismo: [TRANSCRIPT EJEMPLO]\n\n\nNo devuelves nada más que el pie de foto para copiar y pegar\n\nNunca usas más de 90 caracteres.\n\nSiempre incluyes hashtags con sentido"
+            },
+            {
+              "content": "=[PIE DE FOTO PARA EL TRANSCRIPT DE EJEMPLO]",
+              "role": "assistant"
+            },
+            {
+              "content": "=Bien! Ahora hazlo para un vídeo con este transcript: {{ $('Transcript').item.json.text }}"
+            }
+          ]
+        },
+        "simplify": false,
+        "options": {
+          "temperature": 1
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -460,
+        -40
+      ],
+      "id": "e95c972d-dd3a-4041-8c97-5f06939fa595",
+      "name": "Descripcion YT",
+      "credentials": {
+        "openAiApi": {
+          "id": "NKszU0XdYb3enewr",
+          "name": "Generica (20/05/25)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "app6iGT8g3AyW058Q",
+          "mode": "list",
+          "cachedResultName": "Mario Kaizen",
+          "cachedResultUrl": "https://airtable.com/app6iGT8g3AyW058Q"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblzqYxUX04w91qvx",
+          "mode": "list",
+          "cachedResultName": "Verticales",
+          "cachedResultUrl": "https://airtable.com/app6iGT8g3AyW058Q/tblzqYxUX04w91qvx"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Record ID": "={{ $('Webhook').item.json.body.id.Record_ID }}",
+            "Transcript": "={{ $('Transcript').item.json.text }}",
+            "Descripcion YT": "={{ $('Descripcion YT').item.json.choices[0].message.content }}",
+            "Descripcion IG y TT": "={{ $('Descripcion IG y TT').item.json.choices[0].message.content }}",
+            "Visitas": 0,
+            "Likes": 0,
+            "Duracion": 0,
+            "Miniatura": "={{ $json.webViewLink }}",
+            "Estado": "Revisar"
+          },
+          "matchingColumns": [
+            "Record ID"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Visitas",
+              "displayName": "Visitas",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Likes",
+              "displayName": "Likes",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Fecha de Subida",
+              "displayName": "Fecha de Subida",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Transcript",
+              "displayName": "Transcript",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Script",
+              "displayName": "Script",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Musica",
+              "displayName": "Musica",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Hashtags",
+              "displayName": "Hashtags",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Fuente",
+              "displayName": "Fuente",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Duracion",
+              "displayName": "Duracion",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Descripcion IG y TT",
+              "displayName": "Descripcion IG y TT",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Publicacion LDN",
+              "displayName": "Publicacion LDN",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "RAW",
+              "displayName": "RAW",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Video",
+              "displayName": "Video",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Plataforma",
+              "displayName": "Plataforma",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "options": [
+                {
+                  "name": "linkedin",
+                  "value": "linkedin"
+                },
+                {
+                  "name": "tiktok",
+                  "value": "tiktok"
+                },
+                {
+                  "name": "instagram",
+                  "value": "instagram"
+                },
+                {
+                  "name": "youtube",
+                  "value": "youtube"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Record ID",
+              "displayName": "Record ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Estado",
+              "displayName": "Estado",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Subido y Pagado",
+                  "value": "Subido y Pagado"
+                },
+                {
+                  "name": "Subido",
+                  "value": "Subido"
+                },
+                {
+                  "name": "Subir",
+                  "value": "Subir"
+                },
+                {
+                  "name": "Revisar",
+                  "value": "Revisar"
+                },
+                {
+                  "name": "Editado",
+                  "value": "Editado"
+                },
+                {
+                  "name": "Editar",
+                  "value": "Editar"
+                },
+                {
+                  "name": "Grabar",
+                  "value": "Grabar"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "ID IG",
+              "displayName": "ID IG",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "ID TT",
+              "displayName": "ID TT",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "ID YT",
+              "displayName": "ID YT",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "ID LKD",
+              "displayName": "ID LKD",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Descripcion YT",
+              "displayName": "Descripcion YT",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Miniatura",
+              "displayName": "Miniatura",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Fecha Creacion",
+              "displayName": "Fecha Creacion",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "typecast": true
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        680,
+        -280
+      ],
+      "id": "1cd3458b-3c52-41c1-97d2-279b88447b83",
+      "name": "Actualiza con la info",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "kEsoVqBmSZls69vz",
+          "name": "Airtable (12/05/2025)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1JVXdJlHcK4pddNe5utgAUz6SVPxNE0AB",
+          "mode": "list",
+          "cachedResultName": "Miniaturas IA",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1JVXdJlHcK4pddNe5utgAUz6SVPxNE0AB"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        500,
+        -280
+      ],
+      "id": "f3d97bbe-f25d-48a9-961b-99299e7d40fd",
+      "name": "Google Drive",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "udMrUwn8CjtTypjm",
+          "name": "marioprz02"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/images/edits",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer [API KEY OPENAI]"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "gpt-image-1"
+            },
+            {
+              "name": "prompt",
+              "value": "=En medio, un dibujo estilo anime, fondo oscuro con esferas luminosas, estilo ciencia ficción que represente algo relacionado con el transcript del video. Aquí nunca introduzcas el logo que te envío: {{ $('Transcript').item.json.text }}\n\nAl fondo [DESCRIPCION DEL LOGO] exactamente igual a la de la imagen del logo que adjunto. \n\nTexto grande en [TIPOGRAFIA], negrita y redondeada, [ESTILO Y UBICACION DE LA TIPOGRAFIA]: {{ $('Crea Título').item.json.choices[0].message.content }}"
+            },
+            {
+              "parameterType": "formBinaryData",
+              "name": "image[]",
+              "inputDataFieldName": "Video_0"
+            },
+            {
+              "name": "quality",
+              "value": "high"
+            },
+            {
+              "name": "size",
+              "value": "1024x1536"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        180,
+        -280
+      ],
+      "id": "7ffcecdd-9a44-4adf-903b-234310692e4e",
+      "name": "Crear Imagen"
+    },
+    {
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "value": "app6iGT8g3AyW058Q",
+          "mode": "list",
+          "cachedResultName": "Mario Kaizen",
+          "cachedResultUrl": "https://airtable.com/app6iGT8g3AyW058Q"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblzqYxUX04w91qvx",
+          "mode": "list",
+          "cachedResultName": "Verticales",
+          "cachedResultUrl": "https://airtable.com/app6iGT8g3AyW058Q/tblzqYxUX04w91qvx"
+        },
+        "id": "[RECORD_ID_Donde la tengas adjuntada]",
+        "options": {
+          "downloadFields": [
+            "Video"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        -280
+      ],
+      "id": "a558282d-f62f-4018-83dd-49e5ed6238e2",
+      "name": "Descarga Logo (o imagen que quieras incluir)",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "kEsoVqBmSZls69vz",
+          "name": "Airtable (12/05/2025)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## COMO SIEMPRE:\nAquí tienes el Sistema lo más parecido posible a cómo se desarrolló en el vídeo para que puedas descargarlo e importarlo directamente en tu n8n. Las credenciales deberían cambiarse por las tuyas y tendrás en cada nodo unas notas que te indicarán cómo adaptarlo a tu caso ([])\n\nGracias por ver ;)",
+        "width": 740,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1060,
+        -560
+      ],
+      "id": "be62fedd-eaaa-4751-81da-cf281895ac02",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Airtable": {
+      "main": [
+        [
+          {
+            "node": "Transcript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcript": {
+      "main": [
+        [
+          {
+            "node": "Descripcion IG y TT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Descripcion IG y TT": {
+      "main": [
+        [
+          {
+            "node": "Descripcion YT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Descripcion YT": {
+      "main": [
+        [
+          {
+            "node": "Crea Título",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crea Título": {
+      "main": [
+        [
+          {
+            "node": "Descarga Logo (o imagen que quieras incluir)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Actualiza con la info": {
+      "main": [
+        []
+      ]
+    },
+    "Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Actualiza con la info",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crear Imagen": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Descarga Logo (o imagen que quieras incluir)": {
+      "main": [
+        [
+          {
+            "node": "Crear Imagen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6ec5679a-2116-4c6d-ae80-00a4dd47a22b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "161ef4ae33ce65770cbacc969b7a8a7dea7b6f882504adaad3ed796f23a9dcb7"
+  },
+  "id": "X3h9DrZGxPYr2rjW",
+  "tags": []
+}
