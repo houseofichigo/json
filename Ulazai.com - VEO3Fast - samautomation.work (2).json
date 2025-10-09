@@ -1,0 +1,302 @@
+{
+  "name": "Ulazai.com - VEO3Fast - samautomation.work",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        40,
+        -80
+      ],
+      "id": "e295950a-5ebe-4a7b-bd03-088ee1b2b069",
+      "name": "Schedule Trigger1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://ulazai.com/api/v1/generate/video/",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer YOUR API KEY"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"prompt\": \"A whimsical medium shot captures a determined ginger tabby cat riding confidently on the back of a large, ancient sea turtle. The turtle slowly paddles into a pristine, turquoise tropical ocean during the magical golden hour. The camera executes a smooth, gentle push-in. Bathed in soft, natural sunlight, the scene is serene and adventurous, enhanced by the gentle lapping of waves, the soft sounds of the turtle's flippers, and a light, whimsical orchestral score. The color palette is vibrant with ocean blues, warm golds, and earthy browns, evoking a sense of harmonious, unexpected partnership. Filmed at 30fps with subtle 35mm film grain, focusing on the determined cat gazing out to sea.\",\n  \"video_model\": \"veo3_fast\",\n  \"aspect_ratio\": \"9:16\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        300,
+        -80
+      ],
+      "id": "e1897976-7acb-4f83-9a38-25fcc8cac146",
+      "name": "Make a Video"
+    },
+    {
+      "parameters": {
+        "content": "# Video Generation API Guide\n\n## Endpoint Overview\n**URL:** `https://ulazai.com/api/v1/generate/video/`  \n**Method:** `POST`  \n**Content-Type:** `application/json`\n\n## Authentication\nYou need a Bearer token for authentication. Add this to the Authorization header.\n\n## Request Format\n\n### Headers\n\n\n### Body Parameters\n| Parameter | Type | Required | Description |\n|-----------|------|----------|-------------|\n| `prompt` | string | Yes | Description of the video you want to generate |\n\n\n## Example Request\n\n### cURL\n```bash\ncurl -X POST https://ulazai.com/api/v1/generate/video// \\\n  -H \"Content-Type: application/json\" \\\n  -H \"Authorization: Bearer YOUR_API_TOKEN\" \\\n  -d '{\n    \"prompt\": \"A beautiful sunset over mountains with clouds moving\"\n  }' \\\n  -v\n\n",
+        "height": 860,
+        "width": 720
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        940,
+        -400
+      ],
+      "typeVersion": 1,
+      "id": "c18d7277-f4b3-4d4a-a029-487b993849b0",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "# Video Generation API - Start Creating Videos in Seconds! 🚀\n\n## Why Choose Our Video API?\n\n✅ **FREE 100 Credits** - Start generating videos immediately  \n✅ **No KYC Required** - Unlike OpenAI, no ID verification needed  \n✅ **Super Affordable** - Cheapest Veo3 Fast generation available  \n✅ **Instant Access** - Start building in minutes, not days  \n✅ **Price** - 100 credits per video (1 dollar)  \n\n\nPerfect for developers who want AI video generation without the hassle of complex verification processes!\n\n## Quick Start\n\n### Endpoint\n**URL:** `https://ulazai.com/api/v1/generate/video/`  \n**Method:** `POST`  \n**Content-Type:** `application/json`\n\n### Get Your Free Credits\n1. Sign up at [ulazai.com](https://ulazai.com)\n2. Get your API token instantly\n3. Start with 100 FREE credits\n4. No ID verification required!\n\n## Authentication\n### Authorization: Bearer YOUR_API_TOKEN\n\nWould you like to get these new tools with better discounts? \nCheck out the skool community: \n\nhttps://www.skool.com/samautomation",
+        "height": 820,
+        "width": 1040
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1080,
+        -380
+      ],
+      "typeVersion": 1,
+      "id": "1aac44c9-814d-4501-b02e-87596b06f565",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "url": "=https://ulazai.com/api/v1/generate/{{ $json.data.generation_id }}/",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer YOUR API KEY"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        720,
+        -80
+      ],
+      "id": "b4eebe6d-20ee-4d9a-80ea-92a10141d2c7",
+      "name": "Get the video"
+    },
+    {
+      "parameters": {
+        "amount": 90
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        520,
+        -80
+      ],
+      "id": "78a765d7-8e36-429f-a6ed-4350512014c9",
+      "name": "Wait for 90 sec",
+      "webhookId": "ad9b9259-cbff-4740-ae32-e84583a28f3a"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        40,
+        340
+      ],
+      "id": "9745696b-5d52-4293-a341-98ba8ad0b5e1",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://ulazai.com/api/v1/generate/",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer YOUR API KEY"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "prompt",
+              "value": "create a banner for a new image to video model VEO 3 FAST"
+            },
+            {
+              "name": "size",
+              "value": "3:2"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        300,
+        340
+      ],
+      "id": "fc624177-aef2-4c0b-a11f-38ab8fd93979",
+      "name": "Make a Video1"
+    },
+    {
+      "parameters": {
+        "url": "=https://ulazai.com/api/v1/generate/{{ $json.data.generation_id }}/",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer YOUR API KEY"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        720,
+        340
+      ],
+      "id": "8006495b-e96a-4bda-9f5e-a5f79d6889f9",
+      "name": "Get the video1"
+    },
+    {
+      "parameters": {
+        "amount": 20
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        520,
+        340
+      ],
+      "id": "ca6c5ad5-d349-46c1-adab-b478b432b24c",
+      "name": "Wait for 90 sec1",
+      "webhookId": "ad9b9259-cbff-4740-ae32-e84583a28f3a"
+    },
+    {
+      "parameters": {
+        "content": "## Update\nAdded possibility to make 9:16 videos\n\njust add the parameter\n\naspect_ratio",
+        "height": 200,
+        "width": 320,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        300,
+        -360
+      ],
+      "typeVersion": 1,
+      "id": "d3973c11-d45a-4bbc-beda-bc7cf6441eaf",
+      "name": "Sticky Note2"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Make a Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Make a Video": {
+      "main": [
+        [
+          {
+            "node": "Wait for 90 sec",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for 90 sec": {
+      "main": [
+        [
+          {
+            "node": "Get the video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Make a Video1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Make a Video1": {
+      "main": [
+        [
+          {
+            "node": "Wait for 90 sec1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for 90 sec1": {
+      "main": [
+        [
+          {
+            "node": "Get the video1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "d16de77e-d2cb-4fc0-94b0-f867b5b3b2d3",
+  "meta": {
+    "instanceId": "190e1b81e9845aeb2f58812b2e7f9c8a86cb13b1e8883f6c2bfaa8050710ae79"
+  },
+  "id": "sWCJzcgg94iJRJTy",
+  "tags": []
+}
