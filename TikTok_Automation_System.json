@@ -1,0 +1,558 @@
+{
+  "name": "TikTok Automation System",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        200,
+        -300
+      ],
+      "id": "1c396ed3-5daf-4dac-af37-70ab0e60f02a",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appJ3fDAoRBETWkA2",
+          "mode": "list",
+          "cachedResultName": "POV Content ",
+          "cachedResultUrl": "https://airtable.com/appJ3fDAoRBETWkA2"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblsK6gpL3sX3Xk3I",
+          "mode": "list",
+          "cachedResultName": "POV Main",
+          "cachedResultUrl": "https://airtable.com/appJ3fDAoRBETWkA2/tblsK6gpL3sX3Xk3I"
+        },
+        "filterByFormula": "=AND({Status} = \"Ready To Upload\", {TikTok} = \"\")",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        380,
+        -300
+      ],
+      "id": "e3057bca-fdbf-4b0e-be1f-0ad7c945624f",
+      "name": "Airtable",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Airtable').item.json['Final Render Video'] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        900,
+        -300
+      ],
+      "id": "d037f17e-33fd-43b0-92b2-6f227d7527fb",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.upload-post.com/api/upload",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "title",
+              "value": "={{ $json.output }}"
+            },
+            {
+              "name": "user",
+              "value": "tester123"
+            },
+            {
+              "name": "platform[]",
+              "value": "tiktok"
+            },
+            {
+              "parameterType": "formBinaryData",
+              "name": "video",
+              "inputDataFieldName": "data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1080,
+        -300
+      ],
+      "id": "e9c695ba-e128-4c4a-97d9-40ecb42be11f",
+      "name": "TikTok Post (NEW)",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "RScYZfzdT1tlOftE",
+          "name": "Upload-Post"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "Create a viral TikTok description in less than 50 words.  ",
+        "options": {
+          "systemMessage": "=You are a TikTok description Writer. \n\nYour Task is to create viral worthy tiktok post description based on the following informaation about the video: \n- Name: {{ $json.Name }}\n- Details: {{ $json['Concept (Detailed Scenario)'] }}\n- Theme: {{ $json.Theme }}\n- Tone: {{ $json['Tone/Mood'] }}\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        580,
+        -300
+      ],
+      "id": "18d994a6-99bd-4003-b6fc-e58077dd39da",
+      "name": "TikTok Description Writer"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        600,
+        -100
+      ],
+      "id": "667dc075-647d-485b-9fdd-3e121b46f23f",
+      "name": "gpt 4o mini",
+      "credentials": {
+        "openRouterApi": {
+          "id": "y1vjMptfuqUZLu87",
+          "name": "Openrouter Key 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## TikTok Automation",
+        "height": 480,
+        "width": 1380,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        140,
+        -400
+      ],
+      "id": "157711c4-2a60-4ba5-9699-7292335eeb3e",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appJ3fDAoRBETWkA2",
+          "mode": "list",
+          "cachedResultName": "POV Content ",
+          "cachedResultUrl": "https://airtable.com/appJ3fDAoRBETWkA2"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblsK6gpL3sX3Xk3I",
+          "mode": "list",
+          "cachedResultName": "POV Main",
+          "cachedResultUrl": "https://airtable.com/appJ3fDAoRBETWkA2/tblsK6gpL3sX3Xk3I"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "TikTok": "Uploaded",
+            "id": "={{ $('Airtable').item.json['record id'] }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Concept (Detailed Scenario)",
+              "displayName": "Concept (Detailed Scenario)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Theme",
+              "displayName": "Theme",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Tone/Mood",
+              "displayName": "Tone/Mood",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "POV Scenes",
+              "displayName": "POV Scenes",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "POV Images",
+              "displayName": "POV Images",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "POV VIdeos",
+              "displayName": "POV VIdeos",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "POV SFX",
+              "displayName": "POV SFX",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Final Render Video",
+              "displayName": "Final Render Video",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Pending",
+                  "value": "Pending"
+                },
+                {
+                  "name": "Scenes Generated",
+                  "value": "Scenes Generated"
+                },
+                {
+                  "name": "Image Generated",
+                  "value": "Image Generated"
+                },
+                {
+                  "name": "Videos Generated",
+                  "value": "Videos Generated"
+                },
+                {
+                  "name": "SFX Generated",
+                  "value": "SFX Generated"
+                },
+                {
+                  "name": "Materials Uploaded",
+                  "value": "Materials Uploaded"
+                },
+                {
+                  "name": "Ready To Upload",
+                  "value": "Ready To Upload"
+                },
+                {
+                  "name": "Completed",
+                  "value": "Completed"
+                },
+                {
+                  "name": "",
+                  "value": ""
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Instagram",
+              "displayName": "Instagram",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Facebook",
+              "displayName": "Facebook",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Youtube",
+              "displayName": "Youtube",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "TikTok",
+              "displayName": "TikTok",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "created time",
+              "displayName": "created time",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "last modified time",
+              "displayName": "last modified time",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "record id",
+              "displayName": "record id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1280,
+        -300
+      ],
+      "id": "7544ee01-d864-4983-a837-42f09ab2910e",
+      "name": "Update Airtable",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable": {
+      "main": [
+        [
+          {
+            "node": "TikTok Description Writer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "TikTok Post (NEW)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "gpt 4o mini": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "TikTok Description Writer",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TikTok Description Writer": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TikTok Post (NEW)": {
+      "main": [
+        [
+          {
+            "node": "Update Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "98eac301-d9cf-4249-bc69-18c9f0ade39d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d8c459f4ebcadd20c3258ade09582fe0f02de933363f6184259e0c9a36784090"
+  },
+  "id": "B8svK8QxOtfq7QQP",
+  "tags": [
+    {
+      "createdAt": "2025-04-21T05:46:14.494Z",
+      "updatedAt": "2025-04-22T04:14:41.638Z",
+      "id": "3wXrNzc1uwRSnltq",
+      "name": "W7. Tiktok Social Media"
+    }
+  ]
+}
