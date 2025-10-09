@@ -1,0 +1,313 @@
+{
+  "name": "Personal assistant",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -64,
+        -32
+      ],
+      "id": "4f14962f-c1c9-427a-a53a-10f80f1c3217",
+      "name": "Telegram Trigger",
+      "webhookId": "fa960784-717f-4d01-a39a-bf9a54f23711",
+      "credentials": {
+        "telegramApi": {
+          "id": "s0r2nKJcTTTNeDuC",
+          "name": "Telegram n8n_pilot_bot (@n8n_fly_bot)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "={{ $json.cleanText }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        608,
+        -112
+      ],
+      "id": "da4492f6-f6a1-4c0a-a2d0-9bc5b1791a02",
+      "name": "Send a text message",
+      "webhookId": "c8259e38-1646-4350-b0d0-8cb41e4fb96e",
+      "credentials": {
+        "telegramApi": {
+          "id": "s0r2nKJcTTTNeDuC",
+          "name": "Telegram n8n_pilot_bot (@n8n_fly_bot)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a master AI orchestrator. Analyze user requests and determine the appropriate route:\n\n**For date and time send a request to your tool Date & Time\n\n**For public/general information (weather, facts, calculations, general knowledge):**\nRespond directly with helpful information.\n\n\n\n**For private/personal information (calendar, email, files, personal data):**\nUse the GoogleTools with these parameters:\n- userRequest: The exact user request\n- chatId: The chat ID from the Telegram message  \n- messageId: The message ID\n\n### Examples:\n\nUser: \"What's the weather like?\"\n→ Respond directly with weather information\n\nUser: \"Check my calendar for today\"  \n→ Use GoogleTools with userRequest=\"Check my calendar for today\"\n\nUser: \"Send an email to John\"\n→ Use GoogleTools with userRequest=\"Send an email to John\"\n\nYou are a master AI orchestrator. For personal/private requests (calendar, email, files), use GoogleTools with the user's query.\n\nWhen using GoogleTools, call it like this:\nGoogleTools(query=\"user's exact request\", chatId=\"chat_id\", messageContext=\"any additional context\")\n\nExamples:\n- User: \"What events do I have today?\" → GoogleTools(query=\"What events do I have today?\", chatId=\"123\")\n- User: \"Check my emails\" → GoogleTools(query=\"Check my emails\", chatId=\"123\") \n- User: \"What's the weather?\" → Respond directly (no tool needed)\n\nCurrent user request: {{ $('Telegram Trigger').item.json.message.text }}\nChat ID: {{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        128,
+        -32
+      ],
+      "id": "e966fcaf-8fc4-4d4a-804b-e59ad4e95b04",
+      "name": "Master Agent"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4024faed-ee65-47ad-9155-4a926fdc07d1",
+              "name": "cleanText",
+              "value": "={{ $json.output.split('\\n').filter(line => !line.includes('ROUTE:')).join('\\n').replace(/[*_\\[\\](){}]/g, '') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        448,
+        -112
+      ],
+      "id": "88fc59bd-3f14-4131-8673-0b56700078f4",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        112,
+        128
+      ],
+      "id": "f8f0f544-de77-4b61-9cce-13c70fea4ce5",
+      "name": "LLM",
+      "credentials": {
+        "openAiApi": {
+          "id": "T6jALHM6FIHsU7i3",
+          "name": "OpenAi API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "endpointUrl": "http://n8n:5678/webhook/52015d28-d87a-4f6f-9ca2-7c060c9365e5"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1.1,
+      "position": [
+        464,
+        176
+      ],
+      "id": "bcace5bd-5523-4b4a-ace4-e901b16d866b",
+      "name": "MCP Client"
+    },
+    {
+      "parameters": {
+        "options": {
+          "timezone": "America/Los_Angeles"
+        }
+      },
+      "type": "n8n-nodes-base.dateTimeTool",
+      "typeVersion": 2,
+      "position": [
+        368,
+        160
+      ],
+      "id": "ea03e479-d39e-4683-bc8a-16e74cd5f91d",
+      "name": "Date & Time"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        208,
+        208
+      ],
+      "id": "7d8aa7e4-94c7-46b3-82a6-b17ffe688445",
+      "name": "Postgres Chat Memory",
+      "credentials": {
+        "postgres": {
+          "id": "rXPx9j8n3ZWFPZ95",
+          "name": "PostgreSQL credentials personal_assistant"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        640,
+        320
+      ],
+      "id": "beb06f86-01bd-4b54-8fb1-e79d76fd71ac",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "T6jALHM6FIHsU7i3",
+          "name": "OpenAi API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "\"Retrieves personal information, preferences, and data from user's database\"",
+        "tableName": "personal_data",
+        "topK": 10,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePGVector",
+      "typeVersion": 1.3,
+      "position": [
+        624,
+        160
+      ],
+      "id": "930571d8-8e7a-4cb6-9856-0af36d54c432",
+      "name": "Postgres PGVector Store",
+      "credentials": {
+        "postgres": {
+          "id": "rXPx9j8n3ZWFPZ95",
+          "name": "PostgreSQL credentials personal_assistant"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Master Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Master Agent": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Master Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MCP Client": {
+      "ai_tool": [
+        [
+          {
+            "node": "Master Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Date & Time": {
+      "ai_tool": [
+        [
+          {
+            "node": "Master Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        []
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Postgres PGVector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres PGVector Store": {
+      "ai_tool": [
+        [
+          {
+            "node": "Master Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-09-07T20:42:54.401Z",
+  "updatedAt": "2025-09-09T18:33:49.124Z",
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "versionId": "f25c0c70-bc21-454f-bd71-944511ea8757",
+  "triggerCount": 1,
+  "id": "8hLTyqy6RKlEI9CH",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "parentFolderId": "WxkLNiYI2I4KBiMN",
+  "isArchived": false
+}
