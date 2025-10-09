@@ -1,0 +1,305 @@
+{
+  "name": "ai-invoice-agent",
+  "nodes": [
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "text": "You are an AI assistant that extracts structured data from invoices for entry into a Google Sheets database. The invoices can come from any vendor or business type (e.g., cleaners, IT suppliers, consultants, utility bills, etc.).\n\n## TASK\nExtract the following fields from the invoice text input. Return the output as a valid JSON object inside a markdown code block.\n\n## OUTPUT FORMAT\n```json\n{\n  \"invoice_number\": \"string\",\n  \"vendor\": \"string\",\n  \"date\": \"YYYY-MM-DD\",\n  \"due_date\": \"YYYY-MM-DD\",\n  \"description\": \"string\", // Combine all line items into one string (e.g. '2x keyboards, 1x monitor')\n  \"subtotal\": number,\n  \"tax\": number,\n  \"total\": number,\n  \"status\": \"Paid\" | \"Unpaid\" | \"Overdue\" | null\n}\n\n## RULES\nIf any value is not available or clearly shown, return null for that field.\n\nAlways format the JSON inside a single code block.\n\nDates must be ISO format (YYYY-MM-DD).\n\nDo not include any explanations or additional text outside the code block.",
+        "inputType": "base64",
+        "binaryPropertyName": "data0",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        0,
+        0
+      ],
+      "id": "815d6977-c710-4c31-9dc5-049a988e216e",
+      "name": "OpenAI",
+      "credentials": "REDACTED"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1PPv82AgvGUHfdtlR8IxgsFyYcrIYwe9dC_HcHsRSrPI",
+          "mode": "list",
+          "cachedResultName": "invoices",
+          "cachedResultUrl": "REDACTED_URL"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "REDACTED_URL"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Invoice #": "={{ $json.invoice_number }}",
+            "Vendor": "={{ $json.vendor }}",
+            "Date": "={{ $json.date }}",
+            "Due": "={{ $json.due_date }}",
+            "Description": "={{ $json.description }}",
+            "Subtotal": "={{ $json.subtotal }}",
+            "Tax": "={{ $json.tax }}",
+            "Total": "={{ $json.total }}",
+            "Status": "={{ $json.status }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Invoice #",
+              "displayName": "Invoice #",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Vendor",
+              "displayName": "Vendor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Due",
+              "displayName": "Due",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Description",
+              "displayName": "Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Subtotal",
+              "displayName": "Subtotal",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tax",
+              "displayName": "Tax",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Total",
+              "displayName": "Total",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        440,
+        0
+      ],
+      "id": "495a09c0-1faf-4096-909e-1f5cae026586",
+      "name": "Google Sheets",
+      "credentials": "REDACTED"
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $input.first().json.content;\n\nlet parsed;\nlet markdown;\n\ntry {\n  // Step 1: Strip code block\n  const cleaned = raw.replace(/```json\\n|```/g, '').trim();\n\n  // Step 2: Parse JSON\n  parsed = JSON.parse(cleaned);\n\n  // Step 3: Build Markdown summary\n  markdown = `\n**Invoice Summary**\n\n- **Invoice #:** ${String(parsed.invoice_number || 'N/A')}\n- **Vendor:** ${String(parsed.vendor || 'N/A')}\n- **Date:** ${String(parsed.date || 'N/A')}\n- **Due Date:** ${String(parsed.due_date || 'N/A')}\n- **Description:** ${String(parsed.description || 'N/A')}\n- **Subtotal:** $${parsed.subtotal != null ? parsed.subtotal.toFixed(2) : '0.00'}\n- **Tax:** $${parsed.tax != null ? parsed.tax.toFixed(2) : '0.00'}\n- **Total:** $${parsed.total != null ? parsed.total.toFixed(2) : '0.00'}\n- **Status:** ${String(parsed.status || 'N/A')}\n`.trim();\n\n} catch (error) {\n  throw new Error(\"Failed to parse JSON from OpenAI output: \" + error.message);\n}\n\nreturn [{\n  json: {\n    ...parsed,\n    markdown\n  },\n  binary: $input.first().binary // \ud83d\udc48 This keeps the file intact\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "919b9538-3a40-4624-a09e-613a3aed55cc",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        640,
+        220
+      ],
+      "id": "e26d8e22-2b6d-4f66-8b3c-7ede853f8d5d",
+      "name": "OpenAI Chat Model",
+      "credentials": "REDACTED"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Code').item.json.markdown }}",
+        "options": {
+          "systemMessage": "You are an AI Invoice Assistant responsible for replying to vendors or service providers who send invoices to our company, Bart Corp.\n\n## ROLE\nYou act on behalf of Bart Corp\u2019s finance or operations team. Your tone is friendly and professional. Your job is to acknowledge receipt of vendor invoices and keep the communication clear and respectful.\n\n## CONTEXT\nYou will receive invoice information in **Markdown format**. The invoice may be from any type of vendor (e.g., cleaning services, IT suppliers, freelancers, etc.). The Markdown format was generated by another AI that parsed the invoice into structured text.\n\nYour response will be used as an **email reply** to the vendor who sent the invoice.\n\n## OBJECTIVE\nGenerate a short, polite, and professional email that:\n1. Confirms receipt of the invoice.\n2. References key details from the invoice, such as invoice number, total amount, and vendor name.\n3. Assures the sender that the invoice has been recorded.\n4. Closes with a professional note (e.g., \u201cWe\u2019ll be in touch if anything else is needed\u201d).\n\n## INSTRUCTIONS\n- Do not use personal names in the email.\n- Do not include greetings like \u201cHi\u201d or sign-offs like \u201cBest regards.\u201d\n- The tone should be calm, helpful, and neutral.\n- Keep the message to 3\u20135 short sentences.\n- Use information directly from the Markdown input provided.\n- Output only the final email text (no commentary, no JSON).\n\n## INPUT FORMAT\nYou will receive a block of Markdown containing the invoice data.\n\n## SAMPLE INPUT\nInvoice Summary\n\nInvoice #: 12345\n\nVendor: CleanCo Pty Ltd\n\nDate: 2024-04-24\n\nDue Date: 2024-05-01\n\nDescription: Weekly cleaning service\n\nSubtotal: $600.00\n\nTax: $60.00\n\nTotal: $660.00\n\nStatus: Unpaid\n\nperl\nCopy\nEdit\n\n## SAMPLE OUTPUT\nWe\u2019ve received your invoice **#12345** for a total of **$660.00** from **CleanCo Pty Ltd**, dated **2024-04-24**.  \nThanks for sending that through. The details have been recorded in our system and no further action is needed at this stage.  \nIf anything else is required, a member of the Bart Corp team will be in touch."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        660,
+        0
+      ],
+      "id": "5ff444e6-a20b-4e36-a503-5ddab91d631f",
+      "name": "AI Invoice Agent"
+    },
+    {
+      "parameters": {
+        "options": {
+          "allowFileUploads": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -220,
+        0
+      ],
+      "id": "3add7817-94c7-403a-91d0-2b74a4424f89",
+      "name": "When chat message received",
+      "webhookId": "811ca30c-ea2b-4dab-8aa2-3268b642cea6"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "AI Invoice Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Invoice Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Invoice Agent": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "f78d610b-2669-4b98-a812-76397b80e509",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "bec443f32f282145c50b8dcfc610fa7d9dd1cd11f81d464c6dad140e893c49a0"
+  },
+  "id": "Qz9P1hQOIpHhisvq",
+  "tags": [
+    {
+      "createdAt": "2025-03-27T09:59:28.159Z",
+      "updatedAt": "2025-03-27T09:59:28.159Z",
+      "id": "1a5nO4hc89n0BKRU",
+      "name": "youtube"
+    }
+  ]
+}
