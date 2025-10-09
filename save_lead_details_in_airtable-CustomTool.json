@@ -1,0 +1,8 @@
+{
+  "name": "save_lead_details_in_airtable",
+  "description": "Save lead details in airtable",
+  "color": "linear-gradient(rgb(51,32,36), rgb(0,148,117))",
+  "iconSrc": "",
+  "schema": "[{\"id\":0,\"property\":\"name\",\"description\":\"Name of the lead\",\"type\":\"string\",\"required\":false},{\"id\":1,\"property\":\"email\",\"description\":\"email of the lead\",\"type\":\"string\",\"required\":false},{\"id\":2,\"property\":\"budget\",\"description\":\"budget of the lead\",\"type\":\"string\",\"required\":false},{\"id\":3,\"property\":\"notes\",\"description\":\"Additional notes\",\"type\":\"string\",\"required\":false},{\"id\":4,\"property\":\"temperature\",\"description\":\"Lead score (hot, warm, or cold)\",\"type\":\"string\",\"required\":false}]",
+  "func": "const fetch = require('node-fetch');\nconst baseId = 'appjvcjxVklJPf01y';\nconst tableId = 'tblzUR2HI23P2Hw1f';\nconst token = $vars.airtable_api_key;\n\nconst body = {\n\t\"records\": [\n\t\t{\n\t\t\t\"fields\": {\n\t\t\t\t\"name\": $name,\n\t\t\t\t\"email\": $email,\n                \"budget\": $budget,\n                \"notes\": $notes,\n                \"listing_id\": $vars.listing_id,\n                \"temperature\": $temperature,\n\t\t\t}\n\t\t}\n\t]\n};\n\nconst options = {\n\tmethod: 'POST',\n\theaders: {\n\t\t'Authorization': `Bearer ${token}`,\n\t\t'Content-Type': 'application/json'\n\t},\n\tbody: JSON.stringify(body)\n};\n\nconst url = `https://api.airtable.com/v0/${baseId}/${tableId}`\n\ntry {\n\tconst response = await fetch(url, options);\n\tconst text = await response.text();\n    console.log(\"LEAD SAVE response : \", body, text)\n\treturn text;\n} catch (error) {\n\tconsole.error(error);\n\treturn '';\n}"
+}
