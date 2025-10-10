@@ -1,0 +1,785 @@
+{
+  "name": "2. POV Scenes Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e3cff8bf-f13a-4124-ae26-f872e0757e0a",
+              "leftValue": "={{ $json.Status }}",
+              "rightValue": "Pending",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        160,
+        -380
+      ],
+      "id": "60e8cc78-6a21-4d86-9775-2fcb64a186cf",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "[\n  { \"scene\": \"\" },\n  { \"scene\": \"\" },\n  { \"scene\": \"\" },\n  { \"scene\": \"\" },\n  { \"scene\": \"\" },\n  { \"scene\": \"\" },\n  { \"scene\": \"\" }\n]\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        500,
+        -180
+      ],
+      "id": "5ce84e37-1b3e-40ee-b90e-6799e3698323",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Here is the POV idea:\n\n{\n  \"Name\": \"{{ $json.Name }}\"\"\n  \"Concept\": \"{{ $json['Concept (Detailed Scenario)'] }}\"\n  \"Theme\": \"{{ $json.Theme }}\"  \n  \"Tone/Mood\": \"{{ $json['Tone/Mood'] }}\"\n}\n\nPlease generate a new set of 7 scene descriptions based on this idea, following the instructions provided.",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=# Role\nYou are a POV Scenes Creation Agent responsible for generating a sequence of 7 distinct scene descriptions for a POV video. Each scene should be concise (suitable for a 5-second clip) and written as a caption that captures the essence of the POV idea provided.\n\n# Task\n1. **Input Idea:** The POV idea is provided from Airtable and includes the following fields:\n   - Name\n   - Concept\n   - Theme\n   - Tone/Mood\n\n2. **Generate Scenes:**  \nBased on the provided idea, create exactly 7 scene descriptions that form a logical narrative:\n   - **Scene 1:** Should be longer, starting with \"POV:\" and set the tone of the video.\n   - **Scenes 2–7:** Must be short captions (less than 7–10 words each) that continue the narrative.\n\n\n```json\n[\n  { \"scene\": \"\" },\n  { \"scene\": \"\" },\n  { \"scene\": \"\" },\n  { \"scene\": \"\" },\n  { \"scene\": \"\" },\n  { \"scene\": \"\" },\n  { \"scene\": \"\" }\n]\n\n\n#Examples: \n## Example 1: (Based on a historical POV idea titled \"Waking in the Plague\")\n\nProvided Idea:\n1. Name: \"Waking in the Plague\"\n2. Concept: \"Experience a surreal morning in 14th-century London during the height of the Black Plague, where every moment is a fight for survival and unexpected acts of humanity shine through.\"\n3. Theme: \"Desperation & Hope\"\n4. Tone/Mood: \"Gritty, Haunting, Poignant\"\n\nGenerated Scenes:\n1. \"POV: Awakening to eerie silence in a dim, plague-ridden room.\"\n2. \"Stumbling out into a foggy, deserted street.\"\n3. \"Glimpsing shadowy figures moving in the distance.\"\n4. \"Searching desperately for signs of life or medicine.\"\n5. \"A brief encounter with a kind stranger offering help.\"\n6. \"Clutching a precious vial of medicine in trembling hands.\"\n7. \"Fading hope as you retreat into the night.\"\n\n## Example 2: (Based on a futuristic POV idea titled \"The Neon Rebellion\")\n\nProvided Idea:\n1. Name: \"The Neon Rebellion\"\n2. Concept: \"Step into a futuristic cityscape where the underdog fights against a corrupt system. The narrative unfolds through neon-lit alleyways and high-tech hideouts.\"\n3. Theme: \"Rebellion & Resilience\"\n4. Tone/Mood: \"Edgy, Dynamic, Uplifting\"\n\nGenerated Scenes:\n1. \"POV: Awakening in a cramped, neon-lit apartment.\"\n2.\"Sneaking through bustling, rain-soaked streets.\"\n3. \"Dodging surveillance in dark alleys.\"\n4. \"Meeting a mysterious ally in a shadowy corner.\"\n5. \"Brief moment of high-speed escape on futuristic hovercars.\"\n6. \"Overlooking the city from a secret rooftop.\"\n7. \"Steeling yourself for the next act of defiance.\"\n\n## Example 3: (Based on a modern, emotional POV idea titled \"A Day of Hidden Struggles\")\n\nProvided Idea:\n1. Name: \"A Day of Hidden Struggles\"\n2. Concept: \"Capture the intimate moments of someone battling internal challenges while maintaining a facade of normalcy, revealing the unsaid emotions behind everyday actions.\"\n3. Theme: \"Inner Turmoil & Resilience\"\n4. Tone/Mood: \"Subtle, Reflective, Poignant\"\n\nGenerated Scenes:\n1. \"POV: Opening your eyes to a seemingly ordinary morning.\"\n2. \"Staring blankly at a mirror, questioning reality.\"\n3. \"A hesitant step into a busy, indifferent crowd.\"\n4. \"Clutching a small memento that holds deep meaning.\"\n5. \"A fleeting smile masking hidden pain.\"\n6. \"Passing a moment of solitude in a quiet park.\"\n7. \"Closing your eyes as the day fades, with silent determination.\"\n\n#Note\n- \n- Return the output only with the scenes generated in the exact JSON format"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        360,
+        -400
+      ],
+      "id": "139cdf6d-e25b-494d-842b-a3cac6b26cf2",
+      "name": "POV Scenes Agent"
+    },
+    {
+      "parameters": {
+        "content": "## POV Scenes Agent \n",
+        "height": 460,
+        "width": 1500,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -220,
+        -480
+      ],
+      "id": "fa2578de-3148-4968-b6ed-0b8cba3f961a",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "model": "qwen/qwen-2.5-72b-instruct",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        360,
+        -180
+      ],
+      "id": "11fa05d4-7d27-4832-acdc-5151daa2e22d",
+      "name": "Qwen",
+      "credentials": {
+        "openRouterApi": {
+          "id": "y1vjMptfuqUZLu87",
+          "name": "Openrouter Key 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "output",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        700,
+        -400
+      ],
+      "id": "15be73fa-5c8e-4009-977f-6cce92ba0275",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "batchSize": 7,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        920,
+        -400
+      ],
+      "id": "46149444-c332-4463-bf46-32998fc921cb",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appJ3fDAoRBETWkA2",
+          "mode": "list",
+          "cachedResultName": "POV Content ",
+          "cachedResultUrl": "https://airtable.com/appJ3fDAoRBETWkA2"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblsK6gpL3sX3Xk3I",
+          "mode": "list",
+          "cachedResultName": "POV Main",
+          "cachedResultUrl": "https://airtable.com/appJ3fDAoRBETWkA2/tblsK6gpL3sX3Xk3I"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $json.fields['POV Main'][0] }}",
+            "Status": "Scenes Generated"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Concept (Detailed Scenario)",
+              "displayName": "Concept (Detailed Scenario)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Theme",
+              "displayName": "Theme",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Tone/Mood",
+              "displayName": "Tone/Mood",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "POV Scenes",
+              "displayName": "POV Scenes",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "POV Images",
+              "displayName": "POV Images",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "POV VIdeos",
+              "displayName": "POV VIdeos",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "POV Music",
+              "displayName": "POV Music",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "POV SFX",
+              "displayName": "POV SFX",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "POV Voiceovers",
+              "displayName": "POV Voiceovers",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Final Render Video",
+              "displayName": "Final Render Video",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Pending",
+                  "value": "Pending"
+                },
+                {
+                  "name": "Scenes Generated",
+                  "value": "Scenes Generated"
+                },
+                {
+                  "name": "Image Generated",
+                  "value": "Image Generated"
+                },
+                {
+                  "name": "Videos Generated ",
+                  "value": "Videos Generated "
+                },
+                {
+                  "name": "Music Generated",
+                  "value": "Music Generated"
+                },
+                {
+                  "name": "SFX Generated",
+                  "value": "SFX Generated"
+                },
+                {
+                  "name": "Voicevers Generated",
+                  "value": "Voicevers Generated"
+                },
+                {
+                  "name": "Materials Uploaded",
+                  "value": "Materials Uploaded"
+                },
+                {
+                  "name": "Ready To Upload",
+                  "value": "Ready To Upload"
+                },
+                {
+                  "name": "Completed",
+                  "value": "Completed"
+                },
+                {
+                  "name": "",
+                  "value": ""
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Instagram",
+              "displayName": "Instagram",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Facebook",
+              "displayName": "Facebook",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Youtube",
+              "displayName": "Youtube",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "created time",
+              "displayName": "created time",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "last modified time",
+              "displayName": "last modified time",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "record id",
+              "displayName": "record id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1140,
+        -420
+      ],
+      "id": "20f86964-4aae-48a6-969d-ed92e67b03d6",
+      "name": "Update Record",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appJ3fDAoRBETWkA2",
+          "mode": "list",
+          "cachedResultName": "POV Content ",
+          "cachedResultUrl": "https://airtable.com/appJ3fDAoRBETWkA2"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbl47t5XjP64vCYHx",
+          "mode": "list",
+          "cachedResultName": "POV Scenes",
+          "cachedResultUrl": "https://airtable.com/appJ3fDAoRBETWkA2/tbl47t5XjP64vCYHx"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Scene Number": "={{ $json.scenenumber }}",
+            "Description": "={{ $json.description }}",
+            "POV Main": "={{ [$('Airtable').item.json.id] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Scene Number",
+              "displayName": "Scene Number",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Description",
+              "displayName": "Description",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "POV Main",
+              "displayName": "POV Main",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Name (from POV Main)",
+              "displayName": "Name (from POV Main)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "POV Images",
+              "displayName": "POV Images",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Record ID",
+              "displayName": "Record ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        720,
+        -240
+      ],
+      "id": "04e87ba9-9c91-449a-9401-5fe7879015a0",
+      "name": "Store Scenes",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4b68a2b7-3b3b-4f0f-8a8d-74db96044174",
+              "name": "scenenumber",
+              "value": "={{ $itemIndex+1 }}",
+              "type": "string"
+            },
+            {
+              "id": "e0203c9f-011b-4fc6-b495-de05894703ec",
+              "name": "description",
+              "value": "={{ $json.scene }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1040,
+        -240
+      ],
+      "id": "89d40833-e57a-4ee4-9527-27de1d13746a",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        -380
+      ],
+      "id": "94792254-c615-47ac-a5ee-fe152718c663",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appJ3fDAoRBETWkA2",
+          "mode": "list",
+          "cachedResultName": "POV Content ",
+          "cachedResultUrl": "https://airtable.com/appJ3fDAoRBETWkA2"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblsK6gpL3sX3Xk3I",
+          "mode": "list",
+          "cachedResultName": "POV Main",
+          "cachedResultUrl": "https://airtable.com/appJ3fDAoRBETWkA2/tblsK6gpL3sX3Xk3I"
+        },
+        "filterByFormula": "Status = \"Pending\"",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        -380
+      ],
+      "id": "ee589743-4995-4853-8b90-522ce12cbdcf",
+      "name": "Airtable",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "If": {
+      "main": [
+        [
+          {
+            "node": "POV Scenes Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "POV Scenes Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Qwen": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "POV Scenes Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "POV Scenes Agent": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Update Record",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Scenes": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Store Scenes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "4a1d4093-5e81-419e-92df-a8925c7ce041",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d8c459f4ebcadd20c3258ade09582fe0f02de933363f6184259e0c9a36784090"
+  },
+  "id": "3ktz4Pb5hXFw6XkJ",
+  "tags": [
+    {
+      "createdAt": "2025-03-24T09:10:16.506Z",
+      "updatedAt": "2025-03-24T09:10:16.506Z",
+      "id": "RqZ45jZ8VcYyMMZW",
+      "name": "W4: POV Content Machine"
+    }
+  ]
+}
