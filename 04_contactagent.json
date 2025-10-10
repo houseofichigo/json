@@ -1,0 +1,380 @@
+{
+  "name": "04 contactagent",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appo2PMRHKC5xqeQe",
+          "mode": "list",
+          "cachedResultName": "Contact Information",
+          "cachedResultUrl": "https://airtable.com/appo2PMRHKC5xqeQe"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblEdwApn1LvylF98",
+          "mode": "list",
+          "cachedResultName": "Table 1",
+          "cachedResultUrl": "https://airtable.com/appo2PMRHKC5xqeQe/tblEdwApn1LvylF98"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        -500,
+        240
+      ],
+      "id": "511e67e0-3dc7-405e-92c5-9028860e66f0",
+      "name": "Get Contacts",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "C3q778P65pzjOVQj",
+          "name": "Airtable Personal Access Token account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "base": {
+          "__rl": true,
+          "value": "appo2PMRHKC5xqeQe",
+          "mode": "list",
+          "cachedResultName": "Contact Information",
+          "cachedResultUrl": "https://airtable.com/appo2PMRHKC5xqeQe"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblEdwApn1LvylF98",
+          "mode": "list",
+          "cachedResultName": "Table 1",
+          "cachedResultUrl": "https://airtable.com/appo2PMRHKC5xqeQe/tblEdwApn1LvylF98"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $fromAI(\"name\",\"name of contact\") }}",
+            "Email": "={{ $fromAI(\"email\",\"email of contact\") }}",
+            "Phone Number ": "={{ $fromAI(\"phonenumber\",\"phone number of contact\") }}",
+            "Tag": "={{ $fromAI(\"tag\",\"potential prospect or client\") }}",
+            "Priority": "={{ $fromAI(\"priority\",\"low, medium or high\") }}",
+            "Notes": "={{ $fromAI(\"notes\",\"additional notes about contact\") }}"
+          },
+          "matchingColumns": [
+            "name"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Phone Number ",
+              "displayName": "Phone Number ",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Tag",
+              "displayName": "Tag",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Priority",
+              "displayName": "Priority",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "created time",
+              "displayName": "created time",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "last modified time",
+              "displayName": "last modified time",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "record id ",
+              "displayName": "record id ",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        -340,
+        240
+      ],
+      "id": "5b9e304f-a765-4524-9f60-acb9df8caeba",
+      "name": "Add or Update Contact",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "C3q778P65pzjOVQj",
+          "name": "Airtable Personal Access Token account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query }}",
+        "options": {
+          "systemMessage": "=You are a contact management assistant responsible for looking up, adding, and updating contact information efficiently.\n\n---\n\n### **Contact Management Tools**\n1. **Get Contacts** → Use this tool to retrieve contact information.\n2. **Add or Update Contact** → Use this tool to store new contact information or modify existing entries.\n\n---\n\n### **Agent Workflow & Rules**\n1. **Determine Action Type**\n   - Identify whether the user wants to retrieve, add, or update a contact.\n   \n2. **Gather Necessary Information**\n   - If retrieving a contact, ensure the user's request includes a name or relevant identifier.\n   - If adding or updating a contact, confirm necessary details such as name, email, and phone number.\n\n3. **Execute the Correct Action**\n   - Use \"Get Contacts\" for retrieving existing contact information.\n   - Use \"Add or Update Contact\" to store new contacts or update existing ones.\n\n4. **Confirm Task Completion**\n   - Notify the user once the action is completed.\n   - If additional information is needed, prompt the user before proceeding.\n\n---\n\n### **Examples of Agent Execution**\n#### **Example 1: Retrieving a Contact**\n**User Input:** \"Find John's contact details.\"\n\n**Action Steps:**\n1. Call \"Get Contacts\" with the query:\n   - \"Retrieve contact details for John.\"\n2. Respond to the user with the contact information found.\n\n---\n\n#### **Example 2: Adding a New Contact**\n**User Input:** \"Add a new contact: Sarah, email sarah@example.com, phone 555-1234.\"\n\n**Action Steps:**\n1. Call \"Add or Update Contact\" with the query:\n   - \"Store contact information: Name - Sarah, Email - sarah@example.com, Phone - 555-1234.\"\n2. Respond to the user:\n   - \"Sarah’s contact details have been saved. Let me know if you need any modifications.\"\n\n---\n\n#### **Example 3: Updating an Existing Contact**\n**User Input:** \"Update Mike’s phone number to 555-6789.\"\n\n**Action Steps:**\n1. Call \"Add or Update Contact\" with the query:\n   - \"Update contact information for Mike: New phone number - 555-6789.\"\n2. Respond to the user:\n   - \"Mike’s phone number has been updated successfully. Anything else I can assist with?\"\n\n---\n\n### **Error Handling & Clarifications**\n- **Missing Contact Details:**\n  - If a request lacks necessary details (name, email, phone, etc.), ask the user for clarification before proceeding.\n- **Tool-Specific Errors:**\n  - If an action fails, notify the user and provide alternative solutions.\n- **Ambiguous Requests:**\n  - If a request is unclear, ask the user for more information before taking action.\n\n---\n\n### **Final Notes**\n- Always confirm contact details before updating or storing them.\n- Retrieve contact information before making updates to ensure accuracy.\n- Provide clear confirmation messages upon successful task completion.\n- Current date and time is {{ $now }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -520,
+        -40
+      ],
+      "id": "b10e2090-e901-45bd-92ff-8472e87af21e",
+      "name": "Contact Agent",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4f360190-a717-4a93-8336-d03ea65975d5",
+              "name": "response",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -120,
+        -120
+      ],
+      "id": "be2d9678-0915-4e80-bf00-91880c8a0832",
+      "name": "Response"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4f360190-a717-4a93-8336-d03ea65975d5",
+              "name": "response",
+              "value": "An error occurred. Please try again.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -120,
+        100
+      ],
+      "id": "79c455c1-797d-4177-ba42-83d53dbc1dae",
+      "name": "Try Again"
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -780,
+        -40
+      ],
+      "id": "7db012b1-bade-47fe-89f1-a14af4ee47f7",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "model": "qwen/qwen-plus",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -720,
+        240
+      ],
+      "id": "1ecfa86d-3d40-46e3-baec-98db52defacd",
+      "name": "Qwen Plus",
+      "credentials": {
+        "openRouterApi": {
+          "id": "uBQTiXd5eRsdJrn8",
+          "name": "OpenRouter account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Get Contacts": {
+      "ai_tool": [
+        [
+          {
+            "node": "Contact Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add or Update Contact": {
+      "ai_tool": [
+        [
+          {
+            "node": "Contact Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contact Agent": {
+      "main": [
+        [
+          {
+            "node": "Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Try Again",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Contact Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Qwen Plus": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Contact Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "89d4e875-0eeb-4ca3-aec7-d540540be8ae",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e9750110772e39d19e520d5411ea772dd5055cd081f0298a554cb86fb57bf55d"
+  },
+  "id": "8IiejUscDsqTgCpD",
+  "tags": [
+    {
+      "createdAt": "2025-02-05T14:39:29.951Z",
+      "updatedAt": "2025-02-11T07:18:53.327Z",
+      "id": "H7inKYVBNXU71zkD",
+      "name": "04 super agent"
+    }
+  ]
+}
