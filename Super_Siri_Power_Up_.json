@@ -1,0 +1,470 @@
+{
+  "name": "Super Siri Power Up!",
+  "nodes": [
+    {
+      "parameters": {
+        "model": "qwen/qwen-max",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        1280,
+        340
+      ],
+      "id": "7a80dfd4-e34f-4437-9451-d153f25eab98",
+      "name": "Qwen Max",
+      "credentials": {
+        "openRouterApi": {
+          "id": "uBQTiXd5eRsdJrn8",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "emailAgent",
+        "description": "Call this tool for any email actions.",
+        "workflowId": {
+          "__rl": true,
+          "value": "BGfNL0iiReCPRh2e",
+          "mode": "list",
+          "cachedResultName": "Learning — 02 emailAgent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [
+            "query"
+          ],
+          "schema": [
+            {
+              "id": "query",
+              "displayName": "query",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        1540,
+        360
+      ],
+      "id": "e2ae6dbb-7c3c-4082-9af8-80a174e92a32",
+      "name": "emailAgent"
+    },
+    {
+      "parameters": {
+        "name": "calendarAgent",
+        "description": "Call this tool for any calendar action.",
+        "workflowId": {
+          "__rl": true,
+          "value": "kZeWqKBW2RfR5y54",
+          "mode": "list",
+          "cachedResultName": "Learning — 03 calendarAgent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        1680,
+        360
+      ],
+      "id": "7c40c269-a746-4e8b-bc18-28f11310af52",
+      "name": "calendarAgent"
+    },
+    {
+      "parameters": {
+        "name": "contactAgent",
+        "description": "Call this agent to get contact information.",
+        "workflowId": {
+          "__rl": true,
+          "value": "8IiejUscDsqTgCpD",
+          "mode": "list",
+          "cachedResultName": "Learning — 04 contactagent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        1820,
+        340
+      ],
+      "id": "f0e0f4d4-f799-4548-bb77-3d45b7d1d31e",
+      "name": "contactAgent"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Use this tool to search the internet",
+        "method": "POST",
+        "url": "https://api.tavily.com/search",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "Authorization",
+              "valueProvider": "fieldValue",
+              "value": "Bearer {insert-api-key}"
+            },
+            {
+              "name": "Content-Type",
+              "valueProvider": "fieldValue",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"query\": \"{searchResult}\",\n  \"max_results\": 4\n}",
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "searchResult",
+              "description": "What the user has requested to search the internet for",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        1960,
+        340
+      ],
+      "id": "23b1f9ba-bb25-4927-bd30-60411394cac5",
+      "name": "Tavily"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('User Request').item.json.body.input }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        1400,
+        340
+      ],
+      "id": "5e359558-1300-4a17-b47a-27a6f3baeac1",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1840,
+        40
+      ],
+      "id": "3e85a6d3-0204-4aaf-94fd-170d152c5dcc",
+      "name": "Wait",
+      "webhookId": "7537a81c-7579-4841-bca7-ac3ba4320dfb"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.input }}",
+        "options": {
+          "systemMessage": "=You are a helpful assistant that helps to carry out the task given by the user such as email management, calendar scheduling and searching the internet. \n\n---\n\n### **Context & Capabilities**\n- **Task Delegation:** The agent does not write emails, manage calendars, or perform searches itself but delegates tasks to specialized tools.\n- **Tool Selection:** Routes user queries to the appropriate tool based on the request type.\n- **Information Gathering:** Ensures required information, such as contact details, is retrieved before calling a tool.\n- **Error Handling:** If required information is missing, it prompts the user before proceeding.\n- **Response Management:** Confirms task completion to the user.\n\n---\n\n### **Tools & Their Functions**\n1. **emailAgent** → Handles email-related actions (sending, drafting, organizing emails).\n2. **calendarAgent** → Manages calendar events (creating, updating, deleting events).\n3. **contactAgent** → Retrieves, updates, or adds contact details.\n4. **Tavily** → Searches the internet for information.\n\n---\n\n### **Agent Workflow & Rules**\n1. **Identify the Action Type**\n   - Determine whether the request is related to email, calendar, contacts, or search.\n\n2. **Gather Required Information**\n   - If a task involves a contact, retrieve necessary details using `contactAgent` before proceeding.\n   - example: send a querie to contactAgent to request for contact information i.e \"can you retrieve for me Kelvin's email\".\n   - If contact information is missing, ask the user for details before proceeding.\n\n3. **Call the Correct Tool**\n   - Pass the user's request to the appropriate tool in a structured query format.\n\n4. **Confirm Task Completion**\n   - Provide a confirmation response once the tool has executed the action.\n   - If the tool requires more information, request it from the user before proceeding.\n\n---\n\n### **Examples of Agent Execution**\n#### **Example 1: Sending an Email**\n**User Input:** \"Send an email to Calvin to ask for a follow-up on his project.\"\n\n**Action Steps:**\n1. Use `contactAgent` to retrieve Calvin’s email address.\n2. \"Send Calvin (insert email address) an email to ask him what the project progress is so far.\"\n3. Respond to the user:\n   - \"The email has been sent to Calvin. What else can I do for you?\"\n\n---\n\n#### **Example 2: Scheduling a Meeting**\n**User Input:** \"Schedule a meeting with Sarah for next Monday at 10 AM about the marketing strategy.\"\n\n**Action Steps:**\n1. Use `contactAgent` to retrieve Sarah’s email.\n2. If email is available, call `calendarAgent` with the query:\n   - \"Schedule a meeting with Sarah (insert email address) on Monday at 10 AM regarding the marketing strategy.\"\n3. Respond to the user:\n   - \"The meeting has been scheduled with Sarah for next Monday at 10 AM. Anything else I can assist with?\"\n\n---\n\n#### **Example 3: Searching the Internet**\n**User Input:** \"Find the latest news about electric cars.\"\n\n**Action Steps:**\n1. Call `Tavily` with the query: \"Find the latest news about electric cars.\"\n2. Provide the user with search results.\n\n---\n\n### **Error Handling & Clarifications**\n- **Missing Contact Information:**\n  - If an action requires an email and it's not found, stop and ask the user before proceeding.\n- **Tool-Specific Errors:**\n  - If a tool fails to execute an action, notify the user and provide alternative suggestions.\n- **Ambiguous Requests:**\n  - If a request is unclear, ask the user for clarification.\n\n---\n\n### **Final Notes**\n- The agent never composes emails or takes actions itself; it strictly calls the appropriate tool.\n- It ensures proper data retrieval before passing requests to a tool.\n- Always confirms task completion or requests additional information from the user if needed.\n- Respond to user in a conversational manner, short and clear format without use of \\n\\n or add in any links or syntaxes, optimized for voice delivery. \n- Here is the current date/time: {{ $now }}\n\n---"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1520,
+        40
+      ],
+      "id": "f5e8f140-ad57-4e39-a8df-fc5ceeec598b",
+      "name": "Super Siri"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appbxL2PZSTLMEFci",
+          "mode": "list",
+          "cachedResultName": "Super Siri Log",
+          "cachedResultUrl": "https://airtable.com/appbxL2PZSTLMEFci"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblqnZ82SgAM0nMGK",
+          "mode": "list",
+          "cachedResultName": "Chat Log",
+          "cachedResultUrl": "https://airtable.com/appbxL2PZSTLMEFci/tblqnZ82SgAM0nMGK"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "User Input": "={{ $('User Request').item.json.body.input }}",
+            "Super Siri Response": "={{ $json.output }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "User Input",
+              "displayName": "User Input",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Super Siri Response",
+              "displayName": "Super Siri Response",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Created Time",
+              "displayName": "Created Time",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Last Modified Time",
+              "displayName": "Last Modified Time",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Record ID",
+              "displayName": "Record ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        2200,
+        40
+      ],
+      "id": "0fcf3b24-8220-4c8a-896e-98079ed41b78",
+      "name": "Update Chat Log ",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "C3q778P65pzjOVQj",
+          "name": "Airtable Personal Access Token account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.output }}",
+        "options": {}
+      },
+      "id": "476d2aa6-1991-46e5-9880-b35d5bec6362",
+      "name": "Respond To User",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "position": [
+        2000,
+        40
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "assistant",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "005aefcc-72e2-4d23-ac0d-7c2aeda8782f",
+      "name": "User Request",
+      "type": "n8n-nodes-base.webhook",
+      "position": [
+        1300,
+        40
+      ],
+      "webhookId": "f0224b4b-1644-4d3d-9f12-01a9c04879e4",
+      "typeVersion": 2
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Qwen Max": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Super Siri",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "emailAgent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Super Siri",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "calendarAgent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Super Siri",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "contactAgent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Super Siri",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tavily": {
+      "ai_tool": [
+        [
+          {
+            "node": "Super Siri",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Super Siri",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Respond To User",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Super Siri": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond To User": {
+      "main": [
+        [
+          {
+            "node": "Update Chat Log ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "User Request": {
+      "main": [
+        [
+          {
+            "node": "Super Siri",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "b05079fa-dc57-4af3-9247-6a90f0925657",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e9750110772e39d19e520d5411ea772dd5055cd081f0298a554cb86fb57bf55d"
+  },
+  "id": "BWtLHUnoTpPnPioA",
+  "tags": [
+    {
+      "createdAt": "2025-03-05T03:39:43.141Z",
+      "updatedAt": "2025-03-05T03:39:43.141Z",
+      "id": "pDEkAikKHQHcc8M5",
+      "name": "09 Siri AI Agent"
+    }
+  ]
+}
