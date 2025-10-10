@@ -1,0 +1,680 @@
+{
+  "name": "My workflow 14",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Author: Calvin Hia\nhttps://www.youtube.com/@dainami_ai/",
+        "height": 80,
+        "width": 540,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -420,
+        -100
+      ],
+      "id": "5171e6a6-0a51-488b-982f-8ca0fbaa96f3",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -360,
+        680
+      ],
+      "id": "ce13f855-3689-4e8f-882b-d3d5f50968da",
+      "name": "When chat message received",
+      "webhookId": "80bd6ee1-9133-4526-9ad0-29523e336849"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Product Name: {{ $json['product name'] }}\nProduct Description: {{ $json['product description'] }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are a product creator AI assistant. When a user provides a product name and a general description, you must generate detailed product information and return it strictly in JSON format.\n\nYour output JSON must include the following fields:\n\n1. \"product description\" — a concise, engaging summary of the product’s key attributes and benefits.  \n2. \"target audience\" — a description of the ideal customers or user demographics for this product.  \n3. \"unique selling point\" — a list of 2-4 main features or benefits that differentiate the product from competitors.  \n4. \"key features\" — a detailed list of the product’s technical or functional attributes.  \n5. \"brand voice/tone\" — the style and personality that best suits the brand’s messaging (e.g., energetic, friendly, professional).  \n6. \"use cases\" — typical scenarios or situations where the product would be used.  \n7. \"customer pain point\" — the main problems or frustrations that the product solves for customers.\n\nRespond only with a valid JSON object containing all fields exactly as specified, without any extra commentary or explanation.\n\n### Example user input:\n\nProduct name: StrideFlex Ultra Sneakers  \nGeneral description: Lightweight, breathable sneakers designed for all-day comfort and performance.\n\n---\n\n### Example output JSON:\n\n{\n  \"product name\": \"StrideFlex Ultra Sneakers\"\n  \"product description\": \"Lightweight, breathable sneakers designed for all-day comfort and performance.\",\n  \"target audience\": \"Active millennials aged 18-35 who value style and comfort for casual and fitness wear.\",\n  \"unique selling point\": \"Advanced cushioning technology for shock absorption, Eco-friendly materials with recycled soles, Stylish design available in multiple colors\",\n  \"key features\": \"Breathable mesh upper, Memory foam insole, Durable rubber outsole, Machine washable, Available in sizes 5-12\",\n  \"brand voice/tone\": \"Energetic, motivational, friendly\",\n  \"use cases\": \"Daily workouts and runs, Casual outings, Travel and walking long distances\",\n  \"customer pain point\": \"Uncomfortable shoes that cause foot fatigue, Lack of eco-conscious sneaker options, Bulky or heavy sneakers unsuitable for everyday use\"\n}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        -160,
+        140
+      ],
+      "id": "016a207c-2323-46f1-8f0b-de10afa4175a",
+      "name": "Product Creator"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Product Name:  {{ $json.output['product name'] }}\nProduct Description: {{ $json.output['product description'] }}\nTarget Audience: {{ $json.output['target audience'] }}\nUnique Selling Point: {{ $json.output['unique selling point'] }}\nKey Features: {{ $json.output['key features'] }}\nBrand Voice/Tone: {{ $json.output['brand voice/tone'] }}\nUse Cases: {{ $json.output['use cases'] }}\nCustomer Pain Point: {{ $json.output['customer pain point'] }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are a product designer AI assistant tasked with creating an extremely detailed, vivid, and imaginative text prompt for an AI image generation model. \n\nThe prompt is to generate the very first design image of a specific product, describing it as if it is being created and seen for the first time.\n\nYour description must:\n\n- Focus entirely on the product itself, with **no external props, text, or settings**.\n- Specify a **plain, neutral background** (e.g., light grey or white).\n- Be highly detailed, covering every visible aspect of the product:\n  - Shape and silhouette\n  - Materials and textures\n  - Colors and accents\n  - Unique design features \n  - Structural elements \n  - Lighting and shadow details to emphasize form and texture\n- Describe the product from multiple angles if relevant \n- Avoid referencing the product name or brand; write as if the product is entirely new and unseen.\n\nReturn **only** a JSON object with a single key:\n{\n  \"product prompt\": \"your detailed, immersive prompt here\"\n}\n\n---\n\n### Example Input (product info):\n\nProduct Name: Loki EcoStride Hybrid Shoes  \nProduct Description: The Loki EcoStride Hybrid Shoes elegantly combine the performance of track shoes with the sophistication of loafers, designed for the modern eco-conscious individual who values style and sustainability.  \nTarget Audience: Fashion-forward individuals aged 25-45 who prioritize sustainable fashion and seek comfortable footwear for both casual and active lifestyles.  \nUnique Selling Point: Sustainable materials made from recycled plastics, Versatile design suitable for both active and formal settings, Lightweight yet supportive construction for all-day wear  \nKey Features: Recycled plastic upper for eco-friendliness, Cushioned insole for comfort, Slip-on design for easy wear, Durable rubber outsole for grip, Available in various chic colors  \nBrand Voice/Tone: Sleek, sophisticated, innovative\n\n---\n\n### Example Output:\n{\n  \"product prompt\": \"A pair of sleek, modern hybrid shoes placed on a plain, light grey background. One shoe is positioned upright to showcase the side profile, and the other is slightly rotated to reveal the sole and insole. The design merges the athletic form of performance track shoes with the refined elegance of loafers. The upper is crafted from a subtly textured material that resembles woven recycled plastic, in a matte charcoal grey with deep forest green accents along the heel tab and tongue. The silhouette is minimal and sculpted, with no laces — instead featuring a clean slip-on structure and a gently curved opening for ease of wear. The cushioned insole is slightly visible, hinting at comfort, while the outsole is made of durable rubber with a modern grip pattern that’s both functional and minimal. The design is lightweight and supportive, with soft contours that balance style and practicality. Shadows are soft and the lighting is even, highlighting the shoe's form, texture, and color details.\"\n}\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        160,
+        140
+      ],
+      "id": "5c28a046-2d59-4f8e-97ec-a6549028a323",
+      "name": "Designer"
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "data[0].b64_json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        680,
+        140
+      ],
+      "id": "359f153d-15e7-444c-87f9-8e01d014ba5f",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/images/generations",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "gpt-image-1"
+            },
+            {
+              "name": "prompt",
+              "value": "={{ $json.output['product prompt'] }}"
+            },
+            {
+              "name": "n",
+              "value": "={{1}}"
+            },
+            {
+              "name": "size",
+              "value": "1024x1024"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        500,
+        140
+      ],
+      "id": "12364f26-c9ee-4542-830d-0fcc1c956638",
+      "name": "Create Product Image",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "iMF3QDOGv5O2t2g2",
+          "name": "OpenAI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"product name\": \"StrideFlex Ultra Sneakers\",\n  \"product description\": \"Lightweight, breathable sneakers designed for all-day comfort and performance.\",\n  \"target audience\": \"Active millennials aged 18-35 who value style and comfort for casual and fitness wear.\",\n  \"unique selling point\": \"Advanced cushioning technology for shock absorption, Eco-friendly materials with recycled soles, Stylish design available in multiple colors\",\n  \"key features\": \"Breathable mesh upper, Memory foam insole, Durable rubber outsole, Machine washable, Available in sizes 5-12\",\n  \"brand voice/tone\": \"Energetic, motivational, friendly\",\n  \"use cases\": \"Daily workouts and runs, Casual outings, Travel and walking long distances\",\n  \"customer pain point\": \"Uncomfortable shoes that cause foot fatigue, Lack of eco-conscious sneaker options, Bulky or heavy sneakers unsuitable for everyday use\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        -20,
+        380
+      ],
+      "id": "e4ad40e3-aaab-4924-9721-c9d2b2eb9cd8",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"product prompt\": \"your detailed, immersive prompt here\"\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        340,
+        360
+      ],
+      "id": "06b85df7-4a4d-4cb7-9f63-2a67f8be8ee1",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        160,
+        380
+      ],
+      "id": "ee2f83c1-2212-4325-85eb-771715451de6",
+      "name": "gpt4o mini",
+      "credentials": {
+        "openRouterApi": {
+          "id": "y1vjMptfuqUZLu87",
+          "name": "Openrouter Key 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -180,
+        380
+      ],
+      "id": "e4b680e1-e22d-479a-815e-6206b79af45d",
+      "name": "gpt4o mini1",
+      "credentials": {
+        "openRouterApi": {
+          "id": "y1vjMptfuqUZLu87",
+          "name": "Openrouter Key 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "={{ $('Product Creator').item.json.output['product name'] }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1NUS2NDcsIw43ZhM-O4AuVnkn4UWbwFf4",
+          "mode": "list",
+          "cachedResultName": "75.1 Product Images",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1NUS2NDcsIw43ZhM-O4AuVnkn4UWbwFf4"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        780,
+        360
+      ],
+      "id": "28c27a4e-2fcd-4727-b5aa-6cc621141539",
+      "name": "Upload Product Shot",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "9WRrz2c8ZemVzlPL",
+          "name": "Google Drive account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "app7gagpeTkBNSHM0",
+          "mode": "list",
+          "cachedResultName": "Product Database",
+          "cachedResultUrl": "https://airtable.com/app7gagpeTkBNSHM0"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblHshNRn3qAZvHI1",
+          "mode": "list",
+          "cachedResultName": "Product Database",
+          "cachedResultUrl": "https://airtable.com/app7gagpeTkBNSHM0/tblHshNRn3qAZvHI1"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Product Name": "={{ $('Product Creator').item.json.output['product name'] }}",
+            "Product Description": "={{ $('Product Creator').item.json.output['product description'] }}",
+            "Target Audience": "={{ $('Product Creator').item.json.output['target audience'] }}",
+            "Unique Selling Points": "={{ $('Product Creator').item.json.output['unique selling point'] }}",
+            "Key Features": "={{ $('Product Creator').item.json.output['key features'] }}",
+            "Brand Voice/Tone": "={{ $('Product Creator').item.json.output['brand voice/tone'] }}",
+            "Use Cases": "={{ $('Product Creator').item.json.output['use cases'] }}",
+            "Customer Pain Point": "={{ $('Product Creator').item.json.output['customer pain point'] }}",
+            "Product Image URL": "={{ $json.webViewLink }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Product Name",
+              "displayName": "Product Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Product Description",
+              "displayName": "Product Description",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Target Audience",
+              "displayName": "Target Audience",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Unique Selling Points",
+              "displayName": "Unique Selling Points",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Key Features",
+              "displayName": "Key Features",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Brand Voice/Tone",
+              "displayName": "Brand Voice/Tone",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Use Cases",
+              "displayName": "Use Cases",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Customer Pain Point",
+              "displayName": "Customer Pain Point",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Product Image URL",
+              "displayName": "Product Image URL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Product Ads",
+              "displayName": "Product Ads",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Product Video Shoot",
+              "displayName": "Product Video Shoot",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Blogs",
+              "displayName": "Blogs",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Last Modified Time",
+              "displayName": "Last Modified Time",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Created Time",
+              "displayName": "Created Time",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Product Record Id",
+              "displayName": "Product Record Id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1040,
+        360
+      ],
+      "id": "5008a88f-831f-4a72-a8e8-183ed1af1439",
+      "name": "Create Product Record",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Generate New Product\n",
+        "height": 620,
+        "width": 1680,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -420,
+        20
+      ],
+      "id": "1498d792-975a-4953-a78e-4670bfdb57e2",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "product name"
+            },
+            {
+              "name": "product description"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -360,
+        140
+      ],
+      "id": "ef517b5d-9711-4ec9-b4e5-6d87b30f1afd",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "content": "## Update Chat ID\n- Click test step and then send a message from telegram to get the chat ID \n- Copy it over to the telegram node",
+        "height": 280,
+        "width": 560
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        300,
+        -280
+      ],
+      "id": "d25a4a18-5264-4ac3-89ab-f0d73133b36b",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "operation": "sendPhoto",
+        "chatId": "{insert chat id}",
+        "binaryData": true,
+        "additionalFields": {
+          "caption": "=Here's your new product: {{ $('Product Creator').item.json.output['product name'] }} !\n\n{{ $('Product Creator').item.json.output['product description'] }}\n\nHope you like it!"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        920,
+        80
+      ],
+      "id": "2277c703-da6d-40fa-8e4b-6b28e15c0114",
+      "name": "Reply Telegram (Update Chat ID)",
+      "webhookId": "8152253b-d1ef-4889-a786-a92028fd1806",
+      "credentials": {
+        "telegramApi": {
+          "id": "jc90OwyUZxXdBTvg",
+          "name": "Marketing Agent"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        380,
+        -160
+      ],
+      "id": "edd40881-202b-4021-b78e-e398b8b62e2b",
+      "name": "Telegram Trigger",
+      "webhookId": "846089cd-3bfc-4428-aa9e-879204fd4aa2",
+      "credentials": {
+        "telegramApi": {
+          "id": "jc90OwyUZxXdBTvg",
+          "name": "Marketing Agent"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Product Creator": {
+      "main": [
+        [
+          {
+            "node": "Designer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Designer": {
+      "main": [
+        [
+          {
+            "node": "Create Product Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Product Image": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Upload Product Shot",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Reply Telegram (Update Chat ID)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Product Creator",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Designer",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "gpt4o mini": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Designer",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "gpt4o mini1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Product Creator",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Product Shot": {
+      "main": [
+        [
+          {
+            "node": "Create Product Record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Product Creator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6eb952b9-79f7-487b-a856-2e76c8c14437",
+  "meta": {
+    "instanceId": "d8c459f4ebcadd20c3258ade09582fe0f02de933363f6184259e0c9a36784090"
+  },
+  "id": "hgw4hZ2t0D3DJ0O9",
+  "tags": [
+    {
+      "createdAt": "2025-05-20T03:24:56.310Z",
+      "updatedAt": "2025-05-20T03:24:56.310Z",
+      "id": "0rWAvxnRzPQiczkQ",
+      "name": "W15: Marketing Agents"
+    }
+  ]
+}
