@@ -1,0 +1,400 @@
+{
+  "name": "19.0 VEO Character Generator Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Create Your Character",
+        "formDescription": "=Hey there, fill up this form to create your character to generate viral ads for you!",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Name",
+              "placeholder": "What is your character name?",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Age",
+              "placeholder": "What is the age of your character? ",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Gender",
+              "placeholder": "What is the gender of your character? ",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Ethnicity",
+              "placeholder": "Ethnicity of your character.",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Hair",
+              "placeholder": "Hair colour, length, style.",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Key Facial Features",
+              "placeholder": "Angular/round face shape, facial hair, wrinkles? ",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Voice Quality",
+              "placeholder": "Warm, raspy, gravelly, clear etc",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Accent/Dialect",
+              "placeholder": "New York, Asian, British etc.",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Pace/Delivery",
+              "placeholder": "Slow and thoughtful, quick and clipped etc",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Emotional Flavour",
+              "placeholder": "Curious, gentle, gruff-but-kind, playful etc.",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "0adea5f1-7af8-469b-8ba3-e6b10699a6d9",
+      "name": "On form submission",
+      "webhookId": "aab8169e-9a2d-4899-9e4d-9affd1c79880"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Name: {{ $json.Name }}\nAge: {{ $json.Age }}\nGender: {{ $json.Gender }}\nEthnicity: {{ $json.Ethnicity }}\nHair: {{ $json['Key Facial Features'] }}",
+        "options": {
+          "systemMessage": "=# Role\nYou are a **Character Prompt Agent**. Your job is to take a set of user‐provided fields and spin them into a single, vivid narrative paragraph describing a fictional character’s appearance and presence.\n\n# Task\nWhen given:\n- Name (and pronouns)  \n- Age  \n- Gender/Identity  \n- Ethnicity / Skin Tone  \n- Hair (color, length/style/texture)  \n- Key Facial Structure & Features  \n\nOutput exactly one self‐contained paragraph that weaves all details into a natural, descriptive character prompt.\n\n# Examples\n\n**Input:**  \nName: Mei Lin\nAge: 22\nGender: Female\nEthnicity: East Asian, warm ivory complexion\nHair: Jet-black, waist-length, straight and glossy\nKey Facial Structure & Features: Soft oval face with a small beauty mark above her right eyebrow, almond-shaped dark brown eyes, a delicate upturned nose, and full, naturally rosy lips\n\n**Output:**  \nMei Lin is a 22-year-old East Asian woman with a warm ivory complexion. Her straight, jet-black hair cascades to her waist, framing a soft, oval face marked by a single beauty spot above her right eyebrow. Almond-shaped, dark brown eyes sparkle with intelligence. A delicate upturned nose and naturally rosy, full lips give her a friendly, approachable look.\n\n# Note\n- Keep it to **one paragraph**.  \n- Use **rich sensory language** (color, shape, texture).  \n- Do **not** add backstory, motivations, or voice—focus **only** on appearance."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        160,
+        0
+      ],
+      "id": "f512f5ba-571d-4607-8eb5-8c3bab375a83",
+      "name": "Character Prompt Agent"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Name: {{ $('On form submission').item.json.Name }}\nAge: {{ $('On form submission').item.json.Age }}\nGender: {{ $('On form submission').item.json.Gender }}\nVoice Quality: {{ $('On form submission').item.json['Voice Quality'] }}\nAccent: {{ $('On form submission').item.json['Accent/Dialect'] }}\nTalking Pace: {{ $('On form submission').item.json['Pace/Delivery'] }}\nEmotional Flavour: {{ $('On form submission').item.json['Emotional Flavour'] }}",
+        "options": {
+          "systemMessage": "=# Role\nYou are a **Voice Prompt Agent**. Your job is to take a set of user‐provided vocal attributes and craft a concise, evocative voice description for a character.\n\n# Task\nWhen given:\n- Name\n- Age\n- Gender \n- Voice Quality  \n- Accent  \n- Pace\n- Emotional Flavor \n\nOutput exactly one self‐contained paragraph that captures how the character sounds when speaking.\n\n# Examples\n\n**Input:**  \nName: Mei Lin\nAge: 22\nGender: Female\nVoice Quality: Clear and youthful with a gentle lilt\nAccent: Light Asian accent with occasional Asian sparkle\nPace: Steady and upbeat, her tone always carrying a quick, friendly smile\nEmotional Flavor: Brightly curious and warm-hearted, with a hint of playful mischief\n\n**Output:**  \nMei Lin’s voice is clear and youthful, carrying a gentle lilt of Asian English with just a sprinkle of Asian sparkle. She speaks in a steady, upbeat rhythm that always sounds like a quick, friendly smile. Her tone is bright and curious, lifting at the end of each phrase as if she can’t wait to learn more.\n\n# Note\n- Keep it to **one paragraph**.  \n- Emphasize **timbre**, **accent**, **rhythm**, and **emotion**.  \n- Avoid mentioning appearance or backstory—focus **only** on how they speak.",
+          "returnIntermediateSteps": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        480,
+        0
+      ],
+      "id": "a57cc226-1b4a-4ee4-85ea-b2e5744c7fa5",
+      "name": "Voice Prompt Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        140,
+        220
+      ],
+      "id": "b6cdb306-36c5-45b1-a092-59d427206db8",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "y1vjMptfuqUZLu87",
+          "name": "Openrouter Key 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        460,
+        200
+      ],
+      "id": "797ed95e-86c7-4932-a310-c2b549dc9a68",
+      "name": "OpenRouter Chat Model1",
+      "credentials": {
+        "openRouterApi": {
+          "id": "y1vjMptfuqUZLu87",
+          "name": "Openrouter Key 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appitDUrFb8g8iJOu",
+          "mode": "list",
+          "cachedResultName": "VEO3 Ads Creator",
+          "cachedResultUrl": "https://airtable.com/appitDUrFb8g8iJOu"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tble7SgOZ0YnrUl2l",
+          "mode": "list",
+          "cachedResultName": "Character Table",
+          "cachedResultUrl": "https://airtable.com/appitDUrFb8g8iJOu/tble7SgOZ0YnrUl2l"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Age": "={{ $('On form submission').item.json.Age }}",
+            "Gender": "={{ $('On form submission').item.json.Gender }}",
+            "Ethnicity": "={{ $('On form submission').item.json.Ethnicity }}",
+            "Character Prompt": "={{ $('Character Prompt Agent').item.json.output }}",
+            "Voice Prompt ": "={{ $json.output }}",
+            "Name": "={{ $('On form submission').item.json.Name }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Age",
+              "displayName": "Age",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Gender",
+              "displayName": "Gender",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Ethnicity",
+              "displayName": "Ethnicity",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Character Prompt",
+              "displayName": "Character Prompt",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Voice Prompt ",
+              "displayName": "Voice Prompt ",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Ads",
+              "displayName": "Ads",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Last Modified Time",
+              "displayName": "Last Modified Time",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Created Time",
+              "displayName": "Created Time",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Record ID",
+              "displayName": "Record ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        800,
+        0
+      ],
+      "id": "b2fb7333-8d0b-4a39-b875-eafd006cc36c",
+      "name": "Create Character",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## VEO3 Character Prompt Generator\n",
+        "height": 500,
+        "width": 1000,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -40,
+        -100
+      ],
+      "id": "d6475942-df4c-4e7a-b90e-759ba3bfed6e",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Character Prompt Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Character Prompt Agent": {
+      "main": [
+        [
+          {
+            "node": "Voice Prompt Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Character Prompt Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Voice Prompt Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Voice Prompt Agent": {
+      "main": [
+        [
+          {
+            "node": "Create Character",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1a8dc0d6-19c9-485d-884a-4c1d18cd1489",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d8c459f4ebcadd20c3258ade09582fe0f02de933363f6184259e0c9a36784090"
+  },
+  "id": "o0upYjAAeAvo4cDD",
+  "tags": [
+    {
+      "createdAt": "2025-06-16T09:07:09.831Z",
+      "updatedAt": "2025-06-16T09:07:09.831Z",
+      "id": "EY1xj6BA3V7sPQ2e",
+      "name": "W19: VEO Ads Agent"
+    }
+  ]
+}
