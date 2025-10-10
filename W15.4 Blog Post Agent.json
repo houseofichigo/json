@@ -1,0 +1,1281 @@
+{
+  "name": "My workflow 14",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Author: Calvin Hia\nhttps://www.youtube.com/@dainami_ai/",
+        "height": 80,
+        "width": 540,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -3140,
+        -620
+      ],
+      "id": "5171e6a6-0a51-488b-982f-8ca0fbaa96f3",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Product name: {{ $json.output['product name'] }}\nProduct Description: {{ $json.output['product description'] }}\nTarget Audience: {{ $json.output['target audience'] }}\nUnique Selling Point: {{ $json.output['unique selling points'] }}\nKey Features: {{ $json.output['key features'] }}\nBrand Voice: {{ $json.output['brand voice'] }}\nUse Cases: {{ $json.output['use cases'] }}\nCustomer Pain Point: {{ $json.output['customer pain point'] }}\nUser Request: {{ $('When Executed by Another Workflow').item.json.description }}\n",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are a creative blog post AI assistant specialized in writing casual, lifestyle-focused \"how to wear\" or \"how to use\" style blog posts tailored to the product type. You will receive detailed product information including product name, description, target audience, unique selling points, key features, brand voice, use cases, and customer pain points.\n\nYour task is to generate a blog post with the following structure and output format:\n\n- A catchy, lifestyle-related blog title relevant to the product and audience (e.g., \"Three Bold Color Combinations for Fall\" or \"How to Stay Hydrated with Your Reusable Bottle\").\n- An engaging, conversational introduction paragraph that hooks the reader and sets the theme.\n- Exactly **3 distinct sections**, each including:\n  - A descriptive section heading.\n  - A casual, detailed paragraph or two providing practical tips, style advice, or usage ideas related to the product.\n- A friendly, casual closing paragraph (outro) inviting reader engagement or encouraging exploration of the product.\n- A single array field that groups all image prompts for the sections, in order, for easy extraction and iteration.\n\nMaintain the brand voice and tone provided, keeping the style approachable and engaging. Avoid rigid SEO jargon; focus on storytelling and lifestyle relevance.\n\nReturn your output strictly as a JSON object with these fields:\n\n```json\n{\n  \"blog_title\": \"Your catchy, lifestyle-related blog title\",\n  \"introduction\": \"Engaging introductory paragraph.\",\n  \"sections\": [\n    {\n      \"heading\": \"Section 1 heading\",\n      \"content\": \"Section 1 detailed content with practical advice.\"\n    },\n    {\n      \"heading\": \"Section 2 heading\",\n      \"content\": \"Section 2 detailed content with tips or usage ideas.\"\n    },\n    {\n      \"heading\": \"Section 3 heading\",\n      \"content\": \"Section 3 detailed content with style or usage guidance.\"\n    }\n  ],\n  \"image_prompts\": [\n    \"Descriptive prompt for AI image generation referencing the product for section 1.\",\n    \"Descriptive prompt for AI image generation referencing the product for section 2.\",\n    \"Descriptive prompt for AI image generation referencing the product for section 3.\"\n  ],\n  \"outro\": \"Friendly closing paragraph inviting reader interaction or call to action.\"\n}\n\n#Example\nInput: \nProduct name: Loki EcoStride Hybrid Shoes\nProduct Description: The Loki EcoStride Hybrid Shoes elegantly combine the performance of track shoes with the sophistication of loafers, designed for the modern eco-conscious individual who values style and sustainability.\nTarget Audience: Fashion-forward individuals aged 25-45 who prioritize sustainable fashion and seek comfortable footwear for both casual and active lifestyles.\nUnique Selling Point: Sustainable materials made from recycled plastics, Versatile design suitable for both active and formal settings, Lightweight yet supportive construction for all-day wear\nKey Features: Recycled plastic upper for eco-friendliness, Cushioned insole for comfort, Slip-on design for easy wear, Durable rubber outsole for grip, Available in various chic colors\nBrand Voice: Sleek, sophisticated, innovative\nUse Cases: Casual outings, Office wear, Light workouts, Travel and everyday errands\nCustomer Pain Point: Lack of stylish, comfortable shoes that are environmentally friendly; The need for versatile footwear that can transition from casual to formal settings easily.\nUser Request: Focus on styling these shoes for eco-conscious city life.\n\nOutput: \n{\n  \"blog_title\": \"Styling Your Loki EcoStride Hybrid Shoes for Eco-Conscious City Life\",\n  \"introduction\": \"Embrace the urban jungle with style and sustainability. The Loki EcoStride Hybrid Shoes perfectly blend modern design with eco-friendly materials, making them a must-have for the city dweller who cares about the planet and fashion.\",\n  \"sections\": [\n    {\n      \"heading\": \"Effortless Street Style for Everyday Commutes\",\n      \"content\": \"Pair your Loki EcoStride shoes with comfortable, breathable fabrics like organic cotton tees and recycled denim. Their versatile design means you can transition seamlessly from a morning coffee run to a casual meeting, all while keeping your footprint light.\"\n    },\n    {\n      \"heading\": \"Chic Yet Practical for Weekend Adventures\",\n      \"content\": \"Combine these shoes with relaxed chinos and a lightweight jacket for weekend markets or strolls in the park. The cushioned insole and durable outsole ensure comfort and support, so you can explore without compromise.\"\n    },\n    {\n      \"heading\": \"Smart Casual for Eco-Friendly Evenings\",\n      \"content\": \"Dress up your look with tailored trousers and an eco-friendly blazer. The sleek silhouette of the Loki EcoStride shoes adds polish, proving that sustainability and sophistication go hand in hand.\"\n    }\n  ],\n  \"image_prompts\": [\n    \"A stylish urban scene showing a person wearing Loki EcoStride Hybrid Shoes with recycled denim and an organic cotton tee, walking through a busy city street with eco-friendly cafes in the background.\",\n    \"A relaxed weekend outdoor market scene featuring a person in Loki EcoStride shoes paired with chinos and a lightweight jacket, carrying a reusable tote bag.\",\n    \"An evening cityscape with a person dressed in tailored trousers and an eco-friendly blazer wearing Loki EcoStride shoes, standing near modern, sustainable architecture.\"\n  ],\n  \"outro\": \"Ready to walk the city sustainably and in style? Share your favorite urban looks and join the movement towards eco-conscious fashion.\"\n}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        -2580,
+        -280
+      ],
+      "id": "1d1448bd-c623-4147-9f23-25fe9f9540b5",
+      "name": "Blog Post Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -2560,
+        0
+      ],
+      "id": "f6932c1c-d3f0-4a35-ad47-572e5a866a42",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "y1vjMptfuqUZLu87",
+          "name": "Openrouter Key 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Product Name: {{ $json['product name'] }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=#Tools \n- searchProduct: use this to search the airtable for information about product \n- getProduct: use this to get information about a specific product requested by the user\n\n#Output \n\nReturn the product requested with the exact information provided from the airtable in the following JSON format: \n{\n  \"product name\": \"insert product name\",\n  \"product description\": \"insert product description\",\n  \"target audience\": \"insert target audience\",\n  \"unique selling points\": \"insert unique selling points\", \n  \"key features\": \"insert key features\",\n  \"brand voice\": \"insert brand voice\",\n  \"use cases\": \"insert use cases\", \n  \"customer pain point\": \"insert customer pain point\",\n  \"image url\": \"insert image url\",\n  \"product record id\": \"insert product record id\"\n}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        -2920,
+        -280
+      ],
+      "id": "e1cf6e32-f5cb-43e7-9526-0cdb9d3932c7",
+      "name": "Product Owner"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "app7gagpeTkBNSHM0",
+          "mode": "list",
+          "cachedResultName": "Product Database",
+          "cachedResultUrl": "https://airtable.com/app7gagpeTkBNSHM0"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblHshNRn3qAZvHI1",
+          "mode": "list",
+          "cachedResultName": "Product Database",
+          "cachedResultUrl": "https://airtable.com/app7gagpeTkBNSHM0/tblHshNRn3qAZvHI1"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        -3040,
+        -20
+      ],
+      "id": "c6334f84-d818-4e55-b255-987626699502",
+      "name": "searchProduct",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "value": "app7gagpeTkBNSHM0",
+          "mode": "list",
+          "cachedResultName": "Product Database",
+          "cachedResultUrl": "https://airtable.com/app7gagpeTkBNSHM0"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblHshNRn3qAZvHI1",
+          "mode": "list",
+          "cachedResultName": "Product Database",
+          "cachedResultUrl": "https://airtable.com/app7gagpeTkBNSHM0/tblHshNRn3qAZvHI1"
+        },
+        "id": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Record_ID', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        -2900,
+        20
+      ],
+      "id": "64d5f6d5-73f1-4845-b40c-155326e04dd7",
+      "name": "getProduct",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"product name\": \"insert product name\",\n  \"product description\": \"insert product description\",\n  \"target audience\": \"insert target audience\",\n  \"unique selling points\": \"insert unique selling points\", \n  \"key features\": \"insert key features\",\n  \"brand voice\": \"insert brand voice\",\n  \"use cases\": \"insert use cases\", \n  \"customer pain point\": \"insert customer pain point\",\n  \"image url\": \"insert image url\",\n  \"product record id\": \"insert product record id\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        -2760,
+        20
+      ],
+      "id": "09a4a52f-398b-45b8-821f-fa7de5d0287b",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"blog_title\": \"Your catchy, lifestyle-related blog title\",\n  \"introduction\": \"Engaging introductory paragraph.\",\n  \"sections\": [\n    {\n      \"heading\": \"Section 1 heading\",\n      \"content\": \"Section 1 detailed content with practical advice.\"\n    },\n    {\n      \"heading\": \"Section 2 heading\",\n      \"content\": \"Section 2 detailed content with tips or usage ideas.\"\n    },\n    {\n      \"heading\": \"Section 3 heading\",\n      \"content\": \"Section 3 detailed content with style or usage guidance.\"\n    }\n  ],\n  \"image_prompts\": [\n    \"Descriptive prompt for AI image generation referencing the product for section 1.\",\n    \"Descriptive prompt for AI image generation referencing the product for section 2.\",\n    \"Descriptive prompt for AI image generation referencing the product for section 3.\"\n  ],\n  \"outro\": \"Friendly closing paragraph inviting reader interaction or call to action.\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        -2400,
+        -40
+      ],
+      "id": "771a2d9f-f212-4816-abea-ccafeeccbec3",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "sendTo": "calvinhia@gmail.com",
+        "subject": "={{ $('Blog Post Agent').item.json.output.blog_title }}",
+        "message": "={{ $json.output }}",
+        "options": {
+          "appendAttribution": false,
+          "senderName": "BLOGGER"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -560,
+        -140
+      ],
+      "id": "9dc51d3e-dced-40a3-ada7-ba2ec0e31f4a",
+      "name": "Gmail",
+      "webhookId": "c75ceac4-9a91-4790-ae51-1e6d5fb03682",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "nQgyh0JD4weKbEk9",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Product Owner').item.json.output['image url'] }}",
+          "mode": "url"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -2200,
+        -200
+      ],
+      "id": "6980b8b1-e29a-438e-9468-4afffa93666a",
+      "name": "Google Drive",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "9WRrz2c8ZemVzlPL",
+          "name": "Google Drive account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/images/edits",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "image",
+              "inputDataFieldName": "data"
+            },
+            {
+              "name": "prompt",
+              "value": "={{ $json.output.image_prompts[0] }}"
+            },
+            {
+              "name": "model",
+              "value": "gpt-image-1"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2020,
+        -380
+      ],
+      "id": "ab518f9e-e90a-42e7-adaf-f8fb648f394c",
+      "name": "image 1",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "iMF3QDOGv5O2t2g2",
+          "name": "OpenAI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/images/edits",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "image",
+              "inputDataFieldName": "data"
+            },
+            {
+              "name": "prompt",
+              "value": "={{ $json.output.image_prompts[1] }}"
+            },
+            {
+              "name": "model",
+              "value": "gpt-image-1"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2020,
+        -200
+      ],
+      "id": "d3893935-1057-4a90-a513-9302c8f3ef05",
+      "name": "image 2",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "iMF3QDOGv5O2t2g2",
+          "name": "OpenAI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/images/edits",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "image",
+              "inputDataFieldName": "data"
+            },
+            {
+              "name": "prompt",
+              "value": "={{ $json.output.image_prompts[2] }}"
+            },
+            {
+              "name": "model",
+              "value": "gpt-image-1"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2020,
+        0
+      ],
+      "id": "fbcef7d3-c03d-4b6b-8f7a-199d9360a082",
+      "name": "image 3",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "iMF3QDOGv5O2t2g2",
+          "name": "OpenAI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "data[0].b64_json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        -1840,
+        -380
+      ],
+      "id": "e907c6a3-d8a6-49c1-8728-b2976aa8b098",
+      "name": "convert image 1"
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "data[0].b64_json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        -1840,
+        -200
+      ],
+      "id": "ba8d6623-0c72-4ed1-83d8-18087bc62989",
+      "name": "convert image 2"
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "data[0].b64_json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        -1840,
+        0
+      ],
+      "id": "f3236312-f4df-4396-8831-251ed492dac4",
+      "name": "convert image 3"
+    },
+    {
+      "parameters": {
+        "name": "={{ $('Blog Post Agent').item.json.output.blog_title }}_1",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1kC_474nEFKhol83byg_et6sJq4nO1nwu",
+          "mode": "list",
+          "cachedResultName": "75.33. Image Blogs",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1kC_474nEFKhol83byg_et6sJq4nO1nwu"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -1680,
+        -380
+      ],
+      "id": "fed37314-c268-4a8a-adfe-bbcf642cc7b4",
+      "name": "Google Drive1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "9WRrz2c8ZemVzlPL",
+          "name": "Google Drive account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "={{ $('Blog Post Agent').item.json.output.blog_title }}_2",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1kC_474nEFKhol83byg_et6sJq4nO1nwu",
+          "mode": "list",
+          "cachedResultName": "75.33. Image Blogs",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1kC_474nEFKhol83byg_et6sJq4nO1nwu"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -1660,
+        -200
+      ],
+      "id": "4d44193d-95b7-4a6d-8a4f-ac148fe6de50",
+      "name": "Google Drive2",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "9WRrz2c8ZemVzlPL",
+          "name": "Google Drive account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "={{ $('Blog Post Agent').item.json.output.blog_title }}_3",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1kC_474nEFKhol83byg_et6sJq4nO1nwu",
+          "mode": "list",
+          "cachedResultName": "75.33. Image Blogs",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1kC_474nEFKhol83byg_et6sJq4nO1nwu"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -1660,
+        0
+      ],
+      "id": "2f7bc4e5-14ce-4ff5-b1d4-3a7cf4e03954",
+      "name": "Google Drive3",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "9WRrz2c8ZemVzlPL",
+          "name": "Google Drive account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Generate Blog Images",
+        "height": 680,
+        "width": 980,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2260,
+        -460
+      ],
+      "id": "53983d73-253d-4059-ad55-857f5d22bb4e",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Generate Blog Outline",
+        "height": 680,
+        "width": 880
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -3160,
+        -460
+      ],
+      "id": "05cc55f4-e7bd-47f4-9731-ebdfa7f1a49b",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Blog Title: {{ $json.output.blog_title }}\nIntroduction: {{ $json.output.introduction }}\n \nHeader1:{{ $json.output.sections[0].heading }}\nImage1: {{ $json.image1 }}\nText1: {{ $json.output.sections[0].content }}\n \nHeader2: {{ $json.output.sections[1].heading }}\nImage2: {{ $json['image 2'] }}\nText2: {{ $json.output.sections[1].content }}\n \nHeader3: {{ $json.output.sections[2].heading }}\nImage3: {{ $json['image 3'] }}\nText3: {{ $json.output.sections[2].content }}\n",
+        "options": {
+          "systemMessage": "=You are an expert HTML content generator AI assistant. You will receive structured input data representing a blog post with the following fields:\n\n- Blog Title  \n- Introduction  \n- Three sections, each containing:  \n  - Section heading  \n  - Image URL or identifier  \n  - Section text content  \n\nYour task is to generate a **complete HTML document string** that formats this data as a well-structured, readable blog post. The HTML should include:\n\n- The blog title as an `<h1>` heading at the top.  \n- The introduction as a paragraph below the title.  \n- For each of the three sections:  \n  - The section heading as an `<h2>`.  \n  - The image embedded using an `<img>` tag referencing the provided image URL/identifier.  \n  - The section text as one or more `<p>` paragraphs.  \n- Clean, semantic HTML structure with proper indentation and valid syntax.  \n- Embedded image URLs should be properly placed as the `src` attribute in the `<img>` tag.  \n- No external CSS or scripts; simple inline styling is optional for readability.\n\nReturn **only** the full HTML document as a string with no extra text or commentary.\n\n---\n\n### Example input fields you will receive:\n\n- Blog Title: `{{ $('Blog Post Agent').item.json.output.blog_title }}`  \n- Introduction: `{{ $('Blog Post Agent').item.json.output.introduction }}`  \n- Header1: `{{ $('Blog Post Agent').item.json.output.sections[0].heading }}`  \n- Image1: `{{ $json.image1 }}`  \n- Text1: `{{ $('Blog Post Agent').item.json.output.sections[0].content }}`  \n- Header2: `{{ $('Blog Post Agent').item.json.output.sections[1].heading }}`  \n- Image2: `{{ $json['image 2'] }}`  \n- Text2: `{{ $('Blog Post Agent').item.json.output.sections[1].content }}`  \n- Header3: `{{ $('Blog Post Agent').item.json.output.sections[2].heading }}`  \n- Image3: `{{ $json['image 3'] }}`  \n- Text3: `{{ $('Blog Post Agent').item.json.output.sections[2].content }}`\n\n---\n\n### Expected HTML output structure (example snippet):\n\n<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\" />\n  <title>{{ $json.output.blog_title }}</title>\n  <style>\n    body { font-family: Arial, sans-serif; line-height: 1.6; margin: 40px; color: #333; }\n    h1 { font-size: 2.5em; margin-bottom: 0.2em; }\n    h2 { font-size: 1.8em; margin-top: 1.5em; }\n    p { font-size: 1em; margin-bottom: 1em; }\n    img {\n      display: block;\n      max-width: 400px;   /* Prevent images from getting too big */\n      width: 100%;\n      height: auto;\n      margin: 1em auto;   /* Center the images horizontally */\n    }\n  </style>\n</head>\n<body>\n  <h1>{{ $json.output.blog_title }}</h1>\n  <p>{{ $json.output.introduction }}</p>\n\n  <h2>{{ $json.output.sections[0].heading }}</h2>\n  <img src=\"{{ $json.image1 }}\" alt=\"header1\" />\n  <p>{{ $json.output.sections[0].content }}</p>\n\n  <h2>{{ $json.output.sections[1].heading }}</h2>\n  <img src=\"{{ $json['image 2'] }}\" alt=\"header2\" />\n  <p>{{ $json.output.sections[1].content }}</p>\n\n  <h2>{{ $json.output.sections[2].heading }}</h2>\n  <img src=\"{{ $json['image 3'] }}\" alt=\"header3\" />\n  <p>{{ $json.output.sections[2].content }}</p>\n</body>\n</html>\n\n\n#Note: \n- When generating the HTML content, return **only the complete raw HTML string** with **no markdown formatting**, **no code fences**, **no language tags**, and **no additional text or explanation**.\n\n- Respond strictly with the HTML content exactly as it should appear, starting with `<!DOCTYPE html>` and ending with `</html>`.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        -960,
+        -180
+      ],
+      "id": "8ec25003-e511-4699-ac94-2f010a1b9410",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bbb14b8a-0618-45f8-99e0-4db1287928d9",
+              "name": "image1",
+              "value": "={{ $json.webContentLink }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1480,
+        -380
+      ],
+      "id": "9ecffa8a-8247-4b91-91f0-e389371c7bed",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6535b4f1-53c0-4ff7-b0c9-f73e595ca76a",
+              "name": "image 2",
+              "value": "={{ $json.webContentLink }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1480,
+        -200
+      ],
+      "id": "86614a64-5dac-41a7-91fd-3ca434eab7e2",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "00ff1480-a19a-4251-ac19-8bf6bdb74378",
+              "name": "image 3",
+              "value": "={{ $json.webContentLink }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1480,
+        0
+      ],
+      "id": "5cea6d6f-1c5c-4ec8-917e-6fc9e4c52c39",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -980,
+        40
+      ],
+      "id": "8ed36356-9b1b-4a10-b2b2-b0030f47c463",
+      "name": "OpenRouter Chat Model1",
+      "credentials": {
+        "openRouterApi": {
+          "id": "y1vjMptfuqUZLu87",
+          "name": "Openrouter Key 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "numberInputs": 4,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        -1160,
+        -200
+      ],
+      "id": "320df6c5-08bb-49bf-8174-6d952aa6a95a",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "app7gagpeTkBNSHM0",
+          "mode": "list",
+          "cachedResultName": "Product Database",
+          "cachedResultUrl": "https://airtable.com/app7gagpeTkBNSHM0"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbllQs0r2ePiUhDrr",
+          "mode": "list",
+          "cachedResultName": "Blog Post",
+          "cachedResultUrl": "https://airtable.com/app7gagpeTkBNSHM0/tbllQs0r2ePiUhDrr"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Blog Title": "={{ $('Merge').item.json.output.blog_title }}",
+            "Introduction": "={{ $('Merge').item.json.output.introduction }}",
+            "Header 1": "={{ $('Merge').item.json.output.sections[0].heading }}",
+            "Content 1": "={{ $('Merge').item.json.output.sections[0].content }}",
+            "Header 2": "={{ $('Merge').item.json.output.sections[1].heading }}",
+            "Content 2": "={{ $('Merge').item.json.output.sections[1].content }}",
+            "Image 1": "={{ $('Merge').item.json.image1 }}",
+            "Image 2": "={{ $('Merge').item.json['image 2'] }}",
+            "Header 3": "={{ $('Merge').item.json.output.sections[2].heading }}",
+            "Image 3": "={{ $('Merge').item.json['image 3'] }}",
+            "Content 3": "={{ $('Merge').item.json.output.sections[2].content }}",
+            "Product": "={{[$('Product Owner').item.json.output['product record id']]}}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Blog Title",
+              "displayName": "Blog Title",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Introduction",
+              "displayName": "Introduction",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Header 1",
+              "displayName": "Header 1",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Image 1",
+              "displayName": "Image 1",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Content 1",
+              "displayName": "Content 1",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Header 2",
+              "displayName": "Header 2",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Image 2",
+              "displayName": "Image 2",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Content 2",
+              "displayName": "Content 2",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Image 3",
+              "displayName": "Image 3",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Header 3",
+              "displayName": "Header 3",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Content 3",
+              "displayName": "Content 3",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Created Time",
+              "displayName": "Created Time",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Last Modified Time",
+              "displayName": "Last Modified Time",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Blog Record Id",
+              "displayName": "Blog Record Id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Product",
+              "displayName": "Product",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -380,
+        -140
+      ],
+      "id": "82207afd-0b33-4bf6-82f9-3154009d8ad6",
+      "name": "Airtable",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "product name"
+            },
+            {
+              "name": "description"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -3100,
+        -280
+      ],
+      "id": "cc51a509-3b4a-445e-bb6f-2f49254c010e",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -620,
+        -640
+      ],
+      "id": "2a2138b1-69c6-49ae-b73c-fa4abb8a0369",
+      "name": "Telegram Trigger",
+      "webhookId": "846089cd-3bfc-4428-aa9e-879204fd4aa2",
+      "credentials": {
+        "telegramApi": {
+          "id": "jc90OwyUZxXdBTvg",
+          "name": "Marketing Agent"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Update Chat ID\n- Click test step and then send a message from telegram to get the chat ID \n- Copy it over to the telegram node",
+        "height": 280,
+        "width": 560
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -700,
+        -760
+      ],
+      "id": "d88a899e-5e81-47bb-bb6c-3da13a2aa2f4",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "chatId": "{insert chat id}",
+        "text": "=Your Blog Post has been generated!\n\nBlog Name: {{ $('Merge').item.json.output.blog_title }}\n\nCheck out airtable and your email for the full blog!",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -460,
+        -360
+      ],
+      "id": "22227247-ac63-47dd-b08d-31a5ce11cc44",
+      "name": "Reply Telegram (Update Chat ID)",
+      "webhookId": "8ca078a2-2112-408a-9a74-20827df92f17",
+      "credentials": {
+        "telegramApi": {
+          "id": "jc90OwyUZxXdBTvg",
+          "name": "Marketing Agent"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Create and Send Blog\n",
+        "height": 680,
+        "width": 1140,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1260,
+        -460
+      ],
+      "id": "07f0b66f-2326-4ff7-8f06-ad44bf722b84",
+      "name": "Sticky Note4"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Blog Post Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Product Owner",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Blog Post Agent": {
+      "main": [
+        [
+          {
+            "node": "Google Drive",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "searchProduct": {
+      "ai_tool": [
+        [
+          {
+            "node": "Product Owner",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "getProduct": {
+      "ai_tool": [
+        [
+          {
+            "node": "Product Owner",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Product Owner",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Product Owner": {
+      "main": [
+        [
+          {
+            "node": "Blog Post Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Blog Post Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive": {
+      "main": [
+        [
+          {
+            "node": "image 2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "image 3",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "image 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "image 1": {
+      "main": [
+        [
+          {
+            "node": "convert image 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "image 2": {
+      "main": [
+        [
+          {
+            "node": "convert image 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "image 3": {
+      "main": [
+        [
+          {
+            "node": "convert image 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "convert image 2": {
+      "main": [
+        [
+          {
+            "node": "Google Drive2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "convert image 1": {
+      "main": [
+        [
+          {
+            "node": "Google Drive1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "convert image 3": {
+      "main": [
+        [
+          {
+            "node": "Google Drive3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive2": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive3": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Reply Telegram (Update Chat ID)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail": {
+      "main": [
+        [
+          {
+            "node": "Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Product Owner",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6eb952b9-79f7-487b-a856-2e76c8c14437",
+  "meta": {
+    "instanceId": "d8c459f4ebcadd20c3258ade09582fe0f02de933363f6184259e0c9a36784090"
+  },
+  "id": "hgw4hZ2t0D3DJ0O9",
+  "tags": [
+    {
+      "createdAt": "2025-05-20T03:24:56.310Z",
+      "updatedAt": "2025-05-20T03:24:56.310Z",
+      "id": "0rWAvxnRzPQiczkQ",
+      "name": "W15: Marketing Agents"
+    }
+  ]
+}
