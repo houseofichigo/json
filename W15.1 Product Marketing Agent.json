@@ -1,0 +1,790 @@
+{
+  "name": "My workflow 14",
+  "nodes": [
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger1').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1280,
+        40
+      ],
+      "id": "5d804939-520c-4420-8f58-c4cd99627656",
+      "name": "Telegram1",
+      "webhookId": "fbdb3bd7-490b-4d3e-961e-e2d398294649",
+      "credentials": {
+        "telegramApi": {
+          "id": "jc90OwyUZxXdBTvg",
+          "name": "Marketing Agent"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# Product Marketing Team",
+        "height": 400,
+        "width": 460
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        780,
+        -60
+      ],
+      "id": "f45cff77-df3a-4c53-b934-bbfda590e357",
+      "name": "Sticky Note9"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fe7ecc99-e1e8-4a5e-bdd6-6fce9757b234",
+              "name": "text",
+              "value": "={{ $json.message.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "09aa6100-6f0a-49f9-a0ab-2faf03d6edbb",
+      "name": "Set 'Text'1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        460,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.message.voice.file_id }}"
+      },
+      "id": "4e9b7bc7-1e4c-4927-a592-b83eda82e5e3",
+      "name": "Download Voice File1",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        400,
+        20
+      ],
+      "webhookId": "c0b376b1-7b63-41b6-8063-0b3096b8333d",
+      "credentials": {
+        "telegramApi": {
+          "id": "jc90OwyUZxXdBTvg",
+          "name": "Marketing Agent"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "id": "a4d9dc21-bdb1-4cbb-a4ed-b9508ce3b9d9",
+      "name": "Transcribe Audio1",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.6,
+      "position": [
+        580,
+        20
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "s5wn58j1UNzVGfuF",
+          "name": "OpenAI Account 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.voice.file_id }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Voice"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "8c844924-b2ed-48b0-935c-c66a8fd0c778",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Text"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "aa1ce1dc-aa15-4f2e-bfdd-e6318a8c40fd",
+      "name": "Switch1",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        180,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "id": "eee0680c-af8b-478a-a70b-9dd5aa705d0c",
+      "name": "Telegram Trigger1",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        20,
+        100
+      ],
+      "webhookId": "99eab1a0-569d-4f0f-a49e-578a02abfe63",
+      "credentials": {
+        "telegramApi": {
+          "id": "jc90OwyUZxXdBTvg",
+          "name": "Marketing Agent"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# Response\n\n",
+        "height": 400,
+        "width": 200,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1260,
+        -60
+      ],
+      "id": "534311c8-e083-4a38-a39f-8f0175831f5b",
+      "name": "Sticky Note13"
+    },
+    {
+      "parameters": {
+        "content": "# Voice/Text Chat with Agent",
+        "height": 400,
+        "width": 760,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -20,
+        -60
+      ],
+      "id": "3c900f11-0dcb-4c5f-919f-37428dafacc7",
+      "name": "Sticky Note14"
+    },
+    {
+      "parameters": {
+        "content": "# Brain\n\n",
+        "height": 260,
+        "width": 360,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        280,
+        380
+      ],
+      "id": "e1e6cff6-d24b-4f09-bb5b-c73041862ad5",
+      "name": "Sticky Note10"
+    },
+    {
+      "parameters": {
+        "content": "## Ads Agent",
+        "height": 260,
+        "width": 150,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        380
+      ],
+      "id": "28def718-36ae-41f3-adef-59766c9c2996",
+      "name": "Sticky Note11"
+    },
+    {
+      "parameters": {
+        "content": "## Search Product",
+        "height": 260,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        860,
+        380
+      ],
+      "id": "63afa601-4d54-4cca-8e13-fe4282b5ed25",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Blog Post Agent Team",
+        "height": 260,
+        "width": 160,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1300,
+        380
+      ],
+      "id": "05405537-f4a5-4590-98e7-2b6864e8c774",
+      "name": "Sticky Note12"
+    },
+    {
+      "parameters": {
+        "content": "## Product Designer",
+        "height": 260,
+        "width": 180,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        660,
+        380
+      ],
+      "id": "8c39512c-8f48-4233-a823-c94c539cdf0f",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "options": {
+          "systemMessage": "=# Overview  \nYou are the Product Marketing Lead AI Agent. Your role is to guide the user through managing products by orchestrating specialized sub-agents that create new products, generate ads, and write blog posts. You facilitate conversations, clarify user requests, and coordinate calls to the appropriate tools but never perform content generation yourself.\n\n# Tools  \n- **createproduct**: Use this to create a new product.  \n  - First, confirm with the user the product name and description before calling.  \n- **searchproduct**: Use this to search for existing products by name or keyword to help clarify user intent.  \n- **getproduct**: Use this to retrieve full details of a specific existing product.  \n- **createads**: Use this to create ad copy and image prompts for a specific product.  \n  - Before calling, confirm the exact product with the user, leveraging searchproduct and getproduct to ensure accuracy.  \n- **createblogs**: Use this to create blog posts for a specific product.  \n  - Similarly, confirm the exact product and details by interacting with the user and using searchproduct/getproduct tools.  \n- **Think**: Use this to help with reasoning or decision-making if you are unsure how to proceed.\n\n# Instructions  \n- You do not create or generate product details, ads, or blogs yourself.  \n- Your job is to communicate clearly with the user, gather and confirm the necessary information, and decide which tool to call next.  \n- Always confirm ambiguous or incomplete user inputs by asking clarifying questions before calling any tool.  \n- Use **searchproduct** and **getproduct** proactively to avoid errors and ensure you have the correct product information before invoking content creation tools.  \n- Coordinate the workflow smoothly, handling user queries, clarifications, and tool outputs sequentially.  \n- Keep the conversation natural, friendly, and helpful.\n\n# Output  \n- Your output should be clear instructions or questions to the user to collect or confirm information.  \n- When you call a tool, include only the necessary parameters as per that tool’s requirements.  \n- After receiving tool outputs, summarize or pass results back to the user as needed, and guide the next step.  \n- Do not generate final content yourself; always delegate content generation to the respective tools.\n\n---\n\nExample conversation flow you manage:\n\nUser: \"I want to add a new shoe product.\"  \nYou: \"Great! What’s the name and description of the product you want to create?\"  \n(User provides info)  \nYou: (Call createproduct with the info)  \n(After creation)  \nYou: \"Your product has been created. Would you like to generate ads or blog posts for it?\"  \nUser: \"Yes, create ads.\"  \nYou: \"Please confirm the product name or keywords so I can find the correct product.\"  \n(Use searchproduct/getproduct to confirm)  \nYou: (Call createads with confirmed product details)  \n... and so forth.\n\n---\n\nMaintain a helpful, guiding role to provide the best user experience coordinating these product marketing tasks.\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        860,
+        40
+      ],
+      "id": "b78a3c98-8e80-42f0-97c7-027ac30ee1f1",
+      "name": "Product Marketing Team"
+    },
+    {
+      "parameters": {
+        "description": "Call this tool to create a new product.",
+        "workflowId": {
+          "__rl": true,
+          "value": "OcqvnyDyIFPSnpFt",
+          "mode": "list",
+          "cachedResultName": "W15.2 Product Designer"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "product name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('product_name', `Name of product to be created.`, 'string') }}",
+            "product description": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('product_description', `Description of product to be created.`, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "product name",
+              "displayName": "product name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "product description",
+              "displayName": "product description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        700,
+        500
+      ],
+      "id": "fdcf6312-e447-4fb6-b059-27a703f5e848",
+      "name": "createproduct"
+    },
+    {
+      "parameters": {
+        "description": "Call this tool to create new ad copies for product.",
+        "workflowId": {
+          "__rl": true,
+          "value": "nI4Js7lN3i45UNJq",
+          "mode": "list",
+          "cachedResultName": "W15.3 Ads Agent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Product Name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Product_Name', `The product name of the product to generate Ads. \n\nMake sure its the exact product name found in the airtable using searchProduct or getProduct.`, 'string') }}",
+            "Description": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Description', `Any additional request or details that the user like to see in the ad copy.`, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Product Name",
+              "displayName": "Product Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "Description",
+              "displayName": "Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        1160,
+        500
+      ],
+      "id": "7cf6b574-88d9-4577-8804-a83aa6a5983f",
+      "name": "createads"
+    },
+    {
+      "parameters": {
+        "description": "Call this tool to create new blog post for product.",
+        "workflowId": {
+          "__rl": true,
+          "value": "6evNXN0pbAssQ9bk",
+          "mode": "list",
+          "cachedResultName": "W15.4 Blog Post Agent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "product name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('product_name', `The product name of the product to generate blogpost. \n\nMake sure its the exact product name found in the airtable using searchProduct or getProduct.`, 'string') }}",
+            "description": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('description', `Additional details or request to be considered for the blogpost generated.`, 'string') }}"
+          },
+          "matchingColumns": [
+            "product name"
+          ],
+          "schema": [
+            {
+              "id": "product name",
+              "displayName": "product name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "description",
+              "displayName": "description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        1340,
+        500
+      ],
+      "id": "ac9cb653-9068-4d4c-8bcc-8d0ccd65ef9b",
+      "name": "createblogs"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-4.1",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        300,
+        500
+      ],
+      "id": "9776641f-ffd5-4536-9635-9d13f21149b3",
+      "name": "GPT 4.1",
+      "credentials": {
+        "openRouterApi": {
+          "id": "y1vjMptfuqUZLu87",
+          "name": "Openrouter Key 1"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1,
+      "position": [
+        440,
+        540
+      ],
+      "id": "b6065626-f276-458a-aac6-b1e840cc1a4b",
+      "name": "Think"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Telegram Trigger1').item.json.message.chat.id }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        560,
+        540
+      ],
+      "id": "34bd95fd-9262-4a17-8cb4-cf24c83705d4",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "app7gagpeTkBNSHM0",
+          "mode": "list",
+          "cachedResultName": "Product Database",
+          "cachedResultUrl": "https://airtable.com/app7gagpeTkBNSHM0"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblHshNRn3qAZvHI1",
+          "mode": "list",
+          "cachedResultName": "Product Database",
+          "cachedResultUrl": "https://airtable.com/app7gagpeTkBNSHM0/tblHshNRn3qAZvHI1"
+        },
+        "returnAll": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Return_All', ``, 'boolean') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        880,
+        480
+      ],
+      "id": "284afed8-bdca-41b1-8366-cc416fd46266",
+      "name": "searchProduct",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "value": "app7gagpeTkBNSHM0",
+          "mode": "list",
+          "cachedResultName": "Product Database",
+          "cachedResultUrl": "https://airtable.com/app7gagpeTkBNSHM0"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblHshNRn3qAZvHI1",
+          "mode": "list",
+          "cachedResultName": "Product Database",
+          "cachedResultUrl": "https://airtable.com/app7gagpeTkBNSHM0/tblHshNRn3qAZvHI1"
+        },
+        "id": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Record_ID', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        1000,
+        480
+      ],
+      "id": "3ff8ca06-e2ab-4515-b250-a8dd95247969",
+      "name": "getProduct",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Author: Calvin Hia\nhttps://www.youtube.com/@dainami_ai/",
+        "height": 80,
+        "width": 540,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -20,
+        -180
+      ],
+      "id": "5171e6a6-0a51-488b-982f-8ca0fbaa96f3",
+      "name": "Sticky Note2"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Set 'Text'1": {
+      "main": [
+        [
+          {
+            "node": "Product Marketing Team",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Voice File1": {
+      "main": [
+        [
+          {
+            "node": "Transcribe Audio1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcribe Audio1": {
+      "main": [
+        [
+          {
+            "node": "Product Marketing Team",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "Download Voice File1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set 'Text'1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Product Marketing Team": {
+      "main": [
+        [
+          {
+            "node": "Telegram1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "createproduct": {
+      "ai_tool": [
+        [
+          {
+            "node": "Product Marketing Team",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "createads": {
+      "ai_tool": [
+        [
+          {
+            "node": "Product Marketing Team",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "createblogs": {
+      "ai_tool": [
+        [
+          {
+            "node": "Product Marketing Team",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT 4.1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Product Marketing Team",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "Product Marketing Team",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Product Marketing Team",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "searchProduct": {
+      "ai_tool": [
+        [
+          {
+            "node": "Product Marketing Team",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "getProduct": {
+      "ai_tool": [
+        [
+          {
+            "node": "Product Marketing Team",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6eb952b9-79f7-487b-a856-2e76c8c14437",
+  "meta": {
+    "instanceId": "d8c459f4ebcadd20c3258ade09582fe0f02de933363f6184259e0c9a36784090"
+  },
+  "id": "hgw4hZ2t0D3DJ0O9",
+  "tags": [
+    {
+      "createdAt": "2025-05-20T03:24:56.310Z",
+      "updatedAt": "2025-05-20T03:24:56.310Z",
+      "id": "0rWAvxnRzPQiczkQ",
+      "name": "W15: Marketing Agents"
+    }
+  ]
+}
