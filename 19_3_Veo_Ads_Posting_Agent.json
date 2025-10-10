@@ -1,0 +1,1893 @@
+{
+  "name": "19.3 Veo Ads Posting Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=- **Input Text Field**: \nName of video: {{ $json['Ad Name'] }}\nAd Prompt: {{ $json['Ad Prompt'] }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "type": "=SystemMessagePromptTemplate",
+              "message": "=You are an AI specialized in crafting high-impact, viral titles and descriptions optimized for TikTok Shorts, Instagram Reels, YouTube Shorts, and Facebook Reels. \n\nYou will receive a input containing informational fields which may be variably named (e.g., \"caption\", \"description\", etc.).\n\nYour task is to dynamically detect and use the first available text field from the input to generate platform-specific content tailored to each platform’s unique style and audience engagement.\n\nThe **tone and style** of the output should be customizable based on a user-defined variable called `style_tone`. This variable specifies the persona or voice you should adopt when generating content (e.g., \"bossbaby\", \"motivational coach\", \"comedy sketch\", etc.).\n\n---\n\n### Input variables:\n\n- **Input Text Field**: The text to base your content on (captions, description, name etc).  \n- **style_tone**: A string indicating the desired voice/persona for the content.\n\n---\n\n### Platform-specific output requirements:\n\n1. **Instagram Reels**:  \n   - Description: Brief, visually descriptive, up to 5 hashtags, strong call-to-action.\n\n2. **YouTube Shorts**:  \n   - Title (max 50 chars): Direct, suspenseful, clickbait style.  \n   - Description: Concise, keyword-rich, with engagement prompts.\n\n3. **Facebook Reels**:   \n   - Description: Short, emotional hook encouraging reactions.\n\n4. **TikTok**:  \n   - Description: Creative, catchy, platform-appropriate.\n\n---\n\n### Output format:\n\nReturn strictly this JSON structure, adapting content tone according to `style_tone`:\n{\n  \"instagram\": {\n    \"description\": \"...\"\n  },\n  \"youtube\": {\n    \"title\": \"...\",\n    \"description\": \"...\"\n  },\n  \"facebook\": {\n    \"description\": \"...\"\n  },\n  \"tiktok\": {\n    \"description\": \"...\"\n  }\n}\n\n#Note \n- Return only the EXACT JSON Output and nothing else."
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        560,
+        320
+      ],
+      "id": "a8bcf8c5-1d52-4485-bf2d-841f6a352229",
+      "name": "Publishing Agent"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c087ebbf-22a5-45f4-82d5-ddabfd921889",
+              "leftValue": "={{ $json.fields.Youtube }}",
+              "rightValue": "Uploaded",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "301baec8-c772-4042-bdc1-7d2d99f07043",
+              "leftValue": "={{ $json.fields.Instagram }}",
+              "rightValue": "Uploaded",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "a216f3c7-76f0-4bdb-89c6-e9e0dd389ce5",
+              "leftValue": "={{ $json.fields.TikTok }}",
+              "rightValue": "Uploaded",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "fe7070d9-61cd-4dbd-98d9-69716366bb66",
+              "leftValue": "={{ $json.fields.Facebook }}",
+              "rightValue": "Uploaded",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1980,
+        320
+      ],
+      "id": "c7712a23-a881-48d1-8240-6f073b4b2fc8",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appitDUrFb8g8iJOu",
+          "mode": "list",
+          "cachedResultName": "VEO3 Ads Creator",
+          "cachedResultUrl": "https://airtable.com/appitDUrFb8g8iJOu"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblNObG3FAC39rsAB",
+          "mode": "list",
+          "cachedResultName": "Ads",
+          "cachedResultUrl": "https://airtable.com/appitDUrFb8g8iJOu/tblNObG3FAC39rsAB"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Search Record').item.json.id }}",
+            "Youtube": "Uploaded"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Ad Name",
+              "displayName": "Ad Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Description",
+              "displayName": "Description",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Ad Prompt",
+              "displayName": "Ad Prompt",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Link",
+              "displayName": "Link",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Ready To Upload",
+                  "value": "Ready To Upload"
+                },
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Facebook",
+              "displayName": "Facebook",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "TikTok",
+              "displayName": "TikTok",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Youtube",
+              "displayName": "Youtube",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Instagram",
+              "displayName": "Instagram",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Last Modified Time",
+              "displayName": "Last Modified Time",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Created Time",
+              "displayName": "Created Time",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Character Name",
+              "displayName": "Character Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1460,
+        60
+      ],
+      "id": "418fda70-abea-4be4-9940-9c3f6d36670f",
+      "name": "Youtube Posted",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appitDUrFb8g8iJOu",
+          "mode": "list",
+          "cachedResultName": "VEO3 Ads Creator",
+          "cachedResultUrl": "https://airtable.com/appitDUrFb8g8iJOu"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblNObG3FAC39rsAB",
+          "mode": "list",
+          "cachedResultName": "Ads",
+          "cachedResultUrl": "https://airtable.com/appitDUrFb8g8iJOu/tblNObG3FAC39rsAB"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Search Record').item.json.id }}",
+            "Instagram": "Uploaded"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true
+            },
+            {
+              "id": "Ad Name",
+              "displayName": "Ad Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Description",
+              "displayName": "Description",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Ad Prompt",
+              "displayName": "Ad Prompt",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Link",
+              "displayName": "Link",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Ready To Upload",
+                  "value": "Ready To Upload"
+                },
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Facebook",
+              "displayName": "Facebook",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "TikTok",
+              "displayName": "TikTok",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Youtube",
+              "displayName": "Youtube",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Instagram",
+              "displayName": "Instagram",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Last Modified Time",
+              "displayName": "Last Modified Time",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Created Time",
+              "displayName": "Created Time",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Character Name",
+              "displayName": "Character Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1460,
+        540
+      ],
+      "id": "106eaf52-796a-4fbe-b2dd-a4293221bd92",
+      "name": "Instagram Posted",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appitDUrFb8g8iJOu",
+          "mode": "list",
+          "cachedResultName": "VEO3 Ads Creator",
+          "cachedResultUrl": "https://airtable.com/appitDUrFb8g8iJOu"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblNObG3FAC39rsAB",
+          "mode": "list",
+          "cachedResultName": "Ads",
+          "cachedResultUrl": "https://airtable.com/appitDUrFb8g8iJOu/tblNObG3FAC39rsAB"
+        },
+        "filterByFormula": "={Ad Name} = \"{{ $json.adname }}\"",
+        "returnAll": false,
+        "limit": 1,
+        "options": {},
+        "sort": {
+          "property": [
+            {
+              "field": "Status"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        320,
+        320
+      ],
+      "id": "96e5ae2b-c89b-406f-9a38-cfbe450ca3cd",
+      "name": "Search Record",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "video",
+        "operation": "upload",
+        "title": "={{ $('Publishing Agent').item.json.output.youtube.title }}",
+        "regionCode": "SG",
+        "categoryId": "1",
+        "options": {
+          "description": "={{ $('Publishing Agent').item.json.output.youtube.description }}"
+        }
+      },
+      "type": "n8n-nodes-base.youTube",
+      "typeVersion": 1,
+      "position": [
+        1280,
+        60
+      ],
+      "id": "0ac1bdc2-6e1b-4a86-95db-3a7041542b07",
+      "name": "Youtube Post",
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "INhltBeDLkn5aZ0Z",
+          "name": "YouTube account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appitDUrFb8g8iJOu",
+          "mode": "list",
+          "cachedResultName": "VEO3 Ads Creator",
+          "cachedResultUrl": "https://airtable.com/appitDUrFb8g8iJOu"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblNObG3FAC39rsAB",
+          "mode": "list",
+          "cachedResultName": "Ads",
+          "cachedResultUrl": "https://airtable.com/appitDUrFb8g8iJOu/tblNObG3FAC39rsAB"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $json.id }}",
+            "Status": "Uploaded"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Ad Name",
+              "displayName": "Ad Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Description",
+              "displayName": "Description",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Ad Prompt",
+              "displayName": "Ad Prompt",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Link",
+              "displayName": "Link",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Ready To Upload",
+                  "value": "Ready To Upload"
+                },
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Facebook",
+              "displayName": "Facebook",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "TikTok",
+              "displayName": "TikTok",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Youtube",
+              "displayName": "Youtube",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Instagram",
+              "displayName": "Instagram",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Last Modified Time",
+              "displayName": "Last Modified Time",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Created Time",
+              "displayName": "Created Time",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Character Name",
+              "displayName": "Character Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        2280,
+        300
+      ],
+      "id": "a2436be7-2487-405b-b27e-3997af8993e2",
+      "name": "Video Published",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.upload-post.com/api/upload",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "title",
+              "value": "={{ $json.output.tiktok.description }}"
+            },
+            {
+              "name": "user",
+              "value": "tester123"
+            },
+            {
+              "name": "platform[]",
+              "value": "tiktok"
+            },
+            {
+              "parameterType": "formBinaryData",
+              "name": "video",
+              "inputDataFieldName": "data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1280,
+        300
+      ],
+      "id": "0d954c36-1e8e-4ce3-9d6a-de6f4cb005e6",
+      "name": "TikTok Post (NEW)",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "6OabG0dCCFNtUtzQ",
+          "name": "Upload Post"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"instagram\": {\n    \"description\": \"...\"\n  },\n  \"youtube\": {\n    \"title\": \"...\",\n    \"description\": \"...\"\n  },\n  \"facebook\": {\n    \"description\": \"...\"\n  },\n  \"tiktok\": {\n    \"description\": \"...\"\n  }\n}\n\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        800,
+        560
+      ],
+      "id": "911b0a54-9a52-48a6-af17-1a3e8d526f4c",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "content": "## Youtube Agent\n",
+        "height": 220,
+        "width": 420,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1240,
+        0
+      ],
+      "id": "83158949-7832-468a-a428-ae902a35eb28",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "## Instagram Agent\n",
+        "height": 220,
+        "width": 420,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1240,
+        480
+      ],
+      "id": "88b02e4f-c083-4991-9688-baf5c8332ebd",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "content": "## TikTok Post",
+        "height": 220,
+        "width": 420
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1240,
+        240
+      ],
+      "id": "1cbfc426-ca90-4191-bb80-e922542c5354",
+      "name": "Sticky Note9"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appitDUrFb8g8iJOu",
+          "mode": "list",
+          "cachedResultName": "VEO3 Ads Creator",
+          "cachedResultUrl": "https://airtable.com/appitDUrFb8g8iJOu"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblNObG3FAC39rsAB",
+          "mode": "list",
+          "cachedResultName": "Ads",
+          "cachedResultUrl": "https://airtable.com/appitDUrFb8g8iJOu/tblNObG3FAC39rsAB"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Search Record').item.json.id }}",
+            "TikTok": "Uploaded"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true
+            },
+            {
+              "id": "Ad Name",
+              "displayName": "Ad Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Description",
+              "displayName": "Description",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Ad Prompt",
+              "displayName": "Ad Prompt",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Link",
+              "displayName": "Link",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Ready To Upload",
+                  "value": "Ready To Upload"
+                },
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Facebook",
+              "displayName": "Facebook",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "TikTok",
+              "displayName": "TikTok",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Youtube",
+              "displayName": "Youtube",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Instagram",
+              "displayName": "Instagram",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Last Modified Time",
+              "displayName": "Last Modified Time",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Created Time",
+              "displayName": "Created Time",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Character Name",
+              "displayName": "Character Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1440,
+        300
+      ],
+      "id": "da0b7f56-57c6-4cbf-8319-aa3dd2f061ae",
+      "name": "TikTok Posted",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Search Record').item.json.Link }}",
+          "mode": "url"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        940,
+        320
+      ],
+      "id": "86005d4b-23e8-4eb8-b3f0-0992722aaef1",
+      "name": "Download Final Vid",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "9WRrz2c8ZemVzlPL",
+          "name": "Google Drive account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        600,
+        560
+      ],
+      "id": "9bec0deb-1bb4-4156-804b-e375d9b52cee",
+      "name": "gpt4o mini",
+      "credentials": {
+        "openRouterApi": {
+          "id": "y1vjMptfuqUZLu87",
+          "name": "Openrouter Key 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "numberInputs": 4,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        1780,
+        300
+      ],
+      "id": "3f1b3527-3a0a-41c8-9103-f6adf5c25355",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "content": "## Publishing Agent Team\n",
+        "height": 1040,
+        "width": 2820,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -40,
+        -40
+      ],
+      "id": "6e8849d9-41e8-4d66-a887-50aa752b9f94",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "adname"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        60,
+        320
+      ],
+      "id": "934b822f-f60a-466d-bfa3-6e35a1e4b561",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Search Record').item.json.Link }}",
+          "mode": "url"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2460,
+        300
+      ],
+      "id": "63aa3600-c313-4d87-8b71-e01ef990fd02",
+      "name": "Google Drive",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "9WRrz2c8ZemVzlPL",
+          "name": "Google Drive account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendVideo",
+        "chatId": "116486546",
+        "binaryData": true,
+        "additionalFields": {
+          "caption": "=Your Video: {{ $json.fields['Ad Name'] }} has been posted onto Facebook, TikTok, Instagram and Youtube!"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2640,
+        300
+      ],
+      "id": "0df134f0-00e2-424d-9108-08782f1f8a18",
+      "name": "Reply Telegram",
+      "webhookId": "1da1ccf6-ea34-4ffe-9f0d-76ffbd2a327a",
+      "credentials": {
+        "telegramApi": {
+          "id": "rajpDvuc5KDPLJEx",
+          "name": "Veo Video Agent"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Facebook Agent",
+        "height": 220,
+        "width": 420,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1240,
+        720
+      ],
+      "id": "7c96968a-1085-483e-8588-9d050396b8b8",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.upload-post.com/api/upload",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "title",
+              "value": "={{ $json.output.instagram.description }}"
+            },
+            {
+              "name": "user",
+              "value": "tester123"
+            },
+            {
+              "name": "platform[]",
+              "value": "instagram"
+            },
+            {
+              "parameterType": "formBinaryData",
+              "name": "video",
+              "inputDataFieldName": "data"
+            },
+            {
+              "name": "media_type",
+              "value": "REELS"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1280,
+        540
+      ],
+      "id": "fd7dfc73-89ba-4ac1-b7ea-23c69505731e",
+      "name": "Instagram Reels",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "6OabG0dCCFNtUtzQ",
+          "name": "Upload Post"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appitDUrFb8g8iJOu",
+          "mode": "list",
+          "cachedResultName": "VEO3 Ads Creator",
+          "cachedResultUrl": "https://airtable.com/appitDUrFb8g8iJOu"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblNObG3FAC39rsAB",
+          "mode": "list",
+          "cachedResultName": "Ads",
+          "cachedResultUrl": "https://airtable.com/appitDUrFb8g8iJOu/tblNObG3FAC39rsAB"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Search Record').item.json.id }}",
+            "Facebook": "Uploaded"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true
+            },
+            {
+              "id": "Ad Name",
+              "displayName": "Ad Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Description",
+              "displayName": "Description",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Ad Prompt",
+              "displayName": "Ad Prompt",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Link",
+              "displayName": "Link",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Ready To Upload",
+                  "value": "Ready To Upload"
+                },
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Facebook",
+              "displayName": "Facebook",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "TikTok",
+              "displayName": "TikTok",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Youtube",
+              "displayName": "Youtube",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Instagram",
+              "displayName": "Instagram",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Last Modified Time",
+              "displayName": "Last Modified Time",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Created Time",
+              "displayName": "Created Time",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Character Name",
+              "displayName": "Character Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1460,
+        780
+      ],
+      "id": "a2490f64-8fbf-4620-afdb-a81234f9e74f",
+      "name": "Facebook Posted",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.upload-post.com/api/upload",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "description",
+              "value": "={{ $json.output.facebook.description }}"
+            },
+            {
+              "name": "user",
+              "value": "tester123"
+            },
+            {
+              "name": "platform[]",
+              "value": "facebook"
+            },
+            {
+              "parameterType": "formBinaryData",
+              "name": "video",
+              "inputDataFieldName": "data"
+            },
+            {
+              "name": "facebook_page_id",
+              "value": "{insert fb page id}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1280,
+        780
+      ],
+      "id": "3c326449-7ee6-4b3f-8f1c-7b4592e44a12",
+      "name": "Facebook Reels (insert fb page id)",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "6OabG0dCCFNtUtzQ",
+          "name": "Upload Post"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "adname": "Zen Garden Escape"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Publishing Agent": {
+      "main": [
+        [
+          {
+            "node": "Download Final Vid",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Video Published",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Youtube Posted": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Instagram Posted": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Search Record": {
+      "main": [
+        [
+          {
+            "node": "Publishing Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Youtube Post": {
+      "main": [
+        [
+          {
+            "node": "Youtube Posted",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Video Published": {
+      "main": [
+        [
+          {
+            "node": "Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TikTok Post (NEW)": {
+      "main": [
+        [
+          {
+            "node": "TikTok Posted",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Publishing Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TikTok Posted": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Download Final Vid": {
+      "main": [
+        [
+          {
+            "node": "TikTok Post (NEW)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Youtube Post",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Instagram Reels",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Facebook Reels (insert fb page id)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "gpt4o mini": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Publishing Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Search Record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Reply Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Instagram Reels": {
+      "main": [
+        [
+          {
+            "node": "Instagram Posted",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Facebook Posted": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Facebook Reels (insert fb page id)": {
+      "main": [
+        [
+          {
+            "node": "Facebook Posted",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "ad5efe6c-053e-4b1c-99bd-38564f482b79",
+  "meta": {
+    "instanceId": "d8c459f4ebcadd20c3258ade09582fe0f02de933363f6184259e0c9a36784090"
+  },
+  "id": "QkYUAyBX1TyOMfTp",
+  "tags": [
+    {
+      "createdAt": "2025-06-16T09:07:09.831Z",
+      "updatedAt": "2025-06-16T09:07:09.831Z",
+      "id": "EY1xj6BA3V7sPQ2e",
+      "name": "W19: VEO Ads Agent"
+    }
+  ]
+}
