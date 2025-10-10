@@ -1,0 +1,398 @@
+{
+  "name": "19.2 VEO Ads Prompt Generator",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "name"
+            },
+            {
+              "name": "addetail"
+            },
+            {
+              "name": "adname"
+            }
+          ]
+        }
+      },
+      "id": "c055762a-8fe7-4141-a639-df2372f30060",
+      "typeVersion": 1.1,
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        160,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appitDUrFb8g8iJOu",
+          "mode": "list",
+          "cachedResultName": "VEO3 Ads Creator",
+          "cachedResultUrl": "https://airtable.com/appitDUrFb8g8iJOu"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tble7SgOZ0YnrUl2l",
+          "mode": "list",
+          "cachedResultName": "Character Table",
+          "cachedResultUrl": "https://airtable.com/appitDUrFb8g8iJOu/tble7SgOZ0YnrUl2l"
+        },
+        "filterByFormula": "=Name = \"{{ $json.name }}\"",
+        "returnAll": false,
+        "limit": 1,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        340,
+        340
+      ],
+      "id": "a09e4e26-51bb-47a8-a55c-57b94c044802",
+      "name": "Search Airtable",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Name: {{ $json.Name }}\nCharacter Prompt: {{ $json['Character Prompt'] }}\nVoice Prompt: {{ $json['Voice Prompt '] }}\n\nAd Name: {{ $('When Executed by Another Workflow').item.json.adname }}\nAd Description: {{ $('When Executed by Another Workflow').item.json.addetail }}",
+        "options": {
+          "systemMessage": "=# Role\nYou are the **Ads Prompt Generator Agent**, responsible for combining character details, voice style, and ad narrative into a single, coherent video‐generation prompt. This prompt will be consumed by a generative video model to produce a polished ad video.\n\n# Task\nWhen given:\n- **Name**  \n- **Character Prompt** (appearance paragraph)  \n- **Voice Prompt** (vocal style paragraph)  \n- **Ad Name**  \n- **Ad Description** (scene, product, and messaging)\n\nOutput one unified **Video Prompt** block that:\n1. Introduces the character visually in scene  \n2. Describes their vocal delivery while speaking the ad copy  \n3. Incorporates the Ad Name and core messaging    \n\n# Examples\n\n**Input:** \nName: Mei Lin\nCharacter Prompt: Mei Lin is a 22-year-old East Asian woman with a warm ivory complexion that subtly glows in soft, natural light. Her soft oval face is framed by silky, jet-black hair falling to her waist, a small beauty mark above her right eyebrow, almond-shaped dark brown eyes, a delicate upturned nose, and naturally rosy lips that curve into a kind smile.\nVoice Prompt: Mei Lin’s voice is clear and youthful, marked by a gentle lilt and warm-hearted Asian accent. She speaks at a steady, upbeat pace with a hint of playful mischief, each phrase accompanied by an inviting smile.\nAd Name: Eco-Friendly Awareness\nAd Description: Mei Lin stands barefoot in a sun-dappled forest glade, passionately speaks about global warming, and introduces EcoSlips—eco-friendly tissues that minimize environmental impact. She encourages consumers to make sustainable choices for a greener planet.\n\n**Output:**  \nMei Lin is a 22-year-old East Asian woman with a warm ivory complexion that subtly glows in soft, natural light. Her soft oval face is framed by silky, jet-black hair falling to her waist, a small beauty mark above her right eyebrow, almond-shaped dark brown eyes, a delicate upturned nose, and naturally rosy lips that curve into a kind smile.\nShe stands barefoot in a serene forest glade as sunlight filters through the leaves. The camera slowly dollies in while Mei Lin speaks in a clear, youthful voice with a gentle lilt and warm-hearted Asian accent. She delivers her message at a steady, upbeat pace, her tone bright and curious, hinting at playful mischief:\n\"Climate change is urgent, but small actions matter. I choose EcoSlips—eco-friendly tissue that protects our planet. Join me!”  \n\n# Note\n- Produce exactly one **Video Prompt** paragraph.  \n- Seamlessly fuse appearance, voice, and ad messaging.  \n- Keep it concise and action-oriented for a video generation model. \n- Make sure the character description and voice in the final output is exactly the same and consistent with the input.\n- Keep the spoken caption in the output under 18 words so it can be delivered in less than 8 seconds. Do not exceed this length."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        540,
+        340
+      ],
+      "id": "bd6d27c3-b0b8-4744-a569-356a2e63f683",
+      "name": "Ad Prompt Creator"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        500,
+        560
+      ],
+      "id": "70ef137d-e09e-4f72-9593-ea0bd0839bee",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "y1vjMptfuqUZLu87",
+          "name": "Openrouter Key 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appitDUrFb8g8iJOu",
+          "mode": "list",
+          "cachedResultName": "VEO3 Ads Creator",
+          "cachedResultUrl": "https://airtable.com/appitDUrFb8g8iJOu"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblNObG3FAC39rsAB",
+          "mode": "list",
+          "cachedResultName": "Ads",
+          "cachedResultUrl": "https://airtable.com/appitDUrFb8g8iJOu/tblNObG3FAC39rsAB"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Ad Prompt": "={{ $json.output }}",
+            "Description": "={{ $('When Executed by Another Workflow').item.json.addetail }}",
+            "Ad Name": "={{ $('When Executed by Another Workflow').item.json.adname }}",
+            "Character Name": "={{ [$('Search Airtable').item.json['Record ID']] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Ad Name",
+              "displayName": "Ad Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Description",
+              "displayName": "Description",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Ad Prompt",
+              "displayName": "Ad Prompt",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Link",
+              "displayName": "Link",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Ready To Upload ",
+                  "value": "Ready To Upload "
+                },
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Facebook",
+              "displayName": "Facebook",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "TikTok",
+              "displayName": "TikTok",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Youtube",
+              "displayName": "Youtube",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Instagram",
+              "displayName": "Instagram",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Last Modified Time",
+              "displayName": "Last Modified Time",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Created Time",
+              "displayName": "Created Time",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Character Name",
+              "displayName": "Character Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        900,
+        340
+      ],
+      "id": "88778647-dcb1-4622-9538-0eca8cfff9e6",
+      "name": "Update Airtable",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Ad Prompt Generator\n",
+        "height": 440,
+        "width": 920,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        120,
+        260
+      ],
+      "id": "9ddf8a2b-bf20-4398-8da8-b32fb748651f",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Search Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Airtable": {
+      "main": [
+        [
+          {
+            "node": "Ad Prompt Creator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Ad Prompt Creator",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ad Prompt Creator": {
+      "main": [
+        [
+          {
+            "node": "Update Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "7a801cea-917a-4c70-94c2-7ca2cf61f0ec",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d8c459f4ebcadd20c3258ade09582fe0f02de933363f6184259e0c9a36784090"
+  },
+  "id": "lvnMGlpkeBUwUvCu",
+  "tags": [
+    {
+      "createdAt": "2025-06-16T09:07:09.831Z",
+      "updatedAt": "2025-06-16T09:07:09.831Z",
+      "id": "EY1xj6BA3V7sPQ2e",
+      "name": "W19: VEO Ads Agent"
+    }
+  ]
+}
