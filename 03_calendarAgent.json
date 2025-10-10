@@ -1,0 +1,366 @@
+{
+  "name": "03 calendarAgent",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7ab380a2-a8d3-421c-ab4e-748ea8fb7904",
+              "name": "response",
+              "value": "Unable to perform task. Please try again.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3117c70b-2041-4948-b90f-230eb0e89d28",
+      "name": "Try Again",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -300,
+        -240
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "39c2f302-03be-4464-a17a-d7cc481d6d44",
+              "name": "=response",
+              "value": "={{$json.output}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "9601a6ec-29b0-4a4d-b45c-33f3a5549e7c",
+      "name": "Success",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -300,
+        -440
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query }}",
+        "options": {
+          "systemMessage": "=You are a calendar assistant responsible for managing the user's schedule by creating, retrieving, updating, and deleting events.\n\n---\n\n### **Calendar Management Tools**\n1. **Create Event with Attendee** → Use this tool when an event includes a participant.\n2. **Create Event** → Use this tool for solo events.\n3. **Get Events** → Use this tool to fetch calendar schedules when requested.\n4. **Delete Event** → Use \"Get Events\" first to retrieve the event ID before deleting an event.\n5. **Update Event** → Use \"Get Events\" first to retrieve the event ID before updating an event.\n\n---\n\n### **Agent Workflow & Rules**\n1. **Determine Action Type**\n   - Identify whether the user wants to create, retrieve, update, or delete an event.\n   \n2. **Gather Necessary Information**\n   - Ensure event details such as title, date, time, and participants (if applicable) are available.\n   - If an event needs to be deleted or updated, first retrieve the event using \"Get Events.\"\n   - If a duration isn't specified, assume a one-hour event.\n\n3. **Execute the Correct Action**\n   - Use the appropriate calendar tool based on the user's request.\n   - Ensure event details are accurate before confirming the action.\n\n4. **Confirm Task Completion**\n   - Notify the user once the action is completed.\n   - If additional information is needed, prompt the user before proceeding.\n\n---\n\n### **Examples of Agent Execution**\n#### **Example 1: Creating a Solo Event**\n**User Input:** \"Schedule a workout session for tomorrow at 7 AM.\"\n\n**Action Steps:**\n1. Call \"Create Event\" with the query:\n   - \"Create an event titled 'Workout Session' scheduled for tomorrow at 7 AM lasting one hour.\"\n2. Respond to the user:\n   - \"Your workout session has been scheduled for tomorrow at 7 AM. Anything else I can assist with?\"\n\n---\n\n#### **Example 2: Creating an Event with an Attendee**\n**User Input:** \"Set up a meeting with John on Friday at 3 PM.\"\n\n**Action Steps:**\n1. Use \"Create Event with Attendee\" with the query:\n   - \"Schedule a meeting with John (john@example.com) on Friday at 3 PM lasting one hour.\"\n2. Respond to the user:\n   - \"The meeting with John has been scheduled for Friday at 3 PM. Let me know if you need any modifications.\"\n\n---\n\n#### **Example 3: Retrieving Events**\n**User Input:** \"What’s on my schedule for next Monday?\"\n\n**Action Steps:**\n1. Call \"Get Events\" with the query:\n   - \"Retrieve all events scheduled for next Monday.\"\n2. Provide the user with the event details.\n\n---\n\n#### **Example 4: Deleting an Event**\n**User Input:** \"Cancel my doctor’s appointment on Thursday.\"\n\n**Action Steps:**\n1. Use \"Get Events\" to retrieve the event ID for the doctor’s appointment.\n2. Call \"Delete Event\" with the retrieved event ID.\n3. Respond to the user:\n   - \"Your doctor’s appointment on Thursday has been canceled. Let me know if you need further assistance.\"\n\n---\n\n### **Error Handling & Clarifications**\n- **Missing Event Details:**\n  - If event details such as date or title are missing, ask the user before proceeding.\n- **Tool-Specific Errors:**\n  - If an action fails, notify the user and provide alternative solutions.\n- **Ambiguous Requests:**\n  - If a request is unclear, ask the user for clarification before taking action.\n\n---\n\n### **Final Notes**\n- If a duration for an event isn't specified, assume it will be one hour.\n- Always use \"Get Events\" before updating or deleting an event.\n- Confirm task completion or request additional information when necessary.\n- Current Date/Time: {{ $now }}"
+        }
+      },
+      "id": "d4a5305a-fe77-45fb-b850-b93d3170c6c4",
+      "name": "Calendar Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        -980,
+        -340
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "sa55guij9k6kv47dee76voei5c@group.calendar.google.com",
+          "mode": "list",
+          "cachedResultName": "Content Calendar"
+        },
+        "start": "={{ $fromAI(\"eventStart\") }}",
+        "end": "={{ $fromAI(\"eventEnd\") }}",
+        "additionalFields": {
+          "attendees": [
+            "={{ $fromAI(\"eventAttendeeEmail\") }}"
+          ],
+          "summary": "={{ $fromAI(\"eventTitle\") }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        -520,
+        -80
+      ],
+      "id": "5e87b809-2e21-483b-9ee9-0e5c1f8c3412",
+      "name": "Create Event with Attendee",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "PYAfs8II6FrvwR80",
+          "name": "Calendar 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "sa55guij9k6kv47dee76voei5c@group.calendar.google.com",
+          "mode": "list",
+          "cachedResultName": "Content Calendar"
+        },
+        "start": "={{ $fromAI(\"eventStart\") }}",
+        "end": "={{ $fromAI(\"eventEnd\") }}",
+        "additionalFields": {
+          "attendees": [],
+          "summary": "={{ $fromAI(\"eventTitle\") }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        -660,
+        20
+      ],
+      "id": "23d72ae1-2f18-4cb2-bcab-a1dc823e99ca",
+      "name": "Create Event",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "PYAfs8II6FrvwR80",
+          "name": "Calendar 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "sa55guij9k6kv47dee76voei5c@group.calendar.google.com",
+          "mode": "list",
+          "cachedResultName": "Content Calendar"
+        },
+        "returnAll": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Return_All', ``, 'boolean') }}",
+        "timeMin": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('After', `the day after the date the user requested`, 'string') }}",
+        "timeMax": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Before', `the day before the date the user requested`, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        -800,
+        60
+      ],
+      "id": "b0e455ea-ef4b-4ecd-bb6f-381dff41a0b2",
+      "name": "Get Events",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "PYAfs8II6FrvwR80",
+          "name": "Calendar 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "calendar": {
+          "__rl": true,
+          "value": "sa55guij9k6kv47dee76voei5c@group.calendar.google.com",
+          "mode": "list",
+          "cachedResultName": "Content Calendar"
+        },
+        "eventId": "={{ $fromAI(\"eventID\") }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        -940,
+        40
+      ],
+      "id": "68b18868-2128-4244-b798-a604f216a3bf",
+      "name": "Delete Event",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "PYAfs8II6FrvwR80",
+          "name": "Calendar 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "calendar": {
+          "__rl": true,
+          "value": "sa55guij9k6kv47dee76voei5c@group.calendar.google.com",
+          "mode": "list",
+          "cachedResultName": "Content Calendar"
+        },
+        "eventId": "={{ $fromAI(\"eventID\") }}",
+        "updateFields": {
+          "end": "={{ $fromAI(\"endTime\") }}",
+          "start": "={{ $fromAI(\"startTime\") }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        -1080,
+        0
+      ],
+      "id": "dc4cd6dd-6e36-4899-8182-bc6c9fb66119",
+      "name": "Update Event",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "PYAfs8II6FrvwR80",
+          "name": "Calendar 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -1220,
+        -340
+      ],
+      "id": "0be6bd77-28d2-42c0-b864-885c4690dbbe",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "model": "qwen/qwen-plus",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -1300,
+        20
+      ],
+      "id": "b9b66680-3290-4780-a7b1-d06f4b7f16e3",
+      "name": "Qwen Plus",
+      "credentials": {
+        "openRouterApi": {
+          "id": "uBQTiXd5eRsdJrn8",
+          "name": "OpenRouter account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Calendar Agent": {
+      "main": [
+        [
+          {
+            "node": "Success",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Try Again",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Event with Attendee": {
+      "ai_tool": [
+        [
+          {
+            "node": "Calendar Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Event": {
+      "ai_tool": [
+        [
+          {
+            "node": "Calendar Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Events": {
+      "ai_tool": [
+        [
+          {
+            "node": "Calendar Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete Event": {
+      "ai_tool": [
+        [
+          {
+            "node": "Calendar Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Event": {
+      "ai_tool": [
+        [
+          {
+            "node": "Calendar Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Calendar Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Qwen Plus": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Calendar Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "7f059e0b-1bd2-47fe-9940-d6038ee2e535",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e9750110772e39d19e520d5411ea772dd5055cd081f0298a554cb86fb57bf55d"
+  },
+  "id": "kZeWqKBW2RfR5y54",
+  "tags": [
+    {
+      "createdAt": "2025-02-05T14:39:29.951Z",
+      "updatedAt": "2025-02-11T07:18:53.327Z",
+      "id": "H7inKYVBNXU71zkD",
+      "name": "04 super agent"
+    }
+  ]
+}
