@@ -1,0 +1,709 @@
+{
+  "name": "My workflow 14",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Author: Calvin Hia\nhttps://www.youtube.com/@dainami_ai/",
+        "height": 80,
+        "width": 540,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1420,
+        -360
+      ],
+      "id": "5171e6a6-0a51-488b-982f-8ca0fbaa96f3",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Product Name: {{ $json['Product Name'] }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=#Tools \n- searchProduct: use this to search the airtable for information about product \n- getProduct: use this to get information about a specific product requested by the user\n\n#Output \n\nReturn the product requested with the exact information provided from the airtable in the following JSON format: \n{\n  \"product name\": \"insert product name\",\n  \"product description\": \"insert product description\",\n  \"target audience\": \"insert target audience\",\n  \"unique selling points\": \"insert unique selling points\", \n  \"key features\": \"insert key features\",\n  \"brand voice\": \"insert brand voice\",\n  \"use cases\": \"insert use cases\", \n  \"customer pain point\": \"insert customer pain point\",\n  \"image url\": \"insert image url\",\n  \"product record id\": \"insert product record id\"\n}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        -1100,
+        -60
+      ],
+      "id": "911e8a55-df9a-4e30-accb-8460eb721453",
+      "name": "Product Owner"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "app7gagpeTkBNSHM0",
+          "mode": "list",
+          "cachedResultName": "Product Database",
+          "cachedResultUrl": "https://airtable.com/app7gagpeTkBNSHM0"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblHshNRn3qAZvHI1",
+          "mode": "list",
+          "cachedResultName": "Product Database",
+          "cachedResultUrl": "https://airtable.com/app7gagpeTkBNSHM0/tblHshNRn3qAZvHI1"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        -1100,
+        180
+      ],
+      "id": "165381bf-909a-4dcc-a1fd-194149fe5817",
+      "name": "searchProduct",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "value": "app7gagpeTkBNSHM0",
+          "mode": "list",
+          "cachedResultName": "Product Database",
+          "cachedResultUrl": "https://airtable.com/app7gagpeTkBNSHM0"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblHshNRn3qAZvHI1",
+          "mode": "list",
+          "cachedResultName": "Product Database",
+          "cachedResultUrl": "https://airtable.com/app7gagpeTkBNSHM0/tblHshNRn3qAZvHI1"
+        },
+        "id": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Record_ID', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        -960,
+        220
+      ],
+      "id": "25da8ab0-c644-434b-b505-2e95bc8d02ca",
+      "name": "getProduct",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Product Owner').item.json.output['image url'] }}",
+          "mode": "url"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -460,
+        -60
+      ],
+      "id": "b850d02a-641d-45ac-a56c-37ceef21f562",
+      "name": "Download File",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "9WRrz2c8ZemVzlPL",
+          "name": "Google Drive account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/images/edits",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "image",
+              "inputDataFieldName": "data"
+            },
+            {
+              "name": "prompt",
+              "value": "={{ $json.output['Ad Image Prompt'] }}"
+            },
+            {
+              "name": "model",
+              "value": "gpt-image-1"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -300,
+        -60
+      ],
+      "id": "af561cca-e59e-4bc0-97ef-ab6bc78c37d7",
+      "name": "Create Ad Image",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "iMF3QDOGv5O2t2g2",
+          "name": "OpenAI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "data[0].b64_json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        -140,
+        -60
+      ],
+      "id": "8d9a044f-ab16-4dd5-ada4-96beb2583521",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "name": "={{ $('Ad Creator').item.json.output['Ad Design'] }}_ad",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1jIbqi1TaM4vM-1KElrOqH6Ps8YVBs0gP",
+          "mode": "list",
+          "cachedResultName": "75.2 Product Ads",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1jIbqi1TaM4vM-1KElrOqH6Ps8YVBs0gP"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        0,
+        120
+      ],
+      "id": "853a5506-c2bf-43c1-b58c-96d1ec41a5f2",
+      "name": "Google Drive1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "9WRrz2c8ZemVzlPL",
+          "name": "Google Drive account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "app7gagpeTkBNSHM0",
+          "mode": "list",
+          "cachedResultName": "Product Database",
+          "cachedResultUrl": "https://airtable.com/app7gagpeTkBNSHM0"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblixVPVMSsAWGYUP",
+          "mode": "list",
+          "cachedResultName": "Product Ads",
+          "cachedResultUrl": "https://airtable.com/app7gagpeTkBNSHM0/tblixVPVMSsAWGYUP"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Ad Caption": "={{ $('Download File').item.json.output['Ad Caption'] }}",
+            "Ad Design": "={{ $('Download File').item.json.output['Ad Design'] }}",
+            "Ad Description": "={{ $('Download File').item.json.output['Ad Description'] }}",
+            "Image URL": "={{ $json.webViewLink }}",
+            "Product": "={{ [$('Product Owner').item.json.output['product record id']] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Ad Design",
+              "displayName": "Ad Design",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Ad Caption",
+              "displayName": "Ad Caption",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Ad Description",
+              "displayName": "Ad Description",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Image URL",
+              "displayName": "Image URL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Last Modified Time",
+              "displayName": "Last Modified Time",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Created Time",
+              "displayName": "Created Time",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Ads Record Id",
+              "displayName": "Ads Record Id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Product",
+              "displayName": "Product",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        200,
+        120
+      ],
+      "id": "ad649573-31a1-4d47-99e5-06366c9027c5",
+      "name": "Airtable",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -1260,
+        180
+      ],
+      "id": "0cfd687f-4fd0-4107-8c40-f18c262b3a8a",
+      "name": "gpt4.1",
+      "credentials": {
+        "openRouterApi": {
+          "id": "y1vjMptfuqUZLu87",
+          "name": "Openrouter Key 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -720,
+        200
+      ],
+      "id": "9ef130a6-7641-45b9-b56b-efd4eded6f10",
+      "name": "gpt4.1.",
+      "credentials": {
+        "openRouterApi": {
+          "id": "y1vjMptfuqUZLu87",
+          "name": "Openrouter Key 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"product name\": \"insert product name\",\n  \"product description\": \"insert product description\",\n  \"target audience\": \"insert target audience\",\n  \"unique selling points\": \"insert unique selling points\", \n  \"key features\": \"insert key features\",\n  \"brand voice\": \"insert brand voice\",\n  \"use cases\": \"insert use cases\", \n  \"customer pain point\": \"insert customer pain point\",\n  \"image url\": \"insert image url\",\n  \"product record id\": \"insert product record id\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        -840,
+        220
+      ],
+      "id": "643ae096-3704-41d1-a20e-0612a8561634",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Product Name: {{ $json.output['product name'] }}\nProduct Description: {{ $json.output['product description'] }}\nTarget Audience: {{ $json.output['target audience'] }}\nUnique Selling Point: {{ $json.output['unique selling points'] }}\nKey Features: {{ $json.output['key features'] }}\nBrand Voice: {{ $json.output['brand voice'] }}\nUse Cases: {{ $json.output['use cases'] }}\nCustomer Pain Point: {{ $json.output['customer pain point'] }}\nUser Ad Request: {{ $('When Executed by Another Workflow').item.json.Description }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are an expert ad creator AI assistant specialized in generating compelling and creative ad content for marketing campaigns. You will receive detailed product information including product name, description, target audience, unique selling points, key features, brand voice, use cases, customer pain points, and an optional user ad request describing any specific theme, style, or message the user wants emphasized in the ad.\n\nUsing this information, generate a JSON output containing the following fields:\n\n- **Ad Design**: A catchy one-liner name for the ad campaign or design.  \n- **Ad Caption**: The main short caption or tagline used prominently in the ad.  \n- **Ad Description**: A detailed description of the ad copy, including tone, style, and how the ad visually and emotionally engages the audience.  \n- **Ad Image Prompt**: A vivid, descriptive prompt for an AI image generation model to create the ad’s visual. This prompt should include any text or captions that appear in the ad, their approximate location (e.g., top banner, bottom corner), the mood or atmosphere, colors, and style cues matching the brand voice and product features.\n\nReturn **only** a valid JSON object with all fields present. Do not include any explanations or commentary outside the JSON.\n\n---\n\n### Input example:\n\nProduct Name: StrideFlex Ultra Sneakers  \nProduct Description: Lightweight, breathable sneakers designed for all-day comfort and performance.  \nTarget Audience: Active millennials aged 18-35 who value style and comfort for casual and fitness wear.  \nUnique Selling Point: Advanced cushioning technology for shock absorption, Eco-friendly materials with recycled soles, Stylish design available in multiple colors  \nKey Features: Breathable mesh upper, Memory foam insole, Durable rubber outsole, Machine washable, Available in sizes 5-12  \nBrand Voice: Energetic, motivational, friendly  \nUse Cases: Daily workouts and runs, Casual outings, Travel and walking long distances  \nCustomer Pain Point: Uncomfortable shoes that cause foot fatigue, Lack of eco-conscious sneaker options, Bulky or heavy sneakers unsuitable for everyday use  \nUser Ad Request: Emphasize the eco-friendly materials and sustainability aspect, targeting Earth Day campaign.\n\n---\n\n### Example output:\n\n{\n  \"Ad Design\": \"StrideFlex Eco Run\",\n  \"Ad Caption\": \"Run Light, Live Green\",\n  \"Ad Description\": \"An inspiring and eco-conscious ad highlighting the sustainable features of StrideFlex Ultra Sneakers. The tone is motivational and friendly, appealing to millennials who care about the planet. The visuals showcase runners in natural settings, emphasizing breathability, comfort, and recycled materials to connect emotionally with the Earth Day audience.\",\n  \"Ad Image Prompt\": \"A vibrant, nature-themed image showing lightweight sneakers running through a forest trail with sunlight filtering through the trees. The top banner features the text 'Run Light, Live Green' in a clean, modern font. The bottom corner includes an eco-friendly badge with the caption 'Made with recycled materials.' The style is fresh, natural, and energetic, highlighting the breathable mesh texture and sleek design.\"\n}\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        -760,
+        -60
+      ],
+      "id": "cf6b3b38-a35d-4ef4-be35-f2c11688ff59",
+      "name": "Ad Creator"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"Ad Design\": \"StrideFlex Comfort Boost\",\n  \"Ad Caption\": \"Run Light, Live Bright\",\n  \"Ad Description\": \"A vibrant and energetic ad featuring the StrideFlex Ultra Sneakers in action. The tone is motivational and friendly, showcasing young, active people running and enjoying life effortlessly. The copy emphasizes comfort, breathability, and eco-friendly materials, appealing to millennials seeking stylish and practical footwear.\",\n  \"Ad Image Prompt\": \"A dynamic, colorful image showing a pair of lightweight sneakers in motion against a bright urban background. The top banner displays the text 'Run Light, Live Bright' in bold, modern font. The bottom corner includes a small eco-friendly badge with the caption 'Made with recycled materials.' The overall style is fresh, energetic, and youthful, highlighting the breathable mesh texture and sleek silhouette of the shoes.\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        -580,
+        160
+      ],
+      "id": "1debb33a-e9f9-43c2-bec7-f4b957cd2e80",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "content": "## Ad Generator",
+        "height": 660,
+        "width": 1800,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1420,
+        -260
+      ],
+      "id": "d654c75e-5697-4a21-a718-a16d47ed77b7",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "Product Name"
+            },
+            {
+              "name": "Description"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -1320,
+        -60
+      ],
+      "id": "5085aa4e-af33-4360-8ca5-b4bb83590e0a",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "content": "## Update Chat ID\n- Click test step and then send a message from telegram to get the chat ID \n- Copy it over to the telegram node",
+        "height": 280,
+        "width": 560
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -260,
+        -580
+      ],
+      "id": "909bd2bf-d86d-472e-8205-26d36d2323c2",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -180,
+        -460
+      ],
+      "id": "7ea4de3a-79ce-4a5e-b077-7ac0aed828c7",
+      "name": "Telegram Trigger",
+      "webhookId": "846089cd-3bfc-4428-aa9e-879204fd4aa2",
+      "credentials": {
+        "telegramApi": {
+          "id": "jc90OwyUZxXdBTvg",
+          "name": "Marketing Agent"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendPhoto",
+        "chatId": "{insert chat id}",
+        "binaryData": true,
+        "additionalFields": {
+          "caption": "=Here's your ad copy!\n\n{{ $('Ad Creator').item.json.output['Ad Design'] }}\n({{ $('Ad Creator').item.json.output['Ad Caption'] }})\n\n{{ $('Ad Creator').item.json.output['Ad Description'] }}\n"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        60,
+        -220
+      ],
+      "id": "be44ada7-a4b6-49f2-972f-eeee2a15b79e",
+      "name": "Telegram (Update Chat ID)",
+      "webhookId": "fd331270-4470-453a-a27c-ee793ac696ef",
+      "credentials": {
+        "telegramApi": {
+          "id": "jc90OwyUZxXdBTvg",
+          "name": "Marketing Agent"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "searchProduct": {
+      "ai_tool": [
+        [
+          {
+            "node": "Product Owner",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "getProduct": {
+      "ai_tool": [
+        [
+          {
+            "node": "Product Owner",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download File": {
+      "main": [
+        [
+          {
+            "node": "Create Ad Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Ad Image": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Google Drive1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Telegram (Update Chat ID)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Product Owner": {
+      "main": [
+        [
+          {
+            "node": "Ad Creator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive1": {
+      "main": [
+        [
+          {
+            "node": "Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "gpt4.1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Product Owner",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "gpt4.1.": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Ad Creator",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Product Owner",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ad Creator": {
+      "main": [
+        [
+          {
+            "node": "Download File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Ad Creator",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Product Owner",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6eb952b9-79f7-487b-a856-2e76c8c14437",
+  "meta": {
+    "instanceId": "d8c459f4ebcadd20c3258ade09582fe0f02de933363f6184259e0c9a36784090"
+  },
+  "id": "hgw4hZ2t0D3DJ0O9",
+  "tags": [
+    {
+      "createdAt": "2025-05-20T03:24:56.310Z",
+      "updatedAt": "2025-05-20T03:24:56.310Z",
+      "id": "0rWAvxnRzPQiczkQ",
+      "name": "W15: Marketing Agents"
+    }
+  ]
+}
