@@ -1,0 +1,1025 @@
+{
+  "name": "4. POV Video Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "5cfd004a-1108-4b51-a177-ea2204320ca8",
+              "leftValue": "={{ $json.Status }}",
+              "rightValue": "Image Generated",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1020,
+        40
+      ],
+      "id": "f66e2ac0-1a5a-4eda-b15c-467ef5d8d09f",
+      "name": "If"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1380,
+        40
+      ],
+      "id": "0ea37007-1a82-44df-923f-645b6f6948fe",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"prompt\": \"<insert detailed video prompt here>\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        -100,
+        320
+      ],
+      "id": "785ac2e9-171f-43c4-ae5e-c07c88d21967",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Here is the POV scene:\n\nScene Description: {{ $json['Image Prompt'] }}\nTheme: {{ $('Get Image Url').item.json.Theme }}\nTone/Mood: {{ $('Get Image Url').item.json['Tone/Mood'] }}\n\nPlease generate an video prompt to animate this specific scene to life.",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=# Role\n\nYou are a Video Prompt Creation Agent specialized in generating first-person (POV) video prompts for an AI video generator.\n\n\n# Task\nUsing the provided input, craft a concise prompt (under 50 words) that instructs the AI to produce a video with a clear first-person perspective. Your prompt must:\n\n1. Emphasize First-Person POV: Clearly state that the scene is viewed from a first-person perspective (e.g., “First-person view of…” or “POV of…”).\n\n2. Indicate Visible Body Parts: When relevant, specify that hands, arms, or feet should be visible to enhance the POV effect.\n\n3. Include Scene Details: Mention key elements such as lighting, atmosphere, environment, and objects.\n\n4. Reflect Theme & Tone: Integrate the provided theme and tone/mood to ensure the video evokes the desired emotions.\n\n5. Maintain Visual Style: Specify a consistent style (e.g., cinematic, documentary, stylized) that matches the theme or setting.\n\n\n\n# Input\n\nYou will receive:\n\n- **Scene Description:** A POV caption describing the scene.  \n- **Theme:** The underlying theme.  \n- **Tone/Mood:** The intended emotional tone.\n\n# Output\n\nReturn your generated prompt in the following JSON format:\n```json\n{\n  \"prompt\": \"<insert detailed image prompt here>\"\n}\n\n\n#Example\n##Example 1\nInput: \nScene Description: \"First-person view of entering a dim, dust-filled room filled with ancient archives. A hand reaches out, fingers brushing old, dusty scrolls, surrounded by a mystical, thought-provoking, and haunting atmosphere.\"\nTheme: \"Mystery & Legacy\"\nTone/Mood: \"Mystical, Thought-Provoking, Haunting\"\n\nOutput:\n{\n  \"prompt\": \"POV entering a dusty archive. Flickering light illuminates swirling dust as a hand carefully unrolls an ancient scroll, evoking a haunting, mystical sense of mystery and legacy.\"\n}\n"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        -240,
+        80
+      ],
+      "id": "ec1d2db6-d56f-4c65-9c9e-9b54bc46cb6e",
+      "name": "Video Prompt Generator"
+    },
+    {
+      "parameters": {
+        "content": "## POV Video Agent\n",
+        "height": 880,
+        "width": 2580,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1440,
+        -240
+      ],
+      "id": "89d5a13e-9fcc-4fe7-bb59-d57b567d96d4",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.dev.runwayml.com/v1/image_to_video",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Runway-Version",
+              "value": "2024-11-06"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "promptImage",
+              "value": "={{ $('Get Image For Each Scene').item.json['Image URL'] }}"
+            },
+            {
+              "name": "promptText",
+              "value": "={{ $json.output.prompt }}"
+            },
+            {
+              "name": "model",
+              "value": "gen3a_turbo"
+            },
+            {
+              "name": "ratio",
+              "value": "768:1280"
+            },
+            {
+              "name": "duration",
+              "value": "5"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        80,
+        80
+      ],
+      "id": "feb7bf5f-5762-4e60-adfe-84e925515542",
+      "name": "Generate Video",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "jRDusgPWYlKZodhd",
+          "name": "Runway"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://api.dev.runwayml.com/v1/tasks/{{ $json.id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Runway-Version",
+              "value": "2024-11-06"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        440,
+        80
+      ],
+      "id": "ae8fdc82-b50b-4d04-8b50-ec00fb8b909f",
+      "name": "Get Video",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "jRDusgPWYlKZodhd",
+          "name": "Runway"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.output[0] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        640,
+        80
+      ],
+      "id": "55cadc24-5d7e-446f-a9d8-096ef635ee0e",
+      "name": "Download Video"
+    },
+    {
+      "parameters": {
+        "amount": 60
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        260,
+        80
+      ],
+      "id": "22d0e3cd-2c2f-4e67-aa1f-3153dd7b10bf",
+      "name": "Wait",
+      "webhookId": "13f36db0-9e02-4d80-9ad3-fe3dfd8a7612"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appJ3fDAoRBETWkA2",
+          "mode": "list",
+          "cachedResultName": "POV Content ",
+          "cachedResultUrl": "https://airtable.com/appJ3fDAoRBETWkA2"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblsK6gpL3sX3Xk3I",
+          "mode": "list",
+          "cachedResultName": "POV Main",
+          "cachedResultUrl": "https://airtable.com/appJ3fDAoRBETWkA2/tblsK6gpL3sX3Xk3I"
+        },
+        "filterByFormula": "Status = \"Image Generated\"",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -1200,
+        40
+      ],
+      "id": "6f621300-618c-4514-9aa5-7b75bf80ebfc",
+      "name": "Get Image",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "value": "appJ3fDAoRBETWkA2",
+          "mode": "list",
+          "cachedResultName": "POV Content ",
+          "cachedResultUrl": "https://airtable.com/appJ3fDAoRBETWkA2"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblsT61yq58HsS2ZM",
+          "mode": "list",
+          "cachedResultName": "POV Images",
+          "cachedResultUrl": "https://airtable.com/appJ3fDAoRBETWkA2/tblsT61yq58HsS2ZM"
+        },
+        "id": "={{ $json.id }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -880,
+        -140
+      ],
+      "id": "4b71c90d-742a-48b1-a1d4-045f2bb35931",
+      "name": "Get Image Url",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "['POV Images']",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -700,
+        -140
+      ],
+      "id": "c3dbb2ad-ffa1-4af4-9269-5a796af894c6",
+      "name": "Split Image"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -480,
+        -140
+      ],
+      "id": "bc25efbe-f97d-484b-9387-8a9de59f534d",
+      "name": "Loop Image"
+    },
+    {
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "value": "appJ3fDAoRBETWkA2",
+          "mode": "list",
+          "cachedResultName": "POV Content ",
+          "cachedResultUrl": "https://airtable.com/appJ3fDAoRBETWkA2"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblsT61yq58HsS2ZM",
+          "mode": "list",
+          "cachedResultName": "POV Images",
+          "cachedResultUrl": "https://airtable.com/appJ3fDAoRBETWkA2/tblsT61yq58HsS2ZM"
+        },
+        "id": "={{ $json['[\\'POV Images\\']'] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -440,
+        80
+      ],
+      "id": "e2792fa9-fa17-4190-a08b-fdfe288d2a12",
+      "name": "Get Image For Each Scene",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "=qwen/qwen-2.5-72b-instruct",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -300,
+        320
+      ],
+      "id": "117cf280-134d-4b47-b373-e31614cc7c31",
+      "name": "Qwen ",
+      "credentials": {
+        "openRouterApi": {
+          "id": "y1vjMptfuqUZLu87",
+          "name": "Openrouter Key 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "={{ $('Get Image').item.json.Name }}_{{ $('Get Image For Each Scene').item.json['Scene Number'] }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1s1wunylEah6ti8HFeH2H0o0i0iHy_hwX",
+          "mode": "list",
+          "cachedResultName": "2. POV Video",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1s1wunylEah6ti8HFeH2H0o0i0iHy_hwX"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        940,
+        80
+      ],
+      "id": "1cc5fbc3-2f4e-45de-aba8-003c8d511cee",
+      "name": "Upload Video1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "9WRrz2c8ZemVzlPL",
+          "name": "Google Drive account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appJ3fDAoRBETWkA2",
+          "mode": "list",
+          "cachedResultName": "POV Content ",
+          "cachedResultUrl": "https://airtable.com/appJ3fDAoRBETWkA2"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblfMydfHVH18UHdN",
+          "mode": "list",
+          "cachedResultName": "POV Videos",
+          "cachedResultUrl": "https://airtable.com/appJ3fDAoRBETWkA2/tblfMydfHVH18UHdN"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Video Prompt": "={{ $('Video Prompt Generator').item.json.output.prompt }}",
+            "Video URL": "={{ $json.webContentLink }}",
+            "POV Main": "={{[ $('Get Image').item.json.id] }}",
+            "POV Images": "={{[ $('Loop Image').item.json['[\\'POV Images\\']'] ]}}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Scene Number",
+              "displayName": "Scene Number",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Video Prompt",
+              "displayName": "Video Prompt",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Video URL",
+              "displayName": "Video URL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "POV Main",
+              "displayName": "POV Main",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "POV Images",
+              "displayName": "POV Images",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        640,
+        320
+      ],
+      "id": "a19eeff5-ddfe-4753-ae5d-c86e484b7f6d",
+      "name": "Upload Video Airtable",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appJ3fDAoRBETWkA2",
+          "mode": "list",
+          "cachedResultName": "POV Content ",
+          "cachedResultUrl": "https://airtable.com/appJ3fDAoRBETWkA2"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblsK6gpL3sX3Xk3I",
+          "mode": "list",
+          "cachedResultName": "POV Main",
+          "cachedResultUrl": "https://airtable.com/appJ3fDAoRBETWkA2/tblsK6gpL3sX3Xk3I"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "Videos Generated ",
+            "id": "={{ $('Get Image').item.json.id }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Concept (Detailed Scenario)",
+              "displayName": "Concept (Detailed Scenario)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Theme",
+              "displayName": "Theme",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Tone/Mood",
+              "displayName": "Tone/Mood",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "POV Scenes",
+              "displayName": "POV Scenes",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "POV Images",
+              "displayName": "POV Images",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "POV VIdeos",
+              "displayName": "POV VIdeos",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "POV Music",
+              "displayName": "POV Music",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "POV SFX",
+              "displayName": "POV SFX",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "POV Voiceovers",
+              "displayName": "POV Voiceovers",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Final Render Video",
+              "displayName": "Final Render Video",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Pending",
+                  "value": "Pending"
+                },
+                {
+                  "name": "Scenes Generated",
+                  "value": "Scenes Generated"
+                },
+                {
+                  "name": "Image Generated",
+                  "value": "Image Generated"
+                },
+                {
+                  "name": "Videos Generated ",
+                  "value": "Videos Generated "
+                },
+                {
+                  "name": "Music Generated",
+                  "value": "Music Generated"
+                },
+                {
+                  "name": "SFX Generated",
+                  "value": "SFX Generated"
+                },
+                {
+                  "name": "Voicevers Generated",
+                  "value": "Voicevers Generated"
+                },
+                {
+                  "name": "Materials Uploaded",
+                  "value": "Materials Uploaded"
+                },
+                {
+                  "name": "Ready To Upload",
+                  "value": "Ready To Upload"
+                },
+                {
+                  "name": "Completed",
+                  "value": "Completed"
+                },
+                {
+                  "name": "",
+                  "value": ""
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Instagram",
+              "displayName": "Instagram",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Facebook",
+              "displayName": "Facebook",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Youtube",
+              "displayName": "Youtube",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "created time",
+              "displayName": "created time",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "last modified time",
+              "displayName": "last modified time",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "record id",
+              "displayName": "record id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -260,
+        -140
+      ],
+      "id": "d2e6d7ae-0e60-47cf-b777-3a418c381ba3",
+      "name": "Update Airtable 3",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Get Image Url",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Video Prompt Generator",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Video Prompt Generator": {
+      "main": [
+        [
+          {
+            "node": "Generate Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Video": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Video": {
+      "main": [
+        [
+          {
+            "node": "Download Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Video": {
+      "main": [
+        [
+          {
+            "node": "Upload Video1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Get Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Image": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Image Url": {
+      "main": [
+        [
+          {
+            "node": "Split Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Image": {
+      "main": [
+        [
+          {
+            "node": "Loop Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Image": {
+      "main": [
+        [
+          {
+            "node": "Update Airtable 3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Image For Each Scene",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Image For Each Scene": {
+      "main": [
+        [
+          {
+            "node": "Video Prompt Generator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Qwen ": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Video Prompt Generator",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Video1": {
+      "main": [
+        [
+          {
+            "node": "Upload Video Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Video Airtable": {
+      "main": [
+        [
+          {
+            "node": "Loop Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "438bcd78-7567-4cb4-9613-7293b1778047",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d8c459f4ebcadd20c3258ade09582fe0f02de933363f6184259e0c9a36784090"
+  },
+  "id": "OBgiAuReAoWXnnbK",
+  "tags": [
+    {
+      "createdAt": "2025-03-24T09:10:16.506Z",
+      "updatedAt": "2025-03-24T09:10:16.506Z",
+      "id": "RqZ45jZ8VcYyMMZW",
+      "name": "W4: POV Content Machine"
+    }
+  ]
+}
