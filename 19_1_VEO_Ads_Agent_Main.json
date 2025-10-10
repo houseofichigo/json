@@ -1,0 +1,401 @@
+{
+  "name": "19.1 VEO Ads Agent Main",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "options": {
+          "systemMessage": "=#Role \nYou are an Ads Generator Agent tasked to call the specific tools to generate new ads for the user as well as publish ready videos. \n\n#Tools \n1. searchAirtable - call this tool to search Airtable for all the different characters available \n2. generateAd - call this tool to generate new Ad prompts. \n3. readyVideo - call this tool to search for the first ready video.\n4. postingAgent - call this tool to publish a ready video\n\n#Task \n1. When asked about which characters are there, use the searchAirtable tool to find the list of characters available and return the names to the user. \n\n2. To publish a new video, make sure to call the readyVideo tool to check for readyVideo and confirm with user. Once confirm, call the postingAgent tool and send over the exact name of the video as the output \"adname\" provided to post the video.\n\n3. When task to generate a new Ad copy, make sure to ask the user for information about it such as: \n- Which character the user wants to create an ad for (use the searchAirtable tool to list out)\n- Is there a product in it? \n- What's the caption you would like the character to say? \n- What is the ad about? \n- What is the setting of the ads? \n- What is the name of the ad? \n\nOnce you have recieved all of the necessary information, make sure to confirm with the user with the following details: \n1. Character name\n2. Ad name\n3. Ad description (created using all the details provided about the ad in one singular paragraph)\n\nAfter the user has confirmed the details, make sure to call the generateAd tool and pass the following information and nothing else: \n\n{\n  \"name\": \"insert character name\",\n  \"addetial\": \"insert ad description\",\n  \"adname\": \"insert ad name\"\n}\n\n#Note \n- Make sure to NOT add any quotation marks in the final ad description. \n- Make sure the caption provided in the ad description does not last more than 8 seconds"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        260,
+        100
+      ],
+      "id": "483a52a8-de95-440d-992d-ed218ac4f499",
+      "name": "Ads Generator Agent"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        20,
+        100
+      ],
+      "id": "9b08bcb8-7eb8-44b5-bd38-62914a3f2eea",
+      "name": "Telegram Trigger",
+      "webhookId": "5c3f7f07-a8c5-4e02-9bca-c2a406251b40",
+      "credentials": {
+        "telegramApi": {
+          "id": "rajpDvuc5KDPLJEx",
+          "name": "Veo Video Agent"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        0,
+        300
+      ],
+      "id": "2fcf8d06-7b8f-48b7-8164-a7b7d8b77253",
+      "name": "OpenRouter Chat Model2",
+      "credentials": {
+        "openRouterApi": {
+          "id": "y1vjMptfuqUZLu87",
+          "name": "Openrouter Key 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appitDUrFb8g8iJOu",
+          "mode": "list",
+          "cachedResultName": "VEO3 Ads Creator",
+          "cachedResultUrl": "https://airtable.com/appitDUrFb8g8iJOu"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tble7SgOZ0YnrUl2l",
+          "mode": "list",
+          "cachedResultName": "Character Table",
+          "cachedResultUrl": "https://airtable.com/appitDUrFb8g8iJOu/tble7SgOZ0YnrUl2l"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        280,
+        300
+      ],
+      "id": "208dd416-2ff8-45d5-b498-59748df8236e",
+      "name": "searchAirtable",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "Call this tool to generate new ad copies and prompts. ",
+        "workflowId": {
+          "__rl": true,
+          "value": "lvnMGlpkeBUwUvCu",
+          "mode": "list",
+          "cachedResultName": "19.2 VEO Ads Prompt Generator"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('name', ``, 'string') }}",
+            "addetail": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('addetail', ``, 'string') }}",
+            "adname": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('adname', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "addetail",
+              "displayName": "addetail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "adname",
+              "displayName": "adname",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        540,
+        300
+      ],
+      "id": "c1e4ef38-fd37-4467-a06b-94b91f18fe2d",
+      "name": "generateAd"
+    },
+    {
+      "parameters": {
+        "content": "## Ad Generator Agent\n",
+        "height": 440,
+        "width": 960
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -40,
+        20
+      ],
+      "id": "3d0a2e47-00d8-49e8-89ad-1949fa8c3d19",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.message.from.id }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        140,
+        300
+      ],
+      "id": "21cbe3cc-f487-4b52-bdff-3b2a1dfb78b4",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        680,
+        100
+      ],
+      "id": "33c5dd30-459d-4ff3-9c5e-c2e10d39a4fa",
+      "name": "Telegram",
+      "webhookId": "908e2d50-49ab-4131-943e-3336d29dfb14",
+      "credentials": {
+        "telegramApi": {
+          "id": "rajpDvuc5KDPLJEx",
+          "name": "Veo Video Agent"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "Call this tool to post a new video.",
+        "workflowId": {
+          "__rl": true,
+          "value": "QkYUAyBX1TyOMfTp",
+          "mode": "list",
+          "cachedResultName": "19.3 Veo Ads Posting Agent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "adname": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('adname', ``, 'string') }}"
+          },
+          "matchingColumns": [
+            "adname"
+          ],
+          "schema": [
+            {
+              "id": "adname",
+              "displayName": "adname",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        640,
+        300
+      ],
+      "id": "34553ab1-2fac-476e-b557-8594b834dedb",
+      "name": "postingAgent"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appitDUrFb8g8iJOu",
+          "mode": "list",
+          "cachedResultName": "VEO3 Ads Creator",
+          "cachedResultUrl": "https://airtable.com/appitDUrFb8g8iJOu"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblNObG3FAC39rsAB",
+          "mode": "list",
+          "cachedResultName": "Ads",
+          "cachedResultUrl": "https://airtable.com/appitDUrFb8g8iJOu/tblNObG3FAC39rsAB"
+        },
+        "filterByFormula": "{Status} = \"Ready To Upload\"",
+        "returnAll": false,
+        "limit": 1,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        420,
+        300
+      ],
+      "id": "df8daa8e-4457-4e4d-b6b6-0170633e02dd",
+      "name": "readyVideo",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Ads Generator Agent": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Ads Generator Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Ads Generator Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "searchAirtable": {
+      "ai_tool": [
+        [
+          {
+            "node": "Ads Generator Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "generateAd": {
+      "ai_tool": [
+        [
+          {
+            "node": "Ads Generator Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Ads Generator Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "postingAgent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Ads Generator Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "readyVideo": {
+      "ai_tool": [
+        [
+          {
+            "node": "Ads Generator Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "2f3237b2-90ce-4193-bf8b-78c6c4fcf947",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d8c459f4ebcadd20c3258ade09582fe0f02de933363f6184259e0c9a36784090"
+  },
+  "id": "DHxLZCXdVXt6Weqm",
+  "tags": [
+    {
+      "createdAt": "2025-06-16T09:07:09.831Z",
+      "updatedAt": "2025-06-16T09:07:09.831Z",
+      "id": "EY1xj6BA3V7sPQ2e",
+      "name": "W19: VEO Ads Agent"
+    }
+  ]
+}
