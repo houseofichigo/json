@@ -1,0 +1,583 @@
+{
+  "name": "1. POV Idea Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"Name\": \"<Insert catchy title>\",\n  \"Concept\": \"<Insert detailed scenario>\",\n  \"Theme\": \"<Insert theme>\",\n  \"Tone/Mood\": \"<Insert tone/mood>\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        580,
+        760
+      ],
+      "id": "140f8bdb-93d2-4858-87fa-9c3d61c7bf32",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "Please generate a new, unique POV content idea following the instructions provided and return in JSON format. \n",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=# Role\nYou are a POV Daily Idea Agent responsible for generating fresh, highly engaging, and viral POV content ideas for social media. Your ideas should capture attention by exploring unconventional, imaginative perspectives with vivid, provocative language.\n\n# Task\n1. **Fetch Existing Ideas:** Use the searchAirtable tool to retrieve the current ideas and ensure that your generated idea is completely unique and does not duplicate any of the existing entries.\n2. **Generate a New Idea:** Create a new POV idea that leverages diverse contexts and creative twists. Think outside the box—consider scenarios like \"POV of a poor man in Egypt,\" \"POV of Elon Musk’s son,\" or other unexpected perspectives. Your idea should combine elements of pop culture, shock value, and emotionally engaging storytelling.\n3. **Output in JSON Format:** Return your idea in the exact JSON format below:\n\n{\n  \"Name\": \"<Insert catchy title>\",\n  \"Concept\": \"<Insert detailed scenario>\",\n  \"Theme\": \"<Insert theme>\",\n  \"Tone/Mood\": \"<Insert tone/mood>\"\n}\n\n# Examples\n\n**Example 1:**\n- **Name:** \"Dawn of the Desert Nomad\"\n- **Concept:** \"Experience the raw, unfiltered life of a young nomad in Egypt, capturing the struggles and beauty of surviving the harsh desert while embracing unexpected moments of kindness and wonder.\"\n- **Theme:** \"Resilience & Discovery\"\n- **Tone/Mood:** \"Gritty, Inspiring, Mysterious\"\n\n**Example 2:**\n- **Name:** \"The Billionaire's Rebellion\"\n- **Concept:** \"Step into the shoes of Elon Musk’s son as he navigates the pressures of immense wealth and societal expectations, challenging the status quo with bold defiance and surprising acts of compassion.\"\n- **Theme:** \"Contrasts & Rebellion\"\n- **Tone/Mood:** \"Bold, Provocative, Intriguing\"\n\n**Example 3:**\n- **Name:** \"Midnight City Dreams\"\n- **Concept:** \"Dive into the nocturnal journey of an urban wanderer experiencing the hidden, surreal side of a bustling metropolis—a mix of loneliness, hope, and the magic of unexpected encounters.\"\n- **Theme:** \"Urban Mystique & Hope\"\n- **Tone/Mood:** \"Ethereal, Melancholic, Enigmatic\""
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        320,
+        380
+      ],
+      "id": "ad9342e7-931f-4361-a378-78939eec727c",
+      "name": "POV Daily Idea Agent"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "=appJ3fDAoRBETWkA2",
+          "mode": "id"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblsK6gpL3sX3Xk3I",
+          "mode": "list",
+          "cachedResultName": "POV Main",
+          "cachedResultUrl": "https://airtable.com/appJ3fDAoRBETWkA2/tblsK6gpL3sX3Xk3I"
+        },
+        "filterByFormula": "=",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        400,
+        780
+      ],
+      "id": "065c6e8a-aa14-48aa-8bfd-b0046ca2dbd1",
+      "name": "Airtable",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "qwen/qwen-2.5-72b-instruct",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        220,
+        780
+      ],
+      "id": "23b92ab3-befa-40f9-b4cc-8fb8be4f1f39",
+      "name": "Qwen",
+      "credentials": {
+        "openRouterApi": {
+          "id": "y1vjMptfuqUZLu87",
+          "name": "Openrouter Key 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ba80200a-0997-47dd-a71b-6d565c09cc0a",
+              "leftValue": "={{ $json.data.approved }}",
+              "rightValue": "false",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        800,
+        380
+      ],
+      "id": "56b21f00-0ec4-4265-99ad-3b8ad4bc7a16",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "chatId": "116486546",
+        "text": "=😥 Oof! That one didn’t hit the mark, huh?  \n\nNo worries boss — brewing up a brand new idea for you as we speak... 🔄✨",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1060,
+        520
+      ],
+      "id": "d6ee3258-2d00-4227-be6e-d6e99b1870e3",
+      "name": "Declined",
+      "webhookId": "7f712b89-1f1e-4bae-81d2-8c2a40d2374d",
+      "credentials": {
+        "telegramApi": {
+          "id": "WEvCeN3tuBOZpG0G",
+          "name": "Kale AI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "116486546",
+        "text": "=🔥 You’ve got *legendary* taste, boss!   \n\nYour POV video is locked in — this one’s gonna be a banger! 🎥💥   \n\nStay tuned, magic incoming... ✨🚀",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        980,
+        240
+      ],
+      "id": "9884242a-73d8-4fa8-9797-2eaaf1450545",
+      "name": "Approved",
+      "webhookId": "93f7f353-0f0b-44da-9a60-28016e8c7604",
+      "credentials": {
+        "telegramApi": {
+          "id": "WEvCeN3tuBOZpG0G",
+          "name": "Kale AI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "chatId": "116486546",
+        "message": "=🎬 Hey boss! Here's your fresh POV video idea for the day — hit me with your thoughts! 💭🔥\n\n🧠 *Title:* \n{{ $json.output.Name }} \n\n💡 *Concept:*  \n{{ $json.output.Concept }}\n\n🎭 *Theme:*\n{{ $json.output.Theme }} \n\n🎨 *Tone:*\n{{ $json.output['Tone/Mood'] }}  ",
+        "approvalOptions": {
+          "values": {
+            "approvalType": "double"
+          }
+        },
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        640,
+        380
+      ],
+      "id": "a2a9bcc1-3688-4a4c-a559-b7dc699a4692",
+      "name": "Human Approval",
+      "webhookId": "df07c869-e4c8-4e19-bf4f-2d75c6ec8e50",
+      "credentials": {
+        "telegramApi": {
+          "id": "WEvCeN3tuBOZpG0G",
+          "name": "Kale AI"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        840,
+        520
+      ],
+      "id": "75042368-eb4d-4d37-a222-0a05f4e20041",
+      "name": "Wait",
+      "webhookId": "0c55fa26-1f0c-4d7a-8495-adee4a47358d"
+    },
+    {
+      "parameters": {
+        "content": "## 🎥  POV Idea Agent  \n\n",
+        "height": 840,
+        "width": 1400,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        140
+      ],
+      "id": "082f37a1-1d14-4721-8e5a-1e8c9154810e",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "=appJ3fDAoRBETWkA2",
+          "mode": "id"
+        },
+        "table": {
+          "__rl": true,
+          "value": "=tblsK6gpL3sX3Xk3I",
+          "mode": "id"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $('POV Daily Idea Agent').item.json.output.Name }}",
+            "Concept (Detailed Scenario)": "={{ $('POV Daily Idea Agent').item.json.output.Concept }}",
+            "Theme": "={{ $('POV Daily Idea Agent').item.json.output.Theme }}",
+            "Tone/Mood": "={{ $('POV Daily Idea Agent').item.json.output['Tone/Mood'] }}",
+            "Status": "Pending"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Concept (Detailed Scenario)",
+              "displayName": "Concept (Detailed Scenario)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Theme",
+              "displayName": "Theme",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Tone/Mood",
+              "displayName": "Tone/Mood",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Pending",
+                  "value": "Pending"
+                },
+                {
+                  "name": "Materials Uploaded",
+                  "value": "Materials Uploaded"
+                },
+                {
+                  "name": "Ready To Upload",
+                  "value": "Ready To Upload"
+                },
+                {
+                  "name": "Completed",
+                  "value": "Completed"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Instagram",
+              "displayName": "Instagram",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Facebook",
+              "displayName": "Facebook",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Youtube",
+              "displayName": "Youtube",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "created time",
+              "displayName": "created time",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "last modified time",
+              "displayName": "last modified time",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "record id",
+              "displayName": "record id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1180,
+        240
+      ],
+      "id": "14db6051-25ac-4c19-a1a9-3f760c7eb883",
+      "name": "Update Airtable1",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "path": "e3868005-ee39-46fe-9c41-d3e298f2497e",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        100,
+        380
+      ],
+      "id": "a3c75e14-c6ff-4a54-ba73-3a2ca39db352",
+      "name": "Webhook",
+      "webhookId": "e3868005-ee39-46fe-9c41-d3e298f2497e"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "POV Daily Idea Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "POV Daily Idea Agent": {
+      "main": [
+        [
+          {
+            "node": "Human Approval",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable": {
+      "ai_tool": [
+        [
+          {
+            "node": "POV Daily Idea Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Qwen": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "POV Daily Idea Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Approved",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Declined",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Declined": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Approved": {
+      "main": [
+        [
+          {
+            "node": "Update Airtable1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Human Approval": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "POV Daily Idea Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "POV Daily Idea Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "0e059b03-04f6-4178-a8f7-0446cce5b4b9",
+  "meta": {
+    "instanceId": "d8c459f4ebcadd20c3258ade09582fe0f02de933363f6184259e0c9a36784090"
+  },
+  "id": "wjBuxU73Ttuo1beK",
+  "tags": [
+    {
+      "createdAt": "2025-03-24T09:10:16.506Z",
+      "updatedAt": "2025-03-24T09:10:16.506Z",
+      "id": "RqZ45jZ8VcYyMMZW",
+      "name": "W4: POV Content Machine"
+    }
+  ]
+}
