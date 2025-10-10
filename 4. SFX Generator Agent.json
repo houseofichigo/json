@@ -1,0 +1,892 @@
+{
+  "name": "5. POV SFX Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "5cfd004a-1108-4b51-a177-ea2204320ca8",
+              "leftValue": "={{ $json.Status }}",
+              "rightValue": "Videos Generated",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -620,
+        300
+      ],
+      "id": "487ff3fc-c683-46a5-b965-e42e9b0f9369",
+      "name": "If"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1040,
+        280
+      ],
+      "id": "434219c3-82ba-4ba1-986c-0f91a0a1fd6c",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"prompt\": \"<insert detailed SFX prompt here>\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        180,
+        480
+      ],
+      "id": "6ec31dec-475e-4fb7-a71c-6c3c3d36e08f",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Here is the POV scene:\n\nScene Description: {{ $json.Description }}\nTheme: {{ $('Get Scenes 2').item.json.Theme }}\nTone/Mood: {{ $('Get Scenes 2').item.json['Tone/Mood'] }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=# Role  \nYou are an **SFX Sound Effect Agent** specialized in generating immersive, cinematic soundscapes. Your job is to transform scene descriptions into vivid, under-25-word sound effect prompts that evoke the emotion, setting, and atmosphere of the scene.\n\n# Task  \nUsing the provided inputs, generate a short, sensory-rich SFX prompt made up of environmental, ambient, or character-driven sounds. The result should bring the scene to life and reflect its tone and theme through audio cues. The prompt must be concise, descriptive, and formatted as a comma-separated list.\n\n# Input  \nYou will receive:  \n- **Scene Description:** A caption describing the POV scene and its key auditory cues.  \n- **Theme:** The underlying theme.  \n- **Tone/Mood:** The intended emotional tone.\n\n# Output  \nReturn your generated prompt in the following JSON format:\n```json\n{\n  \"prompt\": \"<insert detailed SFX prompt here>\"\n}\n```\n\n# Example  \n\n## Example 1  \n**Input:**  \nScene Description: POV: Entering a dimly lit, dust-filled room filled with ancient archives.  \nTheme: Mystery & Legacy  \nTone/Mood: Mystical, Thought-Provoking, Haunting  \n\n**Output:**  \n```json\n{\n  \"prompt\": \"creaking door, soft footsteps, distant dripping, rustling paper, faint whisper of wind\"\n}\n```\n\n## Example 2  \n**Input:**  \nScene Description: POV: Running through a neon-lit alley during a sudden downpour, chased by unknown figures.  \nTheme: Escape & Futurism  \nTone/Mood: Intense, Gritty, Urgent  \n\n**Output:**  \n```json\n{\n  \"prompt\": \"pounding rain, hurried footsteps, splashing puddles, distant sirens, heavy breathing, electric hum\"\n}\n```\n\n## Example 3  \n**Input:**  \nScene Description: POV: Sitting by a peaceful lake at sunrise, watching mist roll over the water.  \nTheme: Reflection & Tranquility  \nTone/Mood: Calm, Serene, Introspective  \n\n**Output:**  \n```json\n{\n  \"prompt\": \"gentle water lapping, birdsong, breeze in trees, distant loon call, soft rustle of reeds\"\n}\n```\n\n# Notes  \n- Keep the total output under 25 words.  \n- Use evocative and sensory-specific sound descriptions.  \n- Focus on ambient, environmental, and character-related audio cues.  \n- Do not include dialogue or lyrics.  \n- Format all outputs in lowercase, comma-separated strings inside a JSON object.  \n- Ensure the mood, theme, and setting are reflected clearly in the sound choices.  \n- One scene = one output.  \n"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        40,
+        240
+      ],
+      "id": "8b6f9cb5-4182-4a60-8ff4-4265da09cd77",
+      "name": "SFX Prompt Generator"
+    },
+    {
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "value": "appJ3fDAoRBETWkA2",
+          "mode": "list",
+          "cachedResultName": "POV Content ",
+          "cachedResultUrl": "https://airtable.com/appJ3fDAoRBETWkA2"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbl47t5XjP64vCYHx",
+          "mode": "list",
+          "cachedResultName": "POV Scenes",
+          "cachedResultUrl": "https://airtable.com/appJ3fDAoRBETWkA2/tbl47t5XjP64vCYHx"
+        },
+        "id": "={{ $json.id }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -600,
+        20
+      ],
+      "id": "6ae4e9ac-066a-4759-be67-cc3fb121057c",
+      "name": "Get Scenes 2",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appJ3fDAoRBETWkA2",
+          "mode": "list",
+          "cachedResultName": "POV Content ",
+          "cachedResultUrl": "https://airtable.com/appJ3fDAoRBETWkA2"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblsK6gpL3sX3Xk3I",
+          "mode": "list",
+          "cachedResultName": "POV Main",
+          "cachedResultUrl": "https://airtable.com/appJ3fDAoRBETWkA2/tblsK6gpL3sX3Xk3I"
+        },
+        "filterByFormula": "Status = \"Videos Generated\"",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -840,
+        280
+      ],
+      "id": "d405f88f-e278-4ac3-9c1f-3cc724328968",
+      "name": "Check Video Status",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "['POV Scenes']",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -420,
+        20
+      ],
+      "id": "26b469d4-88b2-4eeb-9346-c415a9bce19d",
+      "name": "Split Scenes"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -200,
+        20
+      ],
+      "id": "3477c8f9-1b6e-4231-9604-b6849b97eaf6",
+      "name": "Loop Over Scenes"
+    },
+    {
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "value": "appJ3fDAoRBETWkA2",
+          "mode": "list",
+          "cachedResultName": "POV Content ",
+          "cachedResultUrl": "https://airtable.com/appJ3fDAoRBETWkA2"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbl47t5XjP64vCYHx",
+          "mode": "list",
+          "cachedResultName": "POV Scenes",
+          "cachedResultUrl": "https://airtable.com/appJ3fDAoRBETWkA2/tbl47t5XjP64vCYHx"
+        },
+        "id": "={{ $json['[\\'POV Scenes\\']'] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -160,
+        240
+      ],
+      "id": "d96d2aff-b854-4ddf-8452-674ce6ce3da5",
+      "name": "Get Scenes For SFX",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "=qwen/qwen-2.5-72b-instruct",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -20,
+        480
+      ],
+      "id": "73cebf8a-378c-4250-ad18-3def571e59c6",
+      "name": "Qwen",
+      "credentials": {
+        "openRouterApi": {
+          "id": "y1vjMptfuqUZLu87",
+          "name": "Openrouter Key 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.elevenlabs.io/v1/sound-generation",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "text",
+              "value": "={{ $json.output.prompt }}"
+            },
+            {
+              "name": "duration_seconds",
+              "value": "5"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        460,
+        240
+      ],
+      "id": "4fdb8351-c963-4362-a8bc-932ff90d9aab",
+      "name": "Generate SFX",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "ve0EEdVJ5xWTT2KM",
+          "name": "Elevenlabs"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appJ3fDAoRBETWkA2",
+          "mode": "list",
+          "cachedResultName": "POV Content ",
+          "cachedResultUrl": "https://airtable.com/appJ3fDAoRBETWkA2"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblbabp38S8Q0t93T",
+          "mode": "list",
+          "cachedResultName": "POV SFX",
+          "cachedResultUrl": "https://airtable.com/appJ3fDAoRBETWkA2/tblbabp38S8Q0t93T"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "SFX Prompt": "={{ $('Generate SFX').item.json.output.prompt }}",
+            "URL": "={{ $json.webContentLink }}",
+            "POV Main": "={{ [ $('Check Video Status').item.json.id ]}}",
+            "POV Scenes": "={{ [$('Loop Over Scenes').item.json['[\\'POV Scenes\\']']] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Scene Number",
+              "displayName": "Scene Number",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Music Prompt",
+              "displayName": "Music Prompt",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "SFX Prompt",
+              "displayName": "SFX Prompt",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "URL",
+              "displayName": "URL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "POV Main",
+              "displayName": "POV Main",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "POV Scenes",
+              "displayName": "POV Scenes",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        920,
+        480
+      ],
+      "id": "bc47aa7c-505a-499f-ab18-229ea4c3f0c5",
+      "name": "Upload SFX Airtable",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "={{ $('Check Video Status').item.json.Name }}_{{ $('Get Scenes For SFX').item.json['Scene Number'] }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1y4kHZaLCHjALVIO96h3-sJoVZKFgwOUV",
+          "mode": "list",
+          "cachedResultName": "4. POV SFX",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1y4kHZaLCHjALVIO96h3-sJoVZKFgwOUV"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        680,
+        240
+      ],
+      "id": "97671856-73ff-45ce-9da8-ffd517507274",
+      "name": "Uploade SFX",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "9WRrz2c8ZemVzlPL",
+          "name": "Google Drive account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appJ3fDAoRBETWkA2",
+          "mode": "list",
+          "cachedResultName": "POV Content ",
+          "cachedResultUrl": "https://airtable.com/appJ3fDAoRBETWkA2"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblsK6gpL3sX3Xk3I",
+          "mode": "list",
+          "cachedResultName": "POV Main",
+          "cachedResultUrl": "https://airtable.com/appJ3fDAoRBETWkA2/tblsK6gpL3sX3Xk3I"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "SFX Generated",
+            "id": "={{ $('Check Video Status').item.json.id }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Concept (Detailed Scenario)",
+              "displayName": "Concept (Detailed Scenario)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Theme",
+              "displayName": "Theme",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Tone/Mood",
+              "displayName": "Tone/Mood",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "POV Scenes",
+              "displayName": "POV Scenes",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "POV Images",
+              "displayName": "POV Images",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "POV VIdeos",
+              "displayName": "POV VIdeos",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "POV SFX",
+              "displayName": "POV SFX",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Final Render Video",
+              "displayName": "Final Render Video",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Pending",
+                  "value": "Pending"
+                },
+                {
+                  "name": "Scenes Generated",
+                  "value": "Scenes Generated"
+                },
+                {
+                  "name": "Image Generated",
+                  "value": "Image Generated"
+                },
+                {
+                  "name": "Videos Generated",
+                  "value": "Videos Generated"
+                },
+                {
+                  "name": "SFX Generated",
+                  "value": "SFX Generated"
+                },
+                {
+                  "name": "Materials Uploaded",
+                  "value": "Materials Uploaded"
+                },
+                {
+                  "name": "Ready To Upload",
+                  "value": "Ready To Upload"
+                },
+                {
+                  "name": "Completed",
+                  "value": "Completed"
+                },
+                {
+                  "name": "",
+                  "value": ""
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Instagram",
+              "displayName": "Instagram",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Facebook",
+              "displayName": "Facebook",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Youtube",
+              "displayName": "Youtube",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Uploaded",
+                  "value": "Uploaded"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "created time",
+              "displayName": "created time",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "last modified time",
+              "displayName": "last modified time",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "record id",
+              "displayName": "record id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        100,
+        0
+      ],
+      "id": "aef05dd5-f1b3-4cb9-aafa-4470c89083f6",
+      "name": "Update Airtable 4",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "HlCvwpeDhqxCdX9c",
+          "name": "Airtable Access 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## SFX Agent",
+        "height": 780,
+        "width": 2300,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1100,
+        -40
+      ],
+      "id": "bdc98f86-ec38-4ce4-bbda-76fbf9c572a4",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Get Scenes 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Check Video Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "SFX Prompt Generator",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SFX Prompt Generator": {
+      "main": [
+        [
+          {
+            "node": "Generate SFX",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Scenes 2": {
+      "main": [
+        [
+          {
+            "node": "Split Scenes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Video Status": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Scenes": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Scenes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Scenes": {
+      "main": [
+        [
+          {
+            "node": "Update Airtable 4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Scenes For SFX",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Scenes For SFX": {
+      "main": [
+        [
+          {
+            "node": "SFX Prompt Generator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Qwen": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "SFX Prompt Generator",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate SFX": {
+      "main": [
+        [
+          {
+            "node": "Uploade SFX",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload SFX Airtable": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Scenes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Uploade SFX": {
+      "main": [
+        [
+          {
+            "node": "Upload SFX Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "628ba9c9-7c56-4362-82a0-20344149b0f7",
+  "meta": {
+    "instanceId": "d8c459f4ebcadd20c3258ade09582fe0f02de933363f6184259e0c9a36784090"
+  },
+  "id": "slsyWALnrmtiY3bu",
+  "tags": [
+    {
+      "createdAt": "2025-03-24T09:10:16.506Z",
+      "updatedAt": "2025-03-24T09:10:16.506Z",
+      "id": "RqZ45jZ8VcYyMMZW",
+      "name": "W4: POV Content Machine"
+    }
+  ]
+}
