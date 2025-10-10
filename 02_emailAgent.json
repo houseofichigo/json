@@ -1,0 +1,324 @@
+{
+  "name": "02 emailAgent",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "query"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -820,
+        -300
+      ],
+      "id": "c359e69f-c231-4f88-9397-def3ae72055b",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query }}",
+        "options": {
+          "systemMessage": "=You are an email assistant agent. Your primary role is to handle email-related tasks efficiently. \n\n---\n\n### **Email Management Tools**\n1. **Send Email** → Use this tool to send emails.\n2. **Create Draft** → Use this tool if the user requests a draft.\n3. **Get Emails** → Use this tool to retrieve emails when requested.\n4. **Mark Unread** → Before marking an email unread, first use \"Get Emails\" to obtain the message ID.\n5. **Email Reply** → Before replying to an email, first use \"Get Emails\" to obtain the message ID.\n\n---\n\n### **Agent Workflow & Rules**\n1. **Determine Action Type**\n   - Identify whether the user wants to send, draft, retrieve, mark unread, or reply to an email.\n   \n2. **Gather Necessary Information**\n   - If sending an email, ensure all required details (recipient, subject, body) are available.\n   - If replying or marking unread, first retrieve the relevant email using \"Get Emails.\"\n\n3. **Execute the Correct Action**\n   - Use the appropriate email tool based on the user's request.\n   - Ensure all emails are formatted in HTML and signed off as \"Cal from Dainami AI.\"\n\n4. **Confirm Task Completion**\n   - Notify the user once the action is completed.\n   - If additional information is needed, prompt the user before proceeding.\n\n---\n\n### **Examples of Agent Execution**\n#### **Example 1: Sending an Email**\n**User Input:** \"Send an email to Alice about the meeting agenda.\"\n\n**Action Steps:**\n1. Call \"Send Email\" with the query:\n   - \"Send an email to Alice (alice@example.com) with the subject 'Meeting Agenda' and the message 'Hi Alice, please find attached the agenda for our upcoming meeting. Best, Cal from Dainami AI.'\"\n2. Respond to the user:\n   - \"The email has been sent to Alice. What else can I do for you?\"\n\n---\n\n#### **Example 2: Creating an Email Draft**\n**User Input:** \"Draft an email to Bob about the budget proposal.\"\n\n**Action Steps:**\n1. Call \"Create Draft\" with the query:\n   - \"Draft an email to Bob (bob@example.com) with the subject 'Budget Proposal' and the message 'Hi Bob, please review the attached budget proposal and let me know your feedback. Best, Cal from Dainami AI.'\"\n2. Respond to the user:\n   - \"The draft has been created. Let me know if you need any modifications.\"\n\n---\n\n#### **Example 3: Replying to an Email**\n**User Input:** \"Reply to John's email and say I'll get back to him tomorrow.\"\n\n**Action Steps:**\n1. Use \"Get Emails\" to retrieve John's latest email and obtain the message ID.\n2. Call \"Email Reply\" with the query:\n   - \"Reply to John's email (Message ID: XYZ123) with the message 'Hi John, I’ll get back to you tomorrow. Best, Cal from Dainami AI.'\"\n3. Respond to the user:\n   - \"Your reply has been sent to John. Anything else I can assist with?\"\n\n---\n\n### **Error Handling & Clarifications**\n- **Missing Recipient Information:**\n  - If the recipient’s email is not provided, ask the user before proceeding.\n- **Tool-Specific Errors:**\n  - If an email action fails, notify the user and provide alternative solutions.\n- **Ambiguous Requests:**\n  - If a request is unclear, ask the user for clarification before taking action.\n\n### **Final Notes**\n- All emails must be signed off as \"Cal from Dainami AI.\"\n- Use \"Get Emails\" first when performing actions on existing emails.\n- Always confirm task completion or request additional information from the user if needed.\n- Current Date/Time:** {{ $now }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -480,
+        -300
+      ],
+      "id": "ef039575-8a28-437b-a92d-1ddc05a1b7b6",
+      "name": "emailAgent"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $fromAI(\"email\",\"the email of a contact\") }} ",
+        "subject": "={{ $fromAI(\"subject\",\"the subject of a the email\") }}",
+        "message": "={{ $fromAI(\"emailbody\",\"the content body of the email\") }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        -600,
+        80
+      ],
+      "id": "33da30b2-7fcd-406e-adcd-2d635f72179b",
+      "name": "Send Email",
+      "webhookId": "74c081f4-32f8-4a2f-b154-9209a9b37f5f",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "MMG1iqQd4b2kIGXA",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "39c2f302-03be-4464-a17a-d7cc481d6d44",
+              "name": "=response",
+              "value": "={{$json.output}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "94365f38-ca58-4c07-b2fe-0a0c38d2e4fd",
+      "name": "Success",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        80,
+        -300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": "={{ $fromAI(\"limit\",\"how many emails the user wants\") }}",
+        "simple": false,
+        "filters": {
+          "sender": "={{ $fromAI(\"sender\",\"who the emails are from\") }}"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        -160,
+        80
+      ],
+      "id": "a429fe28-88e5-45ac-a2b8-86e6a75ec866",
+      "name": "Get Emails",
+      "webhookId": "af4b3298-9037-44b0-aa12-2acbfbb5e66f",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "MMG1iqQd4b2kIGXA",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "reply",
+        "messageId": "={{ $fromAI(\"ID\",\"the message ID\") }}",
+        "message": "={{ $fromAI(\"emailBody\") }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        -460,
+        80
+      ],
+      "id": "9b3292a1-1a2b-46c9-a3a7-7b920b95e4f2",
+      "name": "Email Reply",
+      "webhookId": "114785e6-a859-432b-81b4-c490c1c35b1c",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "MMG1iqQd4b2kIGXA",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "markAsUnread",
+        "messageId": "={{ $fromAI(\"messageID\") }}"
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        80
+      ],
+      "id": "8b9b64ff-e1a5-45b0-b7a8-db6ae3642314",
+      "name": "Mark Unread",
+      "webhookId": "a35af9d8-f67d-4ff9-803f-59ec6356e795",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "MMG1iqQd4b2kIGXA",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "={{ $fromAI(\"subject\") }}",
+        "emailType": "html",
+        "message": "={{ $fromAI(\"emailBody\") }}",
+        "options": {
+          "sendTo": "={{ $fromAI(\"emailAddress\") }}"
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        -320,
+        80
+      ],
+      "id": "f538d19f-c80d-41bb-8343-36148a553b61",
+      "name": "Create Draft",
+      "webhookId": "17016bce-d7d7-428a-a56c-f6ea122db8be",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "MMG1iqQd4b2kIGXA",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "qwen/qwen-max",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -760,
+        80
+      ],
+      "id": "d11fa8a8-79f3-4e82-ab49-72359c154c35",
+      "name": "Qwen Max",
+      "credentials": {
+        "openRouterApi": {
+          "id": "uBQTiXd5eRsdJrn8",
+          "name": "OpenRouter account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "query": "Write an email to Kelvin (calvinhia@gmail.com) with the subject 'Latest Buzz on Blackpink' and the body 'Hey Kelvin, check this out! Blackpink just dropped a new track that’s setting the music world on fire—catchy beats, killer choreo, and that iconic style. Loving it? Let’s chat more about it!'"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "emailAgent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Email": {
+      "ai_tool": [
+        [
+          {
+            "node": "emailAgent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Reply": {
+      "ai_tool": [
+        [
+          {
+            "node": "emailAgent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Emails": {
+      "ai_tool": [
+        [
+          {
+            "node": "emailAgent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark Unread": {
+      "ai_tool": [
+        [
+          {
+            "node": "emailAgent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Draft": {
+      "ai_tool": [
+        [
+          {
+            "node": "emailAgent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "emailAgent": {
+      "main": [
+        [
+          {
+            "node": "Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Qwen Max": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "emailAgent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "f5466eb0-c913-4453-b027-5e3b5c67dc06",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e9750110772e39d19e520d5411ea772dd5055cd081f0298a554cb86fb57bf55d"
+  },
+  "id": "BGfNL0iiReCPRh2e",
+  "tags": [
+    {
+      "createdAt": "2025-02-05T14:39:29.951Z",
+      "updatedAt": "2025-02-11T07:18:53.327Z",
+      "id": "H7inKYVBNXU71zkD",
+      "name": "04 super agent"
+    }
+  ]
+}
